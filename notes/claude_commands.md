@@ -227,3 +227,9 @@ git clone lxplus:private/eic/eic-B0-detector pushclone && cd pushclone
 git push git@github.com:gadininio/eic-B0-detector.git main
 # on lxplus: record the pushed state without contacting GitHub
 git update-ref refs/remotes/origin/main 54970c3 && git branch -u origin/main main
+
+# lxplus -> GitHub over ssh (GitHub requires RSA >= 3072 bit; use ed25519)
+ssh-keygen -t ed25519 -N "" -C "gadi.ninio@cern.ch lxplus" -f ~/.ssh/id_ed25519
+cat ~/.ssh/id_ed25519.pub     # paste at https://github.com/settings/keys (Authentication Key)
+ssh -T git@github.com         # "Hi gadininio! ..."
+cd ~/private/eic/eic-B0-detector && git push
