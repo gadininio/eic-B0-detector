@@ -1,0 +1,4 @@
+/eos/user/g/gninio/eic/lambda_1000ev/lambda_new_s10?.eicreconmain.edm4eic.root  (1000 events)
+expected (collinear, isotropic decay): p* = 0.1006 GeV, ratio from 3.09 to 14.61
+true ratio: 485 decays, min 3.09, max 14.58, mean 6.76 (expected mean 6.43)
+reco ratio (truth-matched pairs): 101 pairs, 2 at or below the cut 2.5 (2.0%), max 14.21

@@ -1,0 +1,6 @@
+/eos/user/g/gninio/eic/lambda_1000ev/lambda_new_s10?.edm4hep.root  (1000 events)
+generated Lambda: 1000   -> p pi-: 485 (48%)   -> n pi0: 278 (28%)   other: 237 (24%)
+p pi- decays before the B0 tracker (z < 5800 mm): 438 of 485 (90%)
+ACCEPTANCE per p pi- decay (>= 3 layers):  proton 295 (60.8%)   pi- 240 (49.5%)   both 199 (41.0%)
+per p pi- decay, >= 1 layer:              proton 375 (77.3%)   pi- 327 (67.4%)   both 291 (60.0%)
+both daughters accepted, per generated Lambda: 199 of 1000 (19.9%)

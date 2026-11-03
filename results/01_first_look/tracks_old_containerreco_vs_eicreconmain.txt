@@ -1,0 +1,14 @@
+old: /eos/user/g/gninio/eic/lambda_100ev/lambda_old_s42.containerreco.edm4eic.root
+new: /eos/user/g/gninio/eic/lambda_100ev/lambda_old_s42.eicreconmain.edm4eic.root
+                            old: events / total    new: events / total
+B0 sim hits                      77 / 1478               77 / 1478      
+B0 rec hits                      76 / 1416               76 / 1416      
+truth seeds                       4 / 8                  61 / 650       
+B0 CKF tracks                     3 / 4                  45 / 77        
+B0 charged particles              3 / 4                  45 / 77        
+  positive                        3 / 3                  41 / 48        
+  negative                        1 / 1                  22 / 29        
+central CKF tracks                1 / 1                   1 / 1         
+events with + and -               1                     18
+Lambda ends z<200 mm              5                      5
+Lambda ends z<6000 mm            70                     70

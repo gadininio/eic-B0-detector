@@ -1,0 +1,7 @@
+/eos/user/g/gninio/eic/geantino/geantino_new_5000.edm4hep.root: 5000 events
+layers crossed: 0:823 1:283 2:389 3:159 4:3346 >4:0
+  >=1 layer   83.5 % +- 0.5
+  >=3 layers  70.1 % +- 0.6
+  4 layers    66.9 % +- 0.7
+theta distribution: events 13-18 / 8-13 mrad = 1.02 (1.0 = flat in theta, ~1.5 = flat in cos theta)
+acceptance (>=3 layers) vs theta [mrad]:  8:70%  9:71%  10:77%  11:76%  12:76%  13:69%  14:75%  15:76%  16:66%  17:58%

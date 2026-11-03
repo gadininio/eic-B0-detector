@@ -1,0 +1,3 @@
+/eos/user/g/gninio/eic/lambda_1000ev/lambda_old_s10?.edm4hep.root  (1000 events)
+generated Lambda: 1000   -> p pi-: 503 (50%)   -> n pi0: 250 (25%)   other: 247 (25%)
+M(p pi-) from true momenta: mean 1.115683 GeV, RMS 0.00e+00 GeV (PDG 1.115683 GeV)

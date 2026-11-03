@@ -1,0 +1,6 @@
+/eos/user/g/gninio/eic/lambda_1000ev/lambda_new_s10?.eicreconmain.edm4eic.root  (1000 events)
+all (+,-) pairs:           116   signal  101   purity  87.1%
+pairs with p+/p- > 2.5:    103   signal   99   purity  96.1%   (events with a candidate: 102)
+efficiency of the cut for signal: 99 of 101 (98.0%)
+Gaussian fit after cut (+-15 MeV): mean 1.1164 +- 0.0008 GeV  sigma 0.0064 +- 0.0007 GeV
+in +-20 MeV window after cut: 92 candidates, 92 signal

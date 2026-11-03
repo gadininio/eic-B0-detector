@@ -1,0 +1,8 @@
+/eos/user/g/gninio/eic/lambda_1000ev/lambda_old_s10?.eicreconmain_5keV.edm4eic.root  (1000 events)
+generated Lambda: 1000   -> p pi-: 503
+          acceptance    tracking efficiency        acc x eff  acc x eff (product check)
+proton        80.3%                 82.2%           66.0%                     66.0%
+pi-           69.4%                 55.6%           38.6%                     38.6%
+both          63.2%                 47.2%           29.8%                     29.8%
+reconstructed but not accepted: proton 0, pi- 0
+ACCEPTANCE x EFFICIENCY, both daughters, per generated Lambda: 150 of 1000 (15.0%)

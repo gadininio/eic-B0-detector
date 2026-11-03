@@ -1,0 +1,22 @@
+# data and build products stay out of the repository
+*.root
+*.so
+*.d
+*.pcm
+*_ACLiC_dict*
+calibrations/
+fieldmaps/
+gdml/
+work_*/
+.DS_Store
+# LaTeX intermediate files
+docs/**/*.aux
+docs/**/*.log
+docs/**/*.out
+docs/**/*.toc
+docs/**/*.nav
+docs/**/*.snm
+docs/**/*.vrb
+docs/**/*.fls
+docs/**/*.fdb_latexmk
+docs/**/*.synctex.gz
