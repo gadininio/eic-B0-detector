@@ -221,3 +221,9 @@ scripts/production/geantino_sample.sh local geantino_new_5000 5000
 cd docs/report && latexmk -pdf report.tex; cd ../slides && latexmk -pdf slides.tex
 # reach another lxplus node (e.g. its /tmp) from inside lxplus
 ssh lxplus9116.cern.ch
+
+# push the lxplus repo to GitHub through the Mac (lxplus key not on GitHub)
+git clone lxplus:private/eic/eic-B0-detector pushclone && cd pushclone
+git push git@github.com:gadininio/eic-B0-detector.git main
+# on lxplus: record the pushed state without contacting GitHub
+git update-ref refs/remotes/origin/main 54970c3 && git branch -u origin/main main

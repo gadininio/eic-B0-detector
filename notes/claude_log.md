@@ -402,3 +402,4 @@ Macro `~/private/eic/compare_tracks.C` (run in `~/private/eic`). Both use the co
 - `scripts/make_results.sh` regenerated all of `results/` from the EOS files: every number agrees with the earlier steps (A×ε factorization agrees to < 0.6 %).
 - Documents: `docs/report/report.pdf` (14 pages), `docs/slides/slides.pdf` (16 slides, beamer), `notes/claude_summary.md` (Λ/B0 work only), `README.md` (definitions, results, layout, reproduction).
 - Pitfall: on a new day the ssh master connection was re-made and landed on another node (lxplus930); files in lxplus9116's /tmp were reached with `ssh lxplus9116.cern.ch` from inside lxplus (Kerberos).
+- **Pushed to GitHub** (https://github.com/gadininio/eic-B0-detector, branch `main`, commit 54970c3). lxplus key still refused by GitHub ("Permission denied (publickey)"), so the lxplus repo was cloned to the Mac over ssh and pushed from there (the Mac key is on GitHub).
