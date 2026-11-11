@@ -15,6 +15,9 @@
 // Output: printout (counts, mean/RMS, Gaussian fit of the core if >= 30 pairs) and <outbase>.png.
 // Usage (from the repository top):
 //   root -l -b -q 'macros/mass/lambda_mass_reco.C+("/eos/user/g/gninio/eic/lambda_1000ev/lambda_new_s10?.eicreconmain_5keV.edm4eic.root","results/06_mass/mass_reco_new_5keV")'
+// Seeding: "truth" (default, ReconstructedTruthSeededChargedParticles) or "hit"
+// (ReconstructedChargedParticles, needs EICrecon with #3116); see ../common/LambdaB0.h.
+// Usage with hit seeding: add the arguments  ,0,"hit"
 #include "../common/LambdaB0.h"
 #include "TLorentzVector.h"
 #include "TH1D.h"
@@ -22,13 +25,14 @@
 #include <cstdio>
 
 void lambda_mass_reco(const char* files = "/eos/user/g/gninio/eic/lambda_1000ev/lambda_new_s10?.eicreconmain_5keV.edm4eic.root",
-                      const char* outbase = "mass_reco_new_5keV", int verbose = 0)
+                      const char* outbase = "mass_reco_new_5keV", int verbose = 0, const char* seeding = "truth")
 {
   using namespace lb0;
   TChain* ch = MakeChain(files);
   TTreeReader r(ch);
   MCEvent ev(r);
-  RecoEvent reco(r);
+  Seeding seed(seeding);
+  RecoEvent reco(r, seed);
 
   TH1D hM("hM", "M(p#pi^{-}), reco momenta, truth-matched;M [GeV];pairs / 2 MeV", 55, 1.06, 1.17);
   TH1D hA("hA", "M(+,-) all pairs, reco momenta (p, #pi^{-} hypotheses);M [GeV];pairs", 60, 1.0, 1.3);
@@ -60,7 +64,7 @@ void lambda_mass_reco(const char* files = "/eos/user/g/gninio/eic/lambda_1000ev/
     for (int a = 0; a < reco.N(); ++a) for (int b = 0; b < reco.N(); ++b)
       if (reco.q[a] > 0 && reco.q[b] < 0) hA.Fill((p4(a, kMassProton) + p4(b, kMassPion)).M());
   }
-  printf("%s  (%lld events)\n", files, ch->GetEntries());
+  printf("%s  (%lld events, %s)\n", files, ch->GetEntries(), seed.Name());
   printf("reco tracks: %d   matched p from Lambda: %d   pi- from Lambda: %d   other: %d   unmatched: %d\n",
          nTrk, nP, nPi, nOther, nUnmatched);
   printf("decays with both daughters reconstructed (truth-matched pairs): %d\n", nPairs);

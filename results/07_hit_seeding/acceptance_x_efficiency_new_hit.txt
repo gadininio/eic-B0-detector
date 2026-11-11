@@ -1,0 +1,8 @@
+/eos/user/g/gninio/eic/lambda_1000ev/lambda_new_s10?.eicreconpr3116.edm4eic.root  (1000 events, hit seeding)
+generated Lambda: 1000   -> p pi-: 485
+          acceptance    tracking efficiency        acc x eff  acc x eff (product check)
+proton        60.8%                100.0%           61.2%                     60.8%
+pi-           49.5%                 64.6%           32.2%                     32.0%
+both          41.0%                 65.3%           27.0%                     26.8%
+reconstructed but not accepted: proton 2, pi- 1
+ACCEPTANCE x EFFICIENCY, both daughters, per generated Lambda: 131 of 1000 (13.1%)

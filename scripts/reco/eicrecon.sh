@@ -1,9 +1,13 @@
 # eicrecon.sh: reconstruction with EICrecon (runs INSIDE eic-shell).
 # Run it with scripts/in_eic_shell.sh, which sets the variables:
 #
-#   GEO      container | local: which epic geometry (must be the one used in the simulation)
+#   GEO      which epic geometry, as in scripts/sim/ddsim_gun.sh (container | local | <name>);
+#            must be the one used in the simulation
 #   RECO     main (default) = local EICrecon build in $EIC_TOP/EICrecon/install
 #            container      = EICrecon of the eic-shell container
+#            <dir>          = local EICrecon build in $EIC_TOP/<dir>/install, e.g. EICrecon_pr3116
+#                             (PR #3116, B0 hit seeding; scripts/build/build_eicrecon.sh)
+#            A local build must be built in the same container image it runs in (libraries).
 #   IN       input edm4hep file (absolute path, on a disk visible in the container)
 #   OUT      output edm4eic file (absolute path)
 #   EXTRA    more eicrecon options, e.g.
@@ -18,8 +22,14 @@ JOB=$(dirname "$OUT")/work_$(basename "${OUT%.edm4eic.root}")
 mkdir -p "$JOB" && cd "$JOB"
 if [ "$GEO" = local ]; then source "$EIC_TOP/epic/install/bin/thisepic.sh"
 elif [ "$GEO" = container ]; then source /opt/detector/epic-main/bin/thisepic.sh
-else echo "GEO must be container or local" >&2; exit 1; fi
-[ "$RECO" = main ] && source "$EIC_TOP/EICrecon/install/bin/eicrecon-this.sh"
+elif [ -f "/opt/detector/$GEO/bin/thisepic.sh" ]; then source "/opt/detector/$GEO/bin/thisepic.sh"
+elif [ -f "$EIC_TOP/$GEO/install/bin/thisepic.sh" ]; then source "$EIC_TOP/$GEO/install/bin/thisepic.sh"
+else echo "GEO=$GEO: no such epic (container, local, /opt/detector/<GEO>, \$EIC_TOP/<GEO>/install)" >&2; exit 1; fi
+if [ "$RECO" = main ]; then source "$EIC_TOP/EICrecon/install/bin/eicrecon-this.sh"
+elif [ "$RECO" != container ]; then
+  [ -f "$EIC_TOP/$RECO/install/bin/eicrecon-this.sh" ] || { echo "RECO=$RECO: no $EIC_TOP/$RECO/install" >&2; exit 1; }
+  source "$EIC_TOP/$RECO/install/bin/eicrecon-this.sh"
+fi
 echo "DETECTOR_PATH=$DETECTOR_PATH"
 command -v eicrecon            # "which" in the container fails under set -e
 GEOM="$DETECTOR_PATH/epic_craterlake_18x275.xml"

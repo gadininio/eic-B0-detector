@@ -3,6 +3,10 @@
 #
 #   GEO    container = epic of the eic-shell container (/opt/detector/epic-main)
 #          local     = local epic build in $EIC_TOP/epic/install
+#          <name>    = /opt/detector/<name> in the container (e.g. epic-26.11.0), or a local build
+#                      $EIC_TOP/<name>/install (e.g. epic_43f427e, scripts/build/build_epic.sh)
+#          This study: old geometry = epic_43f427e (= container in the nightly of 2026-11-02),
+#                      new geometry = local (ec774d8) = epic-26.11.0
 #   PART   lambda (default) or geantino (geometric acceptance; straight lines, no interactions)
 #   N      number of events (default 100)
 #   SEED   random seed (default 42)
@@ -22,7 +26,9 @@ JOB=$EIC_WORK/${OUT%.edm4hep.root}
 mkdir -p "$JOB" && cd "$JOB"
 if [ "$GEO" = local ]; then source "$EIC_TOP/epic/install/bin/thisepic.sh"
 elif [ "$GEO" = container ]; then source /opt/detector/epic-main/bin/thisepic.sh
-else echo "GEO must be container or local" >&2; exit 1; fi
+elif [ -f "/opt/detector/$GEO/bin/thisepic.sh" ]; then source "/opt/detector/$GEO/bin/thisepic.sh"
+elif [ -f "$EIC_TOP/$GEO/install/bin/thisepic.sh" ]; then source "$EIC_TOP/$GEO/install/bin/thisepic.sh"
+else echo "GEO=$GEO: no such epic (container, local, /opt/detector/<GEO>, \$EIC_TOP/<GEO>/install)" >&2; exit 1; fi
 GEOM="$DETECTOR_PATH/epic_craterlake_18x275.xml"
 echo "DETECTOR_PATH=$DETECTOR_PATH"
 # geantino: keep zero-energy hits; Lambda: keep the MC history of particles made in the trackers

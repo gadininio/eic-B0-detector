@@ -10,24 +10,28 @@
 // compared directly; it factorizes as acceptance x tracking efficiency
 // (../efficiency/lambda_tracking_efficiency.C). The printout gives all three and checks the
 // factorization (a daughter can in principle be reconstructed without being "accepted").
-// Reconstructed = a ReconstructedTruthSeededChargedParticle whose best truth match is the daughter.
+// Reconstructed = a reconstructed charged particle whose best truth match is the daughter.
+// Seeding: "truth" (default, ReconstructedTruthSeededChargedParticles) or "hit"
+// (ReconstructedChargedParticles, needs EICrecon with #3116); see ../common/LambdaB0.h.
 //
 // Input: EICrecon output files of the Lambda gun (wildcards combine files).
 // Output: printout and <outbase>.png (same four panels as the acceptance: vs Lambda theta,
 // phi, 2D theta_x/theta_y, decay z).
 // Usage (from the repository top):
 //   root -l -b -q 'macros/efficiency/lambda_acceptance_x_efficiency.C+("/eos/user/g/gninio/eic/lambda_1000ev/lambda_new_s10?.eicreconmain_5keV.edm4eic.root","results/05_acceptance_x_efficiency/acceptance_x_efficiency_new_5keV")'
+//   hit seeding: add the arguments  ,3,"hit"
 #include "../common/LambdaB0.h"
 #include <cstdio>
 
 void lambda_acceptance_x_efficiency(const char* files = "/eos/user/g/gninio/eic/lambda_1000ev/lambda_new_s10?.eicreconmain_5keV.edm4eic.root",
-                                    const char* outbase = "acceptance_x_efficiency_new_5keV", int minLayers = lb0::kMinLayers)
+                                    const char* outbase = "acceptance_x_efficiency_new_5keV", int minLayers = lb0::kMinLayers, const char* seeding = "truth")
 {
   using namespace lb0;
   TChain* ch = MakeChain(files);
   TTreeReader r(ch);
   MCEvent ev(r);
-  RecoEvent reco(r);
+  Seeding seed(seeding);
+  RecoEvent reco(r, seed);
 
   FourPanelPlots plots("rec", "reconstructed");
   int nL = 0, nPPi = 0;
@@ -48,7 +52,7 @@ void lambda_acceptance_x_efficiency(const char* files = "/eos/user/g/gninio/eic/
     }
   }
   const char* name[3] = {"proton", "pi-", "both"};
-  printf("%s  (%lld events)\n", files, ch->GetEntries());
+  printf("%s  (%lld events, %s)\n", files, ch->GetEntries(), seed.Name());
   printf("generated Lambda: %d   -> p pi-: %d\n", nL, nPPi);
   printf("%-7s %12s %22s %16s %26s\n", "", "acceptance", "tracking efficiency", "acc x eff", "acc x eff (product check)");
   for (int t = 0; t < 3; ++t) {

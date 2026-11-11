@@ -233,3 +233,16 @@ ssh-keygen -t ed25519 -N "" -C "gadi.ninio@cern.ch lxplus" -f ~/.ssh/id_ed25519
 cat ~/.ssh/id_ed25519.pub     # paste at https://github.com/settings/keys (Authentication Key)
 ssh -T git@github.com         # "Hi gadininio! ..."
 cd ~/private/eic/eic-B0-detector && git push
+
+# ---- 2026-11-11: hit seeding (EICrecon#3116) ----
+# build the PR, and the old geometry (container no longer has it)
+scripts/build/build_eicrecon.sh EICrecon_pr3116 3116
+scripts/build/build_epic.sh epic_43f427e 43f427e736223b963d02adefcda44bfa225d577b
+# check what the container has now
+printf '%s\n' 'ls -la /opt/detector/; eicrecon --version' | ~/private/eic/eic-shell
+# re-reconstruct the 1000-event samples with the PR build (s101 and s102, old and new)
+scripts/production/lambda_rereco.sh epic_43f427e lambda_old_s102 EICrecon_pr3116 eicreconpr3116
+scripts/production/lambda_rereco.sh local        lambda_new_s102 EICrecon_pr3116 eicreconpr3116
+# truth vs hit seeding on the same file
+root -l -b -q 'macros/efficiency/lambda_tracking_efficiency.C+("/eos/user/g/gninio/eic/lambda_1000ev/lambda_new_s101.eicreconpr3116.edm4eic.root","te_hit",3,"hit")'
+scripts/make_results.sh 07

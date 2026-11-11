@@ -1,0 +1,18 @@
+/eos/user/g/gninio/eic/lambda_1000ev/lambda_new_s10?.eicreconpr3116.edm4eic.root  (1000 events, truth seeding)
+accepted daughters (>= 3 layers of simulated hits) passing each step:
+  step                     proton            pi-
+  accepted            295 (100%)     240 (100%)
+  rec hits ok         295 (100%)     240 (100%)
+  seed                287 ( 97%)     230 ( 96%)
+  CKF track           276 ( 94%)     146 ( 61%)
+  filtered track      276 ( 94%)     146 ( 61%)
+  reco particle       275 ( 93%)     146 ( 61%)
+TRACKING EFFICIENCY (reco particle / accepted): proton 93.2%   pi- 60.8%
+tracking efficiency given >= 3 layers of reconstructed hits: proton 93.2%   pi- 60.8%
+accepted pi-: tracking efficiency vs true momentum [GeV]
+    0-  5:    2 /   16 ( 12%)
+    5- 10:   31 /   88 ( 35%)
+   10- 15:   62 /   78 ( 79%)
+   15- 20:   42 /   49 ( 86%)
+   20- 30:    9 /    9 (100%)
+   30-100:    0 /    0 (  0%)

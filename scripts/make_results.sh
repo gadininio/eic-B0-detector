@@ -6,6 +6,7 @@
 # Samples (see README.md):
 #   $EIC_DATA/lambda_100ev/    lambda_{old,new}_s42.*        first 100-event samples
 #   $EIC_DATA/lambda_1000ev/   lambda_{old,new}_s10{1,2}.*   2 x 500 events per geometry
+#                              (.eicreconpr3116.: EICrecon#3116, hit seeding; results/07)
 #   $EIC_DATA/geantino/        geantino_{old,new}_5000.*
 H=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 source "$H/scripts/env.sh"
@@ -66,5 +67,20 @@ done
 if want 06; then
   for g in old new; do
     run macros/mass/lambda_mass_truth.C results/06_mass/mass_truth_$g "$L/lambda_${g}_s10?.edm4hep.root" '"results/06_mass/mass_truth_'$g'"'
+  done
+fi
+# 07: hit seeding of the B0 tracks (EICrecon#3116, built from its branch at 1ca147bc; 5 keV
+# threshold by default). Truth and hit seeding come from the same files, i.e. the same events.
+if want 07; then
+  R=results/07_hit_seeding
+  for g in old new; do
+    f="$L/lambda_${g}_s10?.eicreconpr3116.edm4eic.root"
+    for s in truth hit; do
+      tag=${g}_$s
+      run macros/efficiency/lambda_tracking_efficiency.C $R/tracking_efficiency_$tag "$f" "\"$R/tracking_efficiency_$tag\"" 3 "\"$s\""
+      run macros/efficiency/lambda_acceptance_x_efficiency.C $R/acceptance_x_efficiency_$tag "$f" "\"$R/acceptance_x_efficiency_$tag\"" 3 "\"$s\""
+      run macros/mass/lambda_mass_reco.C $R/mass_reco_$tag "$f" "\"$R/mass_reco_$tag\"" 0 "\"$s\""
+      run macros/mass/lambda_mass_notruth.C $R/mass_notruth_$tag "$f" "\"$R/mass_notruth_$tag\"" 2.5 "\"$s\""
+    done
   done
 fi

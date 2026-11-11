@@ -6,17 +6,24 @@
 //
 // Accepted = the daughter's simulated B0 hits cover >= 3 layers (as in
 // ../acceptance/lambda_daughter_acceptance.C), so the geometry cancels in the ratio.
-// Reconstructed = a ReconstructedTruthSeededChargedParticle whose best truth match is the daughter.
+// Reconstructed = a reconstructed charged particle whose best truth match is the daughter:
+// seeding "truth" (default) ReconstructedTruthSeededChargedParticles, B0 tracks seeded from the
+// true vertex and momentum (EICrecon#2901); "hit" ReconstructedChargedParticles, B0 tracks seeded
+// from triplets of B0 hits (EICrecon#3116). See ../common/LambdaB0.h.
 // Total = acceptance x tracking efficiency: ../efficiency/lambda_acceptance_x_efficiency.C.
 //
 // Step by step, for each accepted daughter:
 //   rec hits       its reconstructed hits (B0TrackerRecHits -> raw hit -> B0TrackerRawHitAssociations
 //                  -> simulated hit -> MC particle) still cover >= 3 layers after digitization
 //                  (threshold, 10 keV by default)
-//   seed           a B0TrackerTruthSeedParameters entry with the daughter's charge and direction
-//                  (seeds have no MC link; they are made from the true momentum smeared by 10 %)
-//   CKF track      B0TrackerCKFTruthSeededTrackUnfilteredAssociations links a track to it
-//   filtered track B0TrackerCKFTruthSeededTrackAssociations links a track to it
+//   seed           truth seeding: a B0TrackerTruthSeedParameters entry with the daughter's charge
+//                  and direction (seeds have no MC link; they are made from the true momentum
+//                  smeared by 10 %)
+//                  hit seeding: a B0TrackerSeeds triplet with >= 2 of its 3 hits made by the
+//                  daughter (seeds have no MC link; matched through their hits)
+//   CKF track      B0TrackerCKF[TruthSeeded]TrackUnfilteredAssociations links a track to it
+//   filtered track B0TrackerCKF[TruthSeeded]TrackAssociations links a track to it (after the
+//                  ambiguity solver)
 //   reco particle  best truth match of a reconstructed particle (= the numerator above)
 //
 // Input: EICrecon output files of the Lambda gun (wildcards combine files).
@@ -25,35 +32,59 @@
 // with reconstructed hits.
 // Usage (from the repository top):
 //   root -l -b -q 'macros/efficiency/lambda_tracking_efficiency.C+("/eos/user/g/gninio/eic/lambda_1000ev/lambda_new_s10?.eicreconmain_5keV.edm4eic.root","results/04_tracking_efficiency/tracking_efficiency_new_5keV")'
+//   hit seeding: add the arguments  ,3,"hit"
 #include "../common/LambdaB0.h"
 #include "TVector2.h"
+#include <memory>
 #include <cstdio>
 
 void lambda_tracking_efficiency(const char* files = "/eos/user/g/gninio/eic/lambda_1000ev/lambda_new_s10?.eicreconmain_5keV.edm4eic.root",
-                                const char* outbase = "tracking_efficiency_new_5keV", int minLayers = lb0::kMinLayers)
+                                const char* outbase = "tracking_efficiency_new_5keV", int minLayers = lb0::kMinLayers,
+                                const char* seeding = "truth")
 {
   using namespace lb0;
   TChain* ch = MakeChain(files);
   TTreeReader r(ch);
   MCEvent ev(r);
-  RecoEvent reco(r);
+  Seeding seed(seeding);
+  RecoEvent reco(r, seed);
   RecHitLayers recHits(r);
   TTreeReaderArray<float> charge(r, "MCParticles.charge");
-  TTreeReaderArray<float> sQoP(r, "B0TrackerTruthSeedParameters.qOverP");
-  TTreeReaderArray<float> sTh(r, "B0TrackerTruthSeedParameters.theta");
-  TTreeReaderArray<float> sPh(r, "B0TrackerTruthSeedParameters.phi");
+  // seeds of the chosen kind (only those readers are created: the other collection may be absent)
+  std::unique_ptr<TTreeReaderArray<float>> sQoP, sTh, sPh;
+  std::unique_ptr<TTreeReaderArray<int>> sHit;
+  std::unique_ptr<TTreeReaderArray<unsigned int>> sBeg, sEnd;
+  if (seed.truth) {
+    sQoP.reset(new TTreeReaderArray<float>(r, "B0TrackerTruthSeedParameters.qOverP"));
+    sTh.reset(new TTreeReaderArray<float>(r, "B0TrackerTruthSeedParameters.theta"));
+    sPh.reset(new TTreeReaderArray<float>(r, "B0TrackerTruthSeedParameters.phi"));
+  } else {
+    sHit.reset(new TTreeReaderArray<int>(r, "_B0TrackerSeeds_hits.index"));
+    sBeg.reset(new TTreeReaderArray<unsigned int>(r, "B0TrackerSeeds.hits_begin"));
+    sEnd.reset(new TTreeReaderArray<unsigned int>(r, "B0TrackerSeeds.hits_end"));
+  }
   // MC indices linked to a track by an association collection (any weight)
-  struct Links { TTreeReaderArray<int> sim; Links(TTreeReader& rr, const char* n) : sim(rr, TString::Format("_%s_sim.index", n)) {} };
-  Links lUnf(r, "B0TrackerCKFTruthSeededTrackUnfilteredAssociations");
-  Links lTrk(r, "B0TrackerCKFTruthSeededTrackAssociations");
+  struct Links { TTreeReaderArray<int> sim; Links(TTreeReader& rr, const TString& n) : sim(rr, "_" + n + "_sim.index") {} };
+  Links lUnf(r, seed.B0TrackAssociations(true));
+  Links lTrk(r, seed.B0TrackAssociations(false));
   auto linked = [](Links& l, int i) { for (size_t a = 0; a < l.sim.GetSize(); ++a) if (l.sim[a] == i) return true; return false; };
   auto seeded = [&](int i) {
+    if (!seed.truth) {
+      // hit seed: >= 2 of its hits made by the daughter
+      for (size_t s = 0; s < sBeg->GetSize(); ++s) {
+        int nMine = 0;
+        for (unsigned int k = (*sBeg)[s]; k < (*sEnd)[s]; ++k) nMine += recHits.MadeBy((*sHit)[k], i, ev);
+        if (nMine >= 2) return true;
+      }
+      return false;
+    }
+    auto& sQoP_ = *sQoP; auto& sTh_ = *sTh; auto& sPh_ = *sPh;
     TVector3 p = ev.P(i);
     double qop = charge[i] / p.Mag();
     // the seeder smears the momentum by 10 %: match charge sign and direction, q/p only loosely
-    for (size_t s = 0; s < sQoP.GetSize(); ++s)
-      if (sQoP[s] * qop > 0 && fabs(sQoP[s] / qop - 1) < 0.5 && fabs(sTh[s] - p.Theta()) < 1e-3
-          && fabs(TVector2::Phi_mpi_pi(sPh[s] - p.Phi())) < 0.05) return true;
+    for (size_t s = 0; s < sQoP_.GetSize(); ++s)
+      if (sQoP_[s] * qop > 0 && fabs(sQoP_[s] / qop - 1) < 0.5 && fabs(sTh_[s] - p.Theta()) < 1e-3
+          && fabs(TVector2::Phi_mpi_pi(sPh_[s] - p.Phi())) < 0.05) return true;
     return false;
   };
 
@@ -95,7 +126,7 @@ void lambda_tracking_efficiency(const char* files = "/eos/user/g/gninio/eic/lamb
       }
     }
   }
-  printf("%s  (%lld events)\n", files, ch->GetEntries());
+  printf("%s  (%lld events, %s)\n", files, ch->GetEntries(), seed.Name());
   printf("accepted daughters (>= %d layers of simulated hits) passing each step:\n", minLayers);
   printf("  %-16s %14s %14s\n", "step", name[0], name[1]);
   for (int s = 0; s < nS; ++s)

@@ -1,0 +1,6 @@
+/eos/user/g/gninio/eic/lambda_1000ev/lambda_old_s10?.eicreconpr3116.edm4eic.root  (1000 events, truth seeding)
+reco tracks: 824   matched p from Lambda: 394   pi- from Lambda: 232   other: 198   unmatched: 0
+decays with both daughters reconstructed (truth-matched pairs): 210
+M(p pi-) truth-matched: mean 1.1176 GeV  RMS 0.0084 GeV in 1.06-1.17 GeV (under/overflow 0 / 4); PDG 1.1157
+dp/p of matched Lambda daughters: mean 0.0006  RMS 0.0394
+Gaussian fit (+-15 MeV): mean 1.1174 +- 0.0006 GeV  sigma 0.0069 +- 0.0005 GeV

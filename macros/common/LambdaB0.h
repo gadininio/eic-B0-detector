@@ -10,6 +10,7 @@
 //   BeamFrame()      momentum rotated into the proton-beam frame (25 mrad crossing undone)
 //   MCEvent          MCParticles + simulated B0 hits; the generated Lambdas and how they ended;
 //                    layers crossed by each MC particle (simulated hits)
+//   Seeding()        collection names for truth-seeded or hit-seeded tracking
 //   RecoEvent        reconstructed charged particles + their truth links; which MC particles
 //                    have a reconstructed particle
 //   RecHitLayers     layers with reconstructed B0 hits made by an MC particle
@@ -20,8 +21,13 @@
 //                          a proton and a pi-. A Lambda that interacted in material also has
 //                          the Lambda as parent of its products, but has more daughters.
 //   accepted daughter      its own simulated B0TrackerHits cover >= 3 B0 layers
-//   reconstructed daughter a ReconstructedTruthSeededChargedParticle whose best truth match
-//                          (highest association weight) is that daughter
+//   reconstructed daughter a reconstructed charged particle whose best truth match (highest
+//                          association weight) is that daughter. Two kinds of tracking, chosen
+//                          with the "seeding" argument of the macros:
+//                            "truth" (default) ReconstructedTruthSeededChargedParticles: B0 tracks
+//                                    seeded from the true vertex and momentum (EICrecon#2901)
+//                            "hit"   ReconstructedChargedParticles: B0 tracks seeded from triplets
+//                                    of hits (EICrecon#3116; empty in EICrecon builds without it)
 #pragma once
 #include "TTreeReader.h"
 #include "TTreeReaderArray.h"
@@ -128,19 +134,34 @@ struct MCEvent {
 };
 
 // ---- reconstruction (EICrecon output only) ------------------------------------------------
+// collection names of the two kinds of tracking (see "reconstructed daughter" above)
+struct Seeding {
+  bool truth;
+  explicit Seeding(const char* s) : truth(TString(s) == "truth") {
+    if (!truth && TString(s) != "hit") { fprintf(stderr, "seeding must be \"truth\" or \"hit\", not \"%s\"\n", s); exit(1); }
+  }
+  const char* Name() const { return truth ? "truth seeding" : "hit seeding"; }
+  TString Particles() const { return truth ? "ReconstructedTruthSeededChargedParticles" : "ReconstructedChargedParticles"; }
+  TString ParticleAssociations() const { return truth ? "ReconstructedTruthSeededChargedParticleAssociations" : "ReconstructedChargedParticleAssociations"; }
+  // B0 tracks before / after the ambiguity solver, linked to MC particles
+  TString B0TrackAssociations(bool unfiltered) const {
+    return TString("B0TrackerCKF") + (truth ? "TruthSeeded" : "") + (unfiltered ? "TrackUnfilteredAssociations" : "TrackAssociations");
+  }
+};
+
 struct RecoEvent {
   TTreeReaderArray<float> px, py, pz, q;
   TTreeReaderArray<int>   aRec, aSim;
   TTreeReaderArray<float> aW;
 
-  explicit RecoEvent(TTreeReader& r)
-    : px(r, "ReconstructedTruthSeededChargedParticles.momentum.x"),
-      py(r, "ReconstructedTruthSeededChargedParticles.momentum.y"),
-      pz(r, "ReconstructedTruthSeededChargedParticles.momentum.z"),
-      q(r, "ReconstructedTruthSeededChargedParticles.charge"),
-      aRec(r, "_ReconstructedTruthSeededChargedParticleAssociations_rec.index"),
-      aSim(r, "_ReconstructedTruthSeededChargedParticleAssociations_sim.index"),
-      aW(r, "ReconstructedTruthSeededChargedParticleAssociations.weight") {}
+  explicit RecoEvent(TTreeReader& r, const Seeding& s = Seeding("truth"))
+    : px(r, s.Particles() + ".momentum.x"),
+      py(r, s.Particles() + ".momentum.y"),
+      pz(r, s.Particles() + ".momentum.z"),
+      q(r, s.Particles() + ".charge"),
+      aRec(r, "_" + s.ParticleAssociations() + "_rec.index"),
+      aSim(r, "_" + s.ParticleAssociations() + "_sim.index"),
+      aW(r, s.ParticleAssociations() + ".weight") {}
 
   int N() { return px.GetSize(); }
   TVector3 P(int k) { return TVector3(px[k], py[k], pz[k]); }
@@ -178,13 +199,16 @@ struct RecHitLayers {
     for (size_t a = 0; a < aRaw.GetSize(); ++a)
       if (aRaw[a] >= 0 && aRaw[a] < (int)rawToSim.size()) rawToSim[aRaw[a]].push_back(aSim[a]);
   }
+  // was reconstructed hit h made (at least partly) by MC particle mc?
+  bool MadeBy(int h, int mc, MCEvent& ev) {
+    int rw = raw[h];
+    if (rw < 0 || rw >= (int)rawToSim.size()) return false;
+    for (int s : rawToSim[rw]) if (s >= 0 && s < (int)ev.hPart.GetSize() && ev.hPart[s] == mc) return true;
+    return false;
+  }
   int Layers(int mc, MCEvent& ev) {
     std::vector<double> zz;
-    for (size_t h = 0; h < z.GetSize(); ++h) {
-      int rw = raw[h];
-      if (rw < 0 || rw >= (int)rawToSim.size()) continue;
-      for (int s : rawToSim[rw]) if (s >= 0 && s < (int)ev.hPart.GetSize() && ev.hPart[s] == mc) { zz.push_back(z[h]); break; }
-    }
+    for (size_t h = 0; h < z.GetSize(); ++h) if (MadeBy(h, mc, ev)) zz.push_back(z[h]);
     return CountLayers(zz);
   }
 };

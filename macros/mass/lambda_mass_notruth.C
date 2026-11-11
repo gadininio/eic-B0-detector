@@ -18,6 +18,9 @@
 // background, Gaussian fit of the core after the cut.
 // Usage (from the repository top):
 //   root -l -b -q 'macros/mass/lambda_mass_notruth.C+("/eos/user/g/gninio/eic/lambda_1000ev/lambda_new_s10?.eicreconmain_5keV.edm4eic.root","results/06_mass/mass_notruth_new_5keV")'
+// Seeding: "truth" (default, ReconstructedTruthSeededChargedParticles) or "hit"
+// (ReconstructedChargedParticles, needs EICrecon with #3116); see ../common/LambdaB0.h.
+// Usage with hit seeding: add the arguments  ,2.5,"hit"
 #include "../common/LambdaB0.h"
 #include "TLorentzVector.h"
 #include "TH1D.h"
@@ -26,13 +29,14 @@
 #include <cstdio>
 
 void lambda_mass_notruth(const char* files = "/eos/user/g/gninio/eic/lambda_1000ev/lambda_new_s10?.eicreconmain_5keV.edm4eic.root",
-                         const char* outbase = "mass_notruth_new_5keV", double minRatio = 2.5)
+                         const char* outbase = "mass_notruth_new_5keV", double minRatio = 2.5, const char* seeding = "truth")
 {
   using namespace lb0;
   TChain* ch = MakeChain(files);
   TTreeReader r(ch);
   MCEvent ev(r);
-  RecoEvent reco(r);
+  Seeding seed(seeding);
+  RecoEvent reco(r, seed);
 
   const int nb = 100; const double lo = 1.05, hi = 1.35;   // 3 MeV bins
   TH1D hAllS("hAllS", "", nb, lo, hi), hAllB("hAllB", "", nb, lo, hi);
@@ -59,7 +63,7 @@ void lambda_mass_notruth(const char* files = "/eos/user/g/gninio/eic/lambda_1000
 
   TF1 g("g", "gaus", kMassLambda - 0.015, kMassLambda + 0.015);
   hCut.Fit(&g, "QR0");
-  printf("%s  (%lld events)\n", files, ch->GetEntries());
+  printf("%s  (%lld events, %s)\n", files, ch->GetEntries(), seed.Name());
   printf("all (+,-) pairs:          %4d   signal %4d   purity %5.1f%%\n", nAll, nAllS, Pct(nAllS, nAll));
   printf("pairs with p+/p- > %.1f:   %4d   signal %4d   purity %5.1f%%   (events with a candidate: %d)\n",
          minRatio, nCut, nCutS, Pct(nCutS, nCut), nEvCand);

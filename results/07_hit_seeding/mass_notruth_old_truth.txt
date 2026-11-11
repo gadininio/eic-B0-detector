@@ -1,0 +1,6 @@
+/eos/user/g/gninio/eic/lambda_1000ev/lambda_old_s10?.eicreconpr3116.edm4eic.root  (1000 events, truth seeding)
+all (+,-) pairs:           331   signal  210   purity  63.4%
+pairs with p+/p- > 2.5:    242   signal  207   purity  85.5%   (events with a candidate: 224)
+efficiency of the cut for signal: 207 of 210 (98.6%)
+Gaussian fit after cut (+-15 MeV): mean 1.1173 +- 0.0006 GeV  sigma 0.0076 +- 0.0006 GeV
+in +-20 MeV window after cut: 208 candidates, 200 signal
