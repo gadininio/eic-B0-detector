@@ -404,3 +404,8 @@ Macro `~/private/eic/compare_tracks.C` (run in `~/private/eic`). Both use the co
 - Pitfall: on a new day the ssh master connection was re-made and landed on another node (lxplus930); files in lxplus9116's /tmp were reached with `ssh lxplus9116.cern.ch` from inside lxplus (Kerberos).
 - **Pushed to GitHub** (https://github.com/gadininio/eic-B0-detector, branch `main`, commit 54970c3). lxplus key still refused by GitHub ("Permission denied (publickey)"), so the lxplus repo was cloned to the Mac over ssh and pushed from there (the Mac key is on GitHub).
 - **Push from lxplus enabled:** GitHub rejected the 2020 RSA key (2048 bit, "Key is too short"); made a new ed25519 key `~/.ssh/id_ed25519` (no passphrase; ~/.ssh AFS ACL: others only `l`), added on GitHub by the user. `ssh -T git@github.com` greets gadininio; pushes now go directly from lxplus. (A token pasted in the chat was not used and should be revoked.)
+
+## 2026-11-11
+- The user moved the Mac work folder `~/code/epic` → `~/code/epic-all/epic` (workspace file `~/code/epic-all/epic.code-workspace`). Logs live here now; Claude memory paths updated and the memory copied to the project folder of the new path.
+- Clarified the slide "compare the B0 geometry of the nightly with the realistic B0 of eic/epic#1194": old = epic 43f427e (geometry in the eic-shell nightly, just before #1194; 300 µm sensors), new = epic main ec774d8 (#1194; 50 µm, φ gap); same EICrecon main, same seeds.
+- Note: the jettagger repo (tau, `gadininio/jettagger-analysis`) belongs to another project and came up here by accident; it is not part of this work and is left alone.
