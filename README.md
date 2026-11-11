@@ -76,6 +76,7 @@ macros/
   mass/lambda_mass_reco.C                   M(p π⁻) from reconstructed tracks, truth-matched
   mass/lambda_mass_notruth.C                M(p π⁻) without truth in the selection
   mass/lambda_ratio_truth.C                 check of the p(+)/p(−) cut against two-body kinematics
+  mass/lambda_mass_seeding_compare.C        M(p π⁻) with truth-seeded vs hit-seeded tracks, overlaid
   exploration/b0_hit_origins.C              which particles make the B0 hits
   exploration/compare_tracks.C              hits, seeds, tracks: file vs file
 scripts/

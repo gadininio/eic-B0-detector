@@ -1,4 +1,4 @@
-# Summary: Λ → p π⁻ in the ePIC B0 tracker (sessions of 2026-11-02/03)
+# Summary: Λ → p π⁻ in the ePIC B0 tracker (sessions of 2026-11-02/03 and 2026-11-11)
 
 Only the Λ / B0 work; the full chronological log is `claude_log.md`, the commands
 `claude_commands.md`. Macros and scripts referred to below are in this repository
@@ -54,7 +54,8 @@ particle gun (p = 50–100 GeV, θ = 8–18 mrad, 25 mrad crossing angle, 18×27
   χ² cuts, multiple scattering, (0,0,0) perigee extrapolation of #2901).
 - **B0 threshold:** the new 50 µm sensors give ≈ 14 keV per hit (old 300 µm: ≈ 95 keV); 10 keV
   cuts 9 % of the hits and 7 % of the accepted daughters; **5 keV recovers them**
-  (`-PB0TRK:B0TrackerRawHits:threshold=5e-6`). No effect in the old geometry.
+  (`-PB0TRK:B0TrackerRawHits:threshold=5e-6`). No effect in the old geometry. Since
+  EICrecon#3084 (merged 2026-11-03, after our main build) 5 keV is the default.
 - **Acceptance × efficiency**, both daughters, per p π⁻ decay: 30 % (old), 21 % (new, 10 keV),
   25 % (new, 5 keV); per generated Λ: 15.0 / 10.1 / 12.0 %.
 
@@ -67,8 +68,49 @@ particle gun (p = 50–100 GeV, θ = 8–18 mrad, 25 mrad crossing angle, 18×27
   3.09–14.58). Purity 95 / 96 / 97 %, 98 % of the signal kept; within ±20 MeV of the PDG mass
   ≈ 100 % pure (single-Λ events; tracks still truth-seeded).
 
+## 7. Hit (realistic) seeding — EICrecon#3116 (2026-11-11)
+- Realistic B0 seeding is not in EICrecon main: #3028 (and the bot fix #3029, merged into the
+  #3028 branch only) was closed for **#3116** (open): triplets of hits on 3 B0 stations with the
+  Acts seeders, hits rotated so the field at the middle hit is along z; no vertex or charge
+  assumption. Built from its branch (1ca147b = main of 2026-11-11 + #3116; includes #2901 and
+  **#3084, merged 2026-11-03: B0 threshold 5 keV is now the EICrecon default**).
+- The eic-shell container moved to the nightly of 2026-11-07, which already has the realistic B0;
+  the old geometry is now a local build of epic 43f427e (epic tag 26.11.0 = ec774d8 = new).
+- The same 1000 events per geometry re-reconstructed (`lambda_rereco.sh`); truth- and hit-seeded
+  tracks come from the same files (`ReconstructedTruthSeededChargedParticles` vs
+  `ReconstructedChargedParticles`); macros take `seeding = "truth" | "hit"`; hit seeds are matched
+  to MC through their hits (≥ 2 of 3).
+
+| (1000 Λ) | old, truth | old, hit | new, truth | new, hit |
+|---|---|---|---|---|
+| seed for accepted p / π⁻ | 99 / 99 % | 100 / 100 % | 97 / 96 % | 100 / 100 % |
+| tracking efficiency p / π⁻ | 97.5 / 66.5 % | 99.5 / 72.5 % | 93.2 / 60.8 % | 100 / 64.6 % |
+| A×ε both, per p π⁻ decay | 41.7 % | 45.5 % | 24.7 % | 27.0 % |
+| both reconstructed, per generated Λ | 21.0 % | 22.9 % | 12.0 % | 13.1 % |
+| M truth-matched: pairs, mean, σ | 210, 1.1174 GeV, 6.9 MeV | 229, 1.1175, 6.8 | 120, 1.1159, 6.8 | 131, 1.1159, 6.3 |
+| dp/p of the daughters (RMS) | 3.8 % | 4.4 % | 3.4 % | 3.7 % |
+| no truth: all (+,−) pairs, purity | 331, 63 % | 877, 26 % | 139, 86 % | 158, 83 % |
+| after p(+)/p(−) > 2.5, purity | 242, 86 % | 348, 64 % | 122, 97 % | 138, 93 % |
+| ±20 MeV window: signal / candidates | 200 / 207 | 206 / 219 | 110 / 110 | 116 / 116 |
+
+- Hit seeding finds a seed for every accepted daughter and reconstructs every proton; the π⁻ are
+  still lost in the CKF (5–10 GeV: 39 % new, 48 % old) ⇒ **the soft-π⁻ loss is not a seeding
+  problem**.
+- The mass peak is the same with both seedings (`lambda_mass_seeding_compare.C`): of the decays
+  reconstructed with both, M(hit) − M(truth) has mean 0.0 and RMS 4.4 MeV; hit seeding adds 17–20
+  decays and loses 1–6. Momentum resolution slightly worse with hit seeding (3.7 vs 3.4 % new).
+- Hit seeding also tracks other particles (secondaries of interactions in material): in the old,
+  thick geometry 432 "other" tracks vs 198, so a large combinatorial background without truth
+  (purity after the cut 64 %); in the new, thin geometry little (93 %). The ±20 MeV window stays
+  ≥ 94 % pure.
+- **Unexplained:** with this build the *truth-seeded* old-geometry efficiency is much higher than
+  with EICrecon main 8b44cae on the same simulation (proton 97.5 vs 82.2 %, A×ε both 41.7 vs
+  29.8 %); new geometry unchanged (93.2 vs 92.9 %). Candidates: EICrecon changes 8b44cae → 1ca147b,
+  the newer container (Acts), or the epic build (same commit 43f427e, container vs local).
+
 ## Open points
 - Why the CKF loses soft π⁻ (rerun with CKF debug output on a few events).
-- Realistic B0 seeding (EICrecon#3028) instead of truth seeding.
+- Realistic B0 seeding: works with #3116 (section 7); follow it until merged.
+- The jump of the old-geometry truth-seeded efficiency between EICrecon builds (section 7).
 - The +2 MeV mass shift in the old geometry.
 - Real events (other tracks, beam background) need vertexing / decay-length cuts.

@@ -82,5 +82,6 @@ if want 07; then
       run macros/mass/lambda_mass_reco.C $R/mass_reco_$tag "$f" "\"$R/mass_reco_$tag\"" 0 "\"$s\""
       run macros/mass/lambda_mass_notruth.C $R/mass_notruth_$tag "$f" "\"$R/mass_notruth_$tag\"" 2.5 "\"$s\""
     done
+    run macros/mass/lambda_mass_seeding_compare.C $R/mass_seeding_compare_$g "$f" "\"$R/mass_seeding_compare_$g\""
   done
 fi

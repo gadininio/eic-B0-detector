@@ -246,3 +246,5 @@ scripts/production/lambda_rereco.sh local        lambda_new_s102 EICrecon_pr3116
 # truth vs hit seeding on the same file
 root -l -b -q 'macros/efficiency/lambda_tracking_efficiency.C+("/eos/user/g/gninio/eic/lambda_1000ev/lambda_new_s101.eicreconpr3116.edm4eic.root","te_hit",3,"hit")'
 scripts/make_results.sh 07
+# mass with truth- vs hit-seeded tracks, overlaid (same file)
+root -l -b -q 'macros/mass/lambda_mass_seeding_compare.C+("/eos/user/g/gninio/eic/lambda_1000ev/lambda_new_s10?.eicreconpr3116.edm4eic.root","results/07_hit_seeding/mass_seeding_compare_new")'

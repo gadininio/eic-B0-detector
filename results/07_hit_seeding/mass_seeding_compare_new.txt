@@ -1,0 +1,15 @@
+/eos/user/g/gninio/eic/lambda_1000ev/lambda_new_s10?.eicreconpr3116.edm4eic.root  (1000 events)
+                                      truth seeding      hit seeding
+truth-matched pairs                             120              131
+  Gaussian mean [GeV] (PDG 1.1157)           1.1159           1.1159
+  +- [GeV]                                   0.0008           0.0007
+  Gaussian sigma [GeV]                       0.0068           0.0063
+  +- [GeV]                                   0.0010           0.0007
+  dp/p of the daughters: RMS                 0.0336           0.0367
+no truth: all (+,-) pairs                       139              158
+  purity                                      86.3%            82.9%
+  after p(+)/p(-) > 2.5                         122              138
+  purity                                      96.7%            92.8%
+  in +-20 MeV: signal/candidates         110/110          116/116   
+decays with truth-matched pairs: both seedings 114, only truth 6, only hit 17
+  both: M(hit) - M(truth) mean -0.00012 GeV, RMS 0.00441 GeV
