@@ -492,3 +492,14 @@ Macro `~/private/eic/compare_tracks.C` (run in `~/private/eic`). Both use the co
   - new: p π⁻ 172, before 158, both accepted 39 (22.7 %); eff p 97.6/100 %, π⁻ 44.1/59.3 %; both reco 5.8/7.6 %; ±10 MeV truth S 14 B 4, hit S 18 B 6.
   - Λ momenta stop at 125 GeV (130 GeV beam), peak 50–75 GeV.
 - Side-by-side montages (old | new) shown: results/09_dis/dis_{,9x130_}{old,new}.png and campaign_sidis_9x130.png.
+- Q&A: the numbers in parentheses of the proton row = reconstructed (truth, hit) / accepted protons, e.g. new 18x275 "68, 78 / 78".
+- Q: why is the DIS acceptance so much lower in the new geometry (16 vs 53 % at 18x275; gun: 41 vs 63 %)? Split of both-daughter acceptance per p π⁻ decay (18x275, scratch macro /tmp/gninio/accsplit/acc_split.C):
+  - φ (beam frame): new 0 % for −45°…+45° (56 of 206 decays, 27 %), old 53–61 % there → the ±45° gap of the new B0 (electron-beam side, seen earlier with geantinos).
+  - θ: 5.5–8 mrad new 10.7 % vs old 50.6 % (proton alone 22.7 vs 72.2 %), 8–11 mrad 31.6 vs 69.5 %, 17–20 mrad 0 vs 22.7 %. DIS Λs pile up at small θ (75 of 206 at 5.5–8 mrad), where the gun (8–18 mrad uniform) had none ⇒ larger drop than for the gun. Outside the gap the new geometry still has ~15–30 % vs ~50–60 %.
+  - decay z: new 13–19 % in every z range, old 45 → 67 → 85 % (z < 2, 2–4, 4–5.8 m), 25 % beyond 5.8 m.
+- Q&A: explained the six panels of lambda_dis.C (spectrum funnel; acceptance per p π⁻ decay; tracking efficiency of accepted daughters; both reconstructed per B0-direction Λ = yield; mass of forward (+,−) pairs with p(+)/p(−) > 2.5, truth and hit seeding). A×ε per p π⁻ decay was not plotted; the yield panel = (p π⁻ decays / Λ) × A × ε.
+- User: add the A×ε per p π⁻ decay panel. `lambda_dis.C` now 4 × 2: top spectrum, acceptance, efficiency, **A×ε per p π⁻ decay** (new); bottom yield per B0-direction Λ, mass truth, mass hit, a text pad with the main numbers; the printout also gives A×ε per p π⁻ decay. Rerun on all samples (results/09_dis):
+  - A×ε per p π⁻ decay, truth / hit: 18x275 old 28.7 / 36.1 %, new 7.3 / 10.2 %; 9x130 (s401) old 25.5 / 33.0 %, new 11.6 / 15.1 %; campaign SIDIS 9x130 2.0 / 0 %.
+  - vs p_Λ: rises with momentum (π⁻ efficiency): old ~12–20 % below 50 GeV → ~50–60 % at 100–160 GeV; new ~2 % → ~15–35 %.
+  - Montages now old above new (each set 4 × 2). Note: montage in an LCG-sourced shell loses its fonts (magic.xml/type.xml warnings) → run it in a clean shell.
+- Condor: watcher now reads the job's own event log (005/009/012 lines) — the condor_q-based one gave a false "finished" (query returned nothing). Both condor jobs still idle at ~17:30.

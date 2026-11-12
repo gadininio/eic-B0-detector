@@ -4,18 +4,19 @@
 // scripts/gen/gen_dis_lambda.sh), with truth- and hit-seeded tracks (EICrecon#3116 build). Also
 // runs on ePIC campaign RECO files (Lambdas decayed by the generator, campaign reconstruction).
 //
-// B0-direction Lambda: generated Lambda (generatorStatus 1) at 5.5-20 mrad from the proton beam
+// B0-direction Lambda: generated Lambda (generatorStatus 1, or 2 in campaign files) at 5.5-20 mrad from the proton beam
 // (beam frame, crossing angle undone). For these, as for the particle gun (../common/LambdaB0.h):
 //   decayed before the B0  p pi- decay at z < 5.8 m, per B0-direction Lambda
 //   acceptance             accepted daughters (>= 3 B0 layers of own simulated hits) per p pi- decay
 //   tracking efficiency    reconstructed / accepted daughters
+//   acceptance x eff.      both daughters reconstructed, per p pi- decay (= A(both) x eff(both | accepted))
 //   yield                  both daughters reconstructed, per B0-direction Lambda
 // Mass: every (+,-) pair of FORWARD reconstructed particles (beam-frame theta < 30 mrad, i.e. B0
 // tracks; the central tracker starts at ~40 mrad), + as proton, - as pi-, p(+)/p(-) > 2.5 as in
 // ../mass/lambda_mass_notruth.C. Truth only labels signal (both from the same Lambda -> p pi-).
 //
 // Input: comma-separated list of EICrecon output files or patterns.
-// Output: printout and <outbase>.png (2 x 3).
+// Output: printout and <outbase>.png (4 x 2; the last pad lists the main numbers).
 // Usage (from the repository top):
 //   root -l -b -q 'macros/dis/lambda_dis.C+("/eos/user/g/gninio/eic/lambda_dis/dis_lambda_new_s30?.eicreconpr3116.edm4eic.root","results/09_dis/dis_new")'
 #include "../common/LambdaB0.h"
@@ -26,6 +27,7 @@
 #include "THStack.h"
 #include "TF1.h"
 #include "TStyle.h"
+#include "TPaveText.h"
 #include <cstdio>
 
 void lambda_dis(const char* files = "/eos/user/g/gninio/eic/lambda_dis/dis_lambda_new_s30?.eicreconpr3116.edm4eic.root",
@@ -48,11 +50,12 @@ void lambda_dis(const char* files = "/eos/user/g/gninio/eic/lambda_dis/dis_lambd
   TH1D hBef("hBef", "", nb, pLo, pHi), hAcc("hAcc", "", nb, pLo, pHi), hRec("hRec", "", nb, pLo, pHi);
   TEfficiency aP("aP", "accepted (#geq 3 B0 layers), per p#pi^{-} decay;p_{#Lambda} [GeV];fraction", nb, pLo, pHi);
   TEfficiency aPi("aPi", "", nb, pLo, pHi), aB("aB", "", nb, pLo, pHi);
-  std::vector<TEfficiency> eP, ePi, yld;
-  for (auto* v : {&eP, &ePi, &yld}) v->reserve(2);
+  std::vector<TEfficiency> eP, ePi, axe, yld;
+  for (auto* v : {&eP, &ePi, &axe, &yld}) v->reserve(2);
   for (int s = 0; s < 2; ++s) {
     eP.emplace_back(TString("eP_") + kind[s], "tracking efficiency of accepted daughters;p_{#Lambda} [GeV];efficiency", nb, pLo, pHi);
     ePi.emplace_back(TString("ePi_") + kind[s], "", nb, pLo, pHi);
+    axe.emplace_back(TString("axe_") + kind[s], "both daughters reconstructed (A#times#varepsilon), per p#pi^{-} decay;p_{#Lambda} [GeV];fraction", nb, pLo, pHi);
     yld.emplace_back(TString("yld_") + kind[s], "both daughters reconstructed, per B0-direction #Lambda;p_{#Lambda} [GeV];fraction", nb, pLo, pHi);
   }
   const int nm = 60; const double mLo = 1.08, mHi = 1.26;   // 3 MeV bins
@@ -88,6 +91,7 @@ void lambda_dis(const char* files = "/eos/user/g/gninio/eic/lambda_dis/dis_lambd
         for (int s = 0; s < 2; ++s) {
           bool rp = recoOf[s][L.p] >= 0, rpi = recoOf[s][L.pi] >= 0;
           rcB[s] = rp && rpi;
+          axe[s].Fill(rcB[s], p);
           if (ap)  { eP[s].Fill(rp, p);   nRecP[s] += rp; }
           if (api) { ePi[s].Fill(rpi, p); nRecPi[s] += rpi; }
         }
@@ -124,10 +128,10 @@ void lambda_dis(const char* files = "/eos/user/g/gninio/eic/lambda_dis/dis_lambd
   printf("B0-direction Lambdas: p pi- %ld (%.1f%%), before z = 5.8 m %ld (%.1f%%), both accepted %ld (%.1f%% of p pi-)\n",
          nPPi, Pct(nPPi, nB0), nBef, Pct(nBef, nB0), nAccB, Pct(nAccB, nPPi));
   for (int s = 0; s < 2; ++s)
-    printf("%-14s eff p %5.1f%% (%ld/%ld)  pi %5.1f%% (%ld/%ld)  both reco %ld = %.1f%% per B0-dir. Lambda;"
-           "  events with one: %ld (%.2f%% of events)\n", seed[s].Name(),
+    printf("%-14s eff p %5.1f%% (%ld/%ld)  pi %5.1f%% (%ld/%ld)  both reco %ld = %.1f%% per p pi- decay (AxE),"
+           " %.1f%% per B0-dir. Lambda;  events with one: %ld (%.2f%% of events)\n", seed[s].Name(),
            Pct(nRecP[s], nAccP), nRecP[s], nAccP, Pct(nRecPi[s], nAccPi), nRecPi[s], nAccPi,
-           nRecB[s], Pct(nRecB[s], nB0), nEvRec[s], Pct(nEvRec[s], nEv));
+           nRecB[s], Pct(nRecB[s], nPPi), Pct(nRecB[s], nB0), nEvRec[s], Pct(nEvRec[s], nEv));
   for (int s = 0; s < 2; ++s) {
     int b1 = hS[s].FindBin(kMassLambda - 0.01), b2 = hS[s].FindBin(kMassLambda + 0.01);
     double S = hS[s].Integral(b1, b2), B = hB[s].Integral(b1, b2);
@@ -136,7 +140,7 @@ void lambda_dis(const char* files = "/eos/user/g/gninio/eic/lambda_dis/dis_lambd
   }
 
   gStyle->SetOptStat(0);
-  TCanvas c("c", "", 1800, 1000); c.Divide(3, 2);
+  TCanvas c("c", "", 2400, 1000); c.Divide(4, 2);
   c.cd(1);
   hAll.SetLineColor(kBlack); hBef.SetLineColor(kBlue); hAcc.SetLineColor(kGreen + 2); hRec.SetLineColor(kRed);
   for (TH1D* h : {&hAll, &hBef, &hAcc, &hRec}) h->SetLineWidth(2);
@@ -150,15 +154,17 @@ void lambda_dis(const char* files = "/eos/user/g/gninio/eic/lambda_dis/dis_lambd
   l2.AddEntry(&aP, "proton", "p"); l2.AddEntry(&aPi, "#pi^{-}", "p"); l2.AddEntry(&aB, "both", "p"); l2.Draw();
   for (int s = 0; s < 2; ++s) {
     int m = s ? 24 : 20;   // truth filled, hit open
-    Style(eP[s], kBlue, m); Style(ePi[s], kRed, m + 1); Style(yld[s], s ? kRed + 1 : kBlue + 1, m);
+    Style(eP[s], kBlue, m); Style(ePi[s], kRed, m + 1);
+    Style(axe[s], s ? kRed + 1 : kBlue + 1, m); Style(yld[s], s ? kRed + 1 : kBlue + 1, m);
   }
   c.cd(3); DrawEff({&eP[0], &eP[1], &ePi[0], &ePi[1]});
   TLegend l3(0.45, 0.15, 0.88, 0.38); l3.SetBorderSize(0);
   l3.AddEntry(&eP[0], "proton, truth seeding", "p"); l3.AddEntry(&eP[1], "proton, hit seeding", "p");
   l3.AddEntry(&ePi[0], "#pi^{-}, truth seeding", "p"); l3.AddEntry(&ePi[1], "#pi^{-}, hit seeding", "p"); l3.Draw();
-  c.cd(4); DrawEff({&yld[0], &yld[1]});
+  c.cd(4); DrawEff({&axe[0], &axe[1]});
   TLegend l4(0.5, 0.75, 0.88, 0.88); l4.SetBorderSize(0);
   l4.AddEntry(&yld[0], "truth seeding", "p"); l4.AddEntry(&yld[1], "hit seeding", "p"); l4.Draw();
+  c.cd(5); DrawEff({&yld[0], &yld[1]}); l4.Draw();
   THStack st[2] = {THStack("st0", ""), THStack("st1", "")};
   TLegend l5(0.55, 0.72, 0.88, 0.88); l5.SetBorderSize(0);
   l5.AddEntry(&hS[0], "signal (truth label)", "f"); l5.AddEntry(&hB[0], "background", "f");
@@ -167,7 +173,18 @@ void lambda_dis(const char* files = "/eos/user/g/gninio/eic/lambda_dis/dis_lambd
     hB[s].SetFillColor(kGray); hB[s].SetLineColor(kGray + 2);
     st[s].SetTitle(TString::Format("forward (+,-) pairs, p(+)/p(-) > %.1f, %s;M(p#pi^{-}) [GeV];pairs / 3 MeV", minRatio, seed[s].Name()));
     st[s].Add(&hB[s]); st[s].Add(&hS[s]);
-    c.cd(5 + s); st[s].Draw("hist"); l5.Draw();
+    c.cd(6 + s); st[s].Draw("hist"); l5.Draw();
   }
+  // main numbers (truth / hit seeding)
+  c.cd(8);
+  TPaveText t(0.05, 0.05, 0.95, 0.95, "NDC"); t.SetFillColor(0); t.SetBorderSize(0); t.SetTextAlign(12); t.SetTextFont(42);
+  t.AddText(TString::Format("%ld events, %ld B0-direction #Lambda", nEv, nB0));
+  t.AddText(TString::Format("p#pi^{-} decays %ld, at z < 5.8 m %ld", nPPi, nBef));
+  t.AddText(TString::Format("both accepted: %.1f%% of p#pi^{-} decays", Pct(nAccB, nPPi)));
+  t.AddText("truth / hit seeding:");
+  t.AddText(TString::Format("  eff. proton %.1f / %.1f%%,  #pi^{-} %.1f / %.1f%%", Pct(nRecP[0], nAccP), Pct(nRecP[1], nAccP), Pct(nRecPi[0], nAccPi), Pct(nRecPi[1], nAccPi)));
+  t.AddText(TString::Format("  A#times#varepsilon per p#pi^{-} decay %.1f / %.1f%%", Pct(nRecB[0], nPPi), Pct(nRecB[1], nPPi)));
+  t.AddText(TString::Format("  both reco per B0-dir. #Lambda %.1f / %.1f%%", Pct(nRecB[0], nB0), Pct(nRecB[1], nB0)));
+  t.Draw();
   c.SaveAs(TString(outbase) + ".png");
 }
