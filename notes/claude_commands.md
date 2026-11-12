@@ -248,3 +248,13 @@ root -l -b -q 'macros/efficiency/lambda_tracking_efficiency.C+("/eos/user/g/gnin
 scripts/make_results.sh 07
 # mass with truth- vs hit-seeded tracks, overlaid (same file)
 root -l -b -q 'macros/mass/lambda_mass_seeding_compare.C+("/eos/user/g/gninio/eic/lambda_1000ev/lambda_new_s10?.eicreconpr3116.edm4eic.root","results/07_hit_seeding/mass_seeding_compare_new")'
+
+# ---- 2026-11-11: high-momentum Lambdas, 100-275 GeV ----
+# simulate (PMIN/PMAX/SIM_ONLY are new in lambda_sample.sh), then hit-seeding reco; 2 x 500 ev per geometry
+for s in 201 202; do for g in old new; do G=local; [ $g = old ] && G=epic_43f427e
+  PMIN=100 PMAX=275 SIM_ONLY=1 scripts/production/lambda_sample.sh $G lambda_${g}_s$s $s 500 $EIC_DATA/lambda_100to275 &&
+  scripts/production/lambda_rereco.sh $G lambda_${g}_s$s EICrecon_pr3116 eicreconpr3116 "" $EIC_DATA/lambda_100to275 &
+done; done; wait
+# acceptance / efficiency vs Lambda momentum, both seedings, 50-100 + 100-275 GeV together
+root -l -b -q 'macros/efficiency/lambda_vs_momentum.C+("/eos/user/g/gninio/eic/lambda_1000ev/lambda_new_s10?.eicreconpr3116.edm4eic.root,/eos/user/g/gninio/eic/lambda_100to275/lambda_new_s20?.eicreconpr3116.edm4eic.root","results/08_momentum/vs_momentum_new")'
+scripts/make_results.sh 08

@@ -108,6 +108,26 @@ particle gun (p = 50–100 GeV, θ = 8–18 mrad, 25 mrad crossing angle, 18×27
   29.8 %); new geometry unchanged (93.2 vs 92.9 %). Candidates: EICrecon changes 8b44cae → 1ca147b,
   the newer container (Acts), or the epic build (same commit 43f427e, container vs local).
 
+## 8. Very energetic Λs: 50–275 GeV (2026-11-12)
+- New samples 100–275 GeV, 2 × 500 Λ per geometry (`$EIC_DATA/lambda_100to275`, `PMIN/PMAX/SIM_ONLY`
+  in `lambda_sample.sh`), reconstructed with #3116; `macros/efficiency/lambda_vs_momentum.C`
+  (results/08_momentum) on 50–100 + 100–275 GeV.
+- **Decay before the B0** follows BR·(1 − e^{−L/λ}), λ = p/m·cτ = p[GeV]·7.07 cm, L = 5.8 m:
+  p π⁻ decays at z < 5.8 m per generated Λ fall from 48 % (50–75 GeV) to 17–18 % (250–275 GeV).
+  A Λ not decayed by ~6 m nearly always interacts in material (fate "other", ending at z = 6–10 m),
+  so "per p π⁻ decay" is a conditional denominator (90 % of p π⁻ decays are before 5.8 m at
+  50–100 GeV) and "per generated Λ" is the unbiased one.
+- For decays that do happen before the B0, things **improve** with momentum: the π⁻ is harder
+  (6–24 % of p_Λ), so the soft-π⁻ CKF loss disappears: π⁻ tracking efficiency vs its own
+  momentum rises from ~40 % below 5 GeV to ~100 % above ~20 GeV (both seedings). Hit seeding:
+  protons 100 % at all momenta; truth seeding loses 5–10 % of the protons (new geometry).
+- Net, both daughters reconstructed per generated Λ (truth / hit seeding): old 21 / 23 % at
+  50–75 GeV, ~25 % at 125–175, 13–17 % above 175 GeV; new 10 / 10 % at 50–75, 9–14 % up to 275 GeV.
+  The falling decay probability is largely compensated by the rising acceptance × efficiency of
+  the early decays (new: 21 % of early p π⁻ decays at 50–75 GeV → ~50 % above 150 GeV).
+- Decays inside/after the tracker (z > 6 m) are not accepted (≥ 3 layers needed). Statistics
+  above 100 GeV are small (30–55 p π⁻ decays per 25 GeV bin).
+
 ## Open points
 - Why the CKF loses soft π⁻ (rerun with CKF debug output on a few events).
 - Realistic B0 seeding: works with #3116 (section 7); follow it until merged.
