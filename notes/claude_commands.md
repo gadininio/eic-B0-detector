@@ -258,3 +258,5 @@ done; done; wait
 # acceptance / efficiency vs Lambda momentum, both seedings, 50-100 + 100-275 GeV together
 root -l -b -q 'macros/efficiency/lambda_vs_momentum.C+("/eos/user/g/gninio/eic/lambda_1000ev/lambda_new_s10?.eicreconpr3116.edm4eic.root,/eos/user/g/gninio/eic/lambda_100to275/lambda_new_s20?.eicreconpr3116.edm4eic.root","results/08_momentum/vs_momentum_new")'
 scripts/make_results.sh 08
+# update documents (first report/slides untouched)
+for d in report_update slides_update; do (cd docs/$d && latexmk -pdf $d.tex); done

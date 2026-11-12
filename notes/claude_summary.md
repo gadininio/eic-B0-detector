@@ -128,6 +128,13 @@ particle gun (p = 50–100 GeV, θ = 8–18 mrad, 25 mrad crossing angle, 18×27
 - Decays inside/after the tracker (z > 6 m) are not accepted (≥ 3 layers needed). Statistics
   above 100 GeV are small (30–55 p π⁻ decays per 25 GeV bin).
 
+## 9. Documents (2026-11-12)
+- README updated for hit seeding, the 5 keV default, the 100–275 GeV samples and the results of 07/08.
+- The first report/slides (3 Nov) are kept as they were; the changes and new results are in
+  `docs/report_update/report_update.pdf` and `docs/slides_update/slides_update.pdf`. They also correct
+  the first report: the "other" Λs interacted (none left the world volume), and "88–90 % of p π⁻ decays
+  before the B0" is conditional; per generated Λ the decay law holds.
+
 ## Open points
 - Why the CKF loses soft π⁻ (rerun with CKF debug output on a few events).
 - Realistic B0 seeding: works with #3116 (section 7); follow it until merged.
