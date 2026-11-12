@@ -1,0 +1,14 @@
+# dis_lambda.sub: Lambda-tagged DIS samples on HTCondor (lxbatch), one job per beam and seed.
+#   cd ~/private/eic/eic-B0-detector
+#   condor_submit -a "queue BEAM,SEED,N,DEST from (9x130 402 500 default)" scripts/condor/dis_lambda.sub
+# Each job: generation + simulation/reconstruction in old and new geometry (2 parallel chains,
+# ~2.5-4 h), output to EOS (DEST "default": $EIC_DATA/lambda_dis[_<BEAM>]).
+# Logs in ~/private/eic/condor_logs/.
+executable     = scripts/condor/dis_lambda_job.sh
+arguments      = $(BEAM) $(SEED) $(N) $(DEST)
+output         = /afs/cern.ch/user/g/gninio/private/eic/condor_logs/dis_$(BEAM)_s$(SEED).$(ClusterId).out
+error          = /afs/cern.ch/user/g/gninio/private/eic/condor_logs/dis_$(BEAM)_s$(SEED).$(ClusterId).err
+log            = /afs/cern.ch/user/g/gninio/private/eic/condor_logs/dis.$(ClusterId).log
++JobFlavour    = "workday"
+RequestCpus    = 4
+getenv         = False

@@ -1,0 +1,9 @@
+
+/eos/user/g/gninio/eic/campaign/sidis_9x130/*.eicrecon.edm4eic.root
+events 19900; generated Lambdas 2581 (0.130 / event), at < 30 mrad 1607, B0-direction (5.5-20 mrad) 683
+events with a B0-direction Lambda: 680 (3.4%)
+B0-direction Lambdas: p pi- 356 (52.1%), before z = 5.8 m 318 (46.6%), both accepted 172 (48.3% of p pi-)
+truth seeding  eff p   6.4% (17/266)  pi   3.0% (6/203)  both reco 7 = 1.0% per B0-dir. Lambda;  events with one: 7 (0.04% of events)
+hit seeding    eff p   0.0% (0/266)  pi   0.0% (0/203)  both reco 0 = 0.0% per B0-dir. Lambda;  events with one: 0 (0.00% of events)
+truth seeding  forward tracks / event 0.43; (+,-) pairs with p+/p- > 2.5: 231, signal 5; in +-10 MeV: S 4 B 25
+hit seeding    forward tracks / event 0.00; (+,-) pairs with p+/p- > 2.5: 0, signal 0; in +-10 MeV: S 0 B 0

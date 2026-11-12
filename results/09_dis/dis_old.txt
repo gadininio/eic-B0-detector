@@ -1,0 +1,9 @@
+
+/eos/user/g/gninio/eic/lambda_dis/dis_lambda_old_s30?.eicreconpr3116.edm4eic.root
+events 1000; generated Lambdas 1036 (1.036 / event), at < 30 mrad 1010, B0-direction (5.5-20 mrad) 417
+events with a B0-direction Lambda: 416 (41.6%)
+B0-direction Lambdas: p pi- 216 (51.8%), before z = 5.8 m 192 (46.0%), both accepted 115 (53.2% of p pi-)
+truth seeding  eff p  93.5% (159/170)  pi  55.7% (73/131)  both reco 62 = 14.9% per B0-dir. Lambda;  events with one: 62 (6.20% of events)
+hit seeding    eff p  98.8% (168/170)  pi  67.9% (89/131)  both reco 78 = 18.7% per B0-dir. Lambda;  events with one: 78 (7.80% of events)
+truth seeding  forward tracks / event 1.93; (+,-) pairs with p+/p- > 2.5: 277, signal 57; in +-10 MeV: S 48 B 41
+hit seeding    forward tracks / event 2.08; (+,-) pairs with p+/p- > 2.5: 326, signal 68; in +-10 MeV: S 54 B 54
