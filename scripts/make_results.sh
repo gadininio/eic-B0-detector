@@ -9,6 +9,8 @@
 #                              (.eicreconpr3116.: EICrecon#3116, hit seeding; results/07)
 #   $EIC_DATA/lambda_100to275/ lambda_{old,new}_s20{1,2}.*   100-275 GeV, 2 x 500 events (results/08)
 #   $EIC_DATA/lambda_dis/     dis_lambda_{old,new}_s30{1,2}.* Lambda-tagged DIS 18x275, 2 x 500 events (results/09)
+#   $EIC_DATA/lambda_dis_9x130/ dis_lambda_9x130_{old,new}_s40{1,2}.* same at 9x130 (results/09)
+#   $EIC_DATA/campaign/sidis_9x130/ 100 files of the campaign 26.07.3 SIDIS 9x130 RECO (results/09)
 #   $EIC_DATA/geantino/        geantino_{old,new}_5000.*
 H=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 source "$H/scripts/env.sh"
@@ -96,11 +98,15 @@ if want 08; then
     run macros/efficiency/lambda_vs_momentum.C $R/vs_momentum_$g "$f" "\"$R/vs_momentum_$g\""
   done
 fi
-# 09: Lambda-tagged DIS (Pythia8 ep 18x275, Q2 > 1, events with a Lambda at < 25 mrad;
-# scripts/production/dis_lambda_sample.sh), EICrecon#3116 (truth and hit seeding).
+# 09: Lambda-tagged DIS. Own production (Pythia8 NC DIS, Q2 > 1, events with a Lambda at < 25 mrad;
+# scripts/production/dis_lambda_sample.sh) at 18x275 and 9x130, EICrecon#3116 (truth and hit seeding);
+# and the ePIC campaign 26.07.3 SIDIS 9x130 (pythia6-lhapdf ep, x 1e-3..1e-2, campaign reconstruction,
+# campaign geometry; scripts/production/campaign_fetch.sh).
 if want 09; then
   R=results/09_dis
   for g in old new; do
     run macros/dis/lambda_dis.C $R/dis_$g "$EIC_DATA/lambda_dis/dis_lambda_${g}_s30?.eicreconpr3116.edm4eic.root" "\"$R/dis_$g\""
+    run macros/dis/lambda_dis.C $R/dis_9x130_$g "$EIC_DATA/lambda_dis_9x130/dis_lambda_9x130_${g}_s40?.eicreconpr3116.edm4eic.root" "\"$R/dis_9x130_$g\""
   done
+  run macros/dis/lambda_dis.C $R/campaign_sidis_9x130 "$EIC_DATA/campaign/sidis_9x130/*.eicrecon.edm4eic.root" "\"$R/campaign_sidis_9x130\""
 fi

@@ -151,6 +151,14 @@ particle gun (p = 50–100 GeV, θ = 8–18 mrad, 25 mrad crossing angle, 18×27
   the B0, acceptance, tracking efficiency, yield), and the mass from all forward (+,−) track pairs,
   where the rest of the DIS event now adds combinatorial background.
 
+- Also at **9×130** (own production, same chain, `BEAM=9x130`), and as a cross-check the ePIC campaign
+  26.07.3 **SIDIS 9×130** (pythia6-lhapdf ep, x 1e-3–1e-2, 100 RECO files from the BNL xrootd server;
+  `scripts/production/campaign_fetch.sh`). Campaign files: Λ decayed by the generator (status 2, accepted
+  by `LambdaB0.h` now), no material interactions of the Λ; the campaign reconstruction predates
+  EICrecon#2901 (B0 truth seeds for secondaries, merged 2026-10-31) and has no hit seeding, so the B0
+  tracking efficiency of the daughters is ~0 there: usable for rates, spectra and acceptance only.
+  No campaign has the new B0 geometry or 18×275 ep DIS.
+
 ## Open points
 - Why the CKF loses soft π⁻ (rerun with CKF debug output on a few events).
 - Realistic B0 seeding: works with #3116 (section 7); follow it until merged.

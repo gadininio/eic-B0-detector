@@ -1,7 +1,8 @@
 // lambda_dis.C
 //
-// Lambda -> p pi- in the B0 for Lambda-tagged DIS (Pythia8 ep 18x275, Q2 > 1 GeV^2,
-// scripts/gen/gen_dis_lambda.sh), with truth- and hit-seeded tracks (EICrecon#3116 build).
+// Lambda -> p pi- in the B0 for Lambda-tagged DIS (Pythia8 ep 18x275 or 9x130, Q2 > 1 GeV^2,
+// scripts/gen/gen_dis_lambda.sh), with truth- and hit-seeded tracks (EICrecon#3116 build). Also
+// runs on ePIC campaign RECO files (Lambdas decayed by the generator, campaign reconstruction).
 //
 // B0-direction Lambda: generated Lambda (generatorStatus 1) at 5.5-20 mrad from the proton beam
 // (beam frame, crossing angle undone). For these, as for the particle gun (../common/LambdaB0.h):

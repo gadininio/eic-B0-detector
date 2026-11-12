@@ -17,9 +17,12 @@
 //   FourPanelPlots   the standard plots: fraction vs Lambda theta, phi, (theta_x, theta_y), decay z
 //
 // Definitions used everywhere (see README.md):
-//   Lambda -> p pi- decay  generated Lambda (generatorStatus 1) with exactly two daughters,
-//                          a proton and a pi-. A Lambda that interacted in material also has
-//                          the Lambda as parent of its products, but has more daughters.
+//   Lambda -> p pi- decay  generated Lambda with exactly two daughters, a proton and a pi-.
+//                          Generated = generatorStatus 1 (stable in the generator, decayed by
+//                          Geant4: our gun and Pythia8 samples) or 2 (decayed by the generator:
+//                          ePIC campaign files; then endpoint = generator decay vertex and the
+//                          Lambda never meets material). A Lambda that interacted in material
+//                          also has the Lambda as parent of its products, but more daughters.
 //   accepted daughter      its own simulated B0TrackerHits cover >= 3 B0 layers
 //   reconstructed daughter a reconstructed charged particle whose best truth match (highest
 //                          association weight) is that daughter. Two kinds of tracking, chosen
@@ -99,11 +102,13 @@ struct MCEvent {
   enum Fate { kPPi, kNPi0, kOther };   // decayed to p pi-, to n pi0, or other (interaction, no decay)
   struct Lambda { int idx, p, pi; Fate fate; };
 
+  // generated Lambda: stable in the generator (status 1) or decayed by it (status 2)
+  bool IsGenLambda(int i) { return pdg[i] == 3122 && (status[i] == 1 || status[i] == 2); }
   // the generated Lambdas in this event and how they ended
   std::vector<Lambda> Lambdas() {
     std::vector<Lambda> out;
     for (size_t i = 0; i < pdg.GetSize(); ++i) {
-      if (pdg[i] != 3122 || status[i] != 1) continue;
+      if (!IsGenLambda(i)) continue;
       int nd = dEnd[i] - dBeg[i], ip = -1, ipi = -1, in = -1, ipi0 = -1;
       for (unsigned int k = dBeg[i]; k < dEnd[i]; ++k) {
         int d = dIdx[k];
@@ -129,7 +134,7 @@ struct MCEvent {
   int LambdaOf(int m, int wantPdg) {
     if (m < 0 || pdg[m] != wantPdg || pEnd[m] == pBeg[m]) return -1;
     int par = pIdx[pBeg[m]];
-    return (pdg[par] == 3122 && status[par] == 1 && dEnd[par] - dBeg[par] == 2) ? par : -1;
+    return (IsGenLambda(par) && dEnd[par] - dBeg[par] == 2) ? par : -1;
   }
 };
 

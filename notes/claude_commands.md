@@ -271,3 +271,12 @@ scripts/production/dis_lambda_sample.sh 9 3 /tmp/$USER/dis_test        # smoke t
 for s in 301 302; do nohup setsid scripts/production/dis_lambda_sample.sh $s 500 \
     > /tmp/$USER/dis_lambda_s$s.log 2>&1 < /dev/null & done
 root -l -b -q 'macros/dis/lambda_dis.C+("/eos/user/g/gninio/eic/lambda_dis/dis_lambda_new_s30?.eicreconpr3116.edm4eic.root","results/09_dis/dis_new")'
+# BNL xrootd works (JLab does not):
+xrdfs root://epicxrd1.sdcc.bnl.gov:1095 ls /eic/EPIC/RECO/26.07.3/epic_craterlake/SIDIS/pythia6-lhapdf/1.1.0/ep_noradcor/9x130
+scripts/production/campaign_fetch.sh /eic/EPIC/RECO/26.07.3/epic_craterlake/SIDIS/pythia6-lhapdf/1.1.0/ep_noradcor/9x130/x_1e-3to1e-2 100 $EIC_DATA/campaign/sidis_9x130
+# own 9x130 production (BEAM selects generator energies and epic_craterlake_<BEAM>.xml)
+BEAM=9x130 nohup setsid scripts/production/dis_lambda_sample.sh 401 500 > /tmp/$USER/dis_lambda_9x130_s401.log 2>&1 < /dev/null &
+root -l -b -q 'macros/dis/lambda_dis.C+("/eos/user/g/gninio/eic/campaign/sidis_9x130/*.eicrecon.edm4eic.root","results/09_dis/campaign_sidis_9x130")'
+scripts/make_results.sh 09
+# when was EICrecon#2901 (B0 truth seeds for secondaries) merged?
+curl -s https://api.github.com/repos/eic/EICrecon/pulls/2901 | python3 -c "import json,sys; print(json.load(sys.stdin)['merged_at'])"

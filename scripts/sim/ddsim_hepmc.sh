@@ -5,8 +5,10 @@
 #   IN     input HepMC3 file (absolute path, visible in the container)
 #   N      number of events (default -1 = all)
 #   OUT    output file name, written in $EIC_WORK/<OUT without .edm4hep.root>/
+#   BEAM   beam configuration of the geometry, epic_craterlake_<BEAM>.xml (default 18x275; also
+#          9x130, 10x275, ...); must match the generator energies
 #
-# 18x275 craterlake geometry; the generator is head-on, ddsim applies the 25 mrad crossing angle.
+# The generator is head-on, ddsim applies the 25 mrad crossing angle.
 # No beam divergence or vertex spread (no afterburner).
 set -e
 set --
@@ -18,7 +20,7 @@ elif [ "$GEO" = container ]; then source /opt/detector/epic-main/bin/thisepic.sh
 elif [ -f "/opt/detector/$GEO/bin/thisepic.sh" ]; then source "/opt/detector/$GEO/bin/thisepic.sh"
 elif [ -f "$EIC_TOP/$GEO/install/bin/thisepic.sh" ]; then source "$EIC_TOP/$GEO/install/bin/thisepic.sh"
 else echo "GEO=$GEO: no such epic (container, local, /opt/detector/<GEO>, \$EIC_TOP/<GEO>/install)" >&2; exit 1; fi
-GEOM="$DETECTOR_PATH/epic_craterlake_18x275.xml"
+GEOM="$DETECTOR_PATH/epic_craterlake_${BEAM:-18x275}.xml"
 echo "DETECTOR_PATH=$DETECTOR_PATH"
 ddsim \
     --compactFile "$GEOM" \

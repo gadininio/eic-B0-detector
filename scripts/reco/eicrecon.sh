@@ -10,6 +10,7 @@
 #            A local build must be built in the same container image it runs in (libraries).
 #   IN       input edm4hep file (absolute path, on a disk visible in the container)
 #   OUT      output edm4eic file (absolute path)
+#   BEAM     beam configuration, epic_craterlake_<BEAM>.xml (default 18x275); as in the simulation
 #   EXTRA    more eicrecon options, e.g.
 #              -PB0TRK:B0TrackerRawHits:threshold=5e-6                (B0 threshold 5 keV; GeV units)
 #              -Ptracking:B0TrackerTruthSeeds:MomentumSmear=0         (no seed momentum smearing)
@@ -32,6 +33,6 @@ elif [ "$RECO" != container ]; then
 fi
 echo "DETECTOR_PATH=$DETECTOR_PATH"
 command -v eicrecon            # "which" in the container fails under set -e
-GEOM="$DETECTOR_PATH/epic_craterlake_18x275.xml"
+GEOM="$DETECTOR_PATH/epic_craterlake_${BEAM:-18x275}.xml"
 eicrecon -Pjana:nevents=-1 -Pdd4hep:xml_files="$GEOM" $EXTRA -Ppodio:output_file="$OUT" "$IN"
 echo RECO_OK
