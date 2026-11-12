@@ -135,6 +135,22 @@ particle gun (p = 50–100 GeV, θ = 8–18 mrad, 25 mrad crossing angle, 18×27
   the first report: the "other" Λs interacted (none left the world volume), and "88–90 % of p π⁻ decays
   before the B0" is conditional; per generated Λ the decay law holds.
 
+## 10. Λ-tagged DIS (2026-11-12, running)
+- From the particle gun to a physics process: Pythia8 8.316 (container) NC DIS, ep 18×275,
+  Q² > 1 GeV², ePIC campaign settings; Λ stable in Pythia (Geant4 decays it); only events with a Λ
+  at θ < 25 mrad are kept (`scripts/gen/`). No beam effects; ddsim applies the crossing angle
+  (`scripts/sim/ddsim_hepmc.sh`). The official campaign files (JLab xrootd) are not reachable from
+  lxplus.
+- 7 % of DIS events have a Λ at < 25 mrad; 3.2 % one in the B0 range (5.5–20 mrad). Most forward
+  Λs are at 2.5–5 mrad (ZDC / Roman-pot angles). B0-range Λs are softer than the gun samples:
+  momentum peak 25–100 GeV, few above 175 GeV.
+- Samples: seeds 301, 302 × 500 kept events, the same events in the old and new geometry,
+  reconstructed with #3116 (`scripts/production/dis_lambda_sample.sh`, `$EIC_DATA/lambda_dis`).
+  Full DIS events: ~15 s/event in ddsim.
+- Analysis `macros/dis/lambda_dis.C` (results/09_dis): same chain per B0-direction Λ (decay before
+  the B0, acceptance, tracking efficiency, yield), and the mass from all forward (+,−) track pairs,
+  where the rest of the DIS event now adds combinatorial background.
+
 ## Open points
 - Why the CKF loses soft π⁻ (rerun with CKF debug output on a few events).
 - Realistic B0 seeding: works with #3116 (section 7); follow it until merged.

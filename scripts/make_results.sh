@@ -8,6 +8,7 @@
 #   $EIC_DATA/lambda_1000ev/   lambda_{old,new}_s10{1,2}.*   2 x 500 events per geometry
 #                              (.eicreconpr3116.: EICrecon#3116, hit seeding; results/07)
 #   $EIC_DATA/lambda_100to275/ lambda_{old,new}_s20{1,2}.*   100-275 GeV, 2 x 500 events (results/08)
+#   $EIC_DATA/lambda_dis/     dis_lambda_{old,new}_s30{1,2}.* Lambda-tagged DIS 18x275, 2 x 500 events (results/09)
 #   $EIC_DATA/geantino/        geantino_{old,new}_5000.*
 H=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 source "$H/scripts/env.sh"
@@ -93,5 +94,13 @@ if want 08; then
   for g in old new; do
     f="$L/lambda_${g}_s10?.eicreconpr3116.edm4eic.root,$EIC_DATA/lambda_100to275/lambda_${g}_s20?.eicreconpr3116.edm4eic.root"
     run macros/efficiency/lambda_vs_momentum.C $R/vs_momentum_$g "$f" "\"$R/vs_momentum_$g\""
+  done
+fi
+# 09: Lambda-tagged DIS (Pythia8 ep 18x275, Q2 > 1, events with a Lambda at < 25 mrad;
+# scripts/production/dis_lambda_sample.sh), EICrecon#3116 (truth and hit seeding).
+if want 09; then
+  R=results/09_dis
+  for g in old new; do
+    run macros/dis/lambda_dis.C $R/dis_$g "$EIC_DATA/lambda_dis/dis_lambda_${g}_s30?.eicreconpr3116.edm4eic.root" "\"$R/dis_$g\""
   done
 fi

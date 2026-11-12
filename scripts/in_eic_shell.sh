@@ -14,7 +14,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/env.sh"
 script=$1; shift
 [ -f "$script" ] || { echo "no such script: $script" >&2; exit 1; }
 {
-  echo "export EIC_TOP=$EIC_TOP EIC_WORK=$EIC_WORK"
+  echo "export EIC_TOP=$EIC_TOP EIC_WORK=$EIC_WORK EIC_REPO=$EIC_REPO"
   for kv in "$@"; do echo "export $kv"; done
   cat "$script"
 } | "$EIC_TOP/eic-shell"

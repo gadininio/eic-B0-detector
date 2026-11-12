@@ -260,3 +260,14 @@ root -l -b -q 'macros/efficiency/lambda_vs_momentum.C+("/eos/user/g/gninio/eic/l
 scripts/make_results.sh 08
 # update documents (first report/slides untouched)
 for d in report_update slides_update; do (cd docs/$d && latexmk -pdf $d.tex); done
+
+# ---- 2026-11-12: Lambda-tagged DIS (Pythia8, 18x275, Q2 > 1) ----
+# campaign files on JLab xrootd are not reachable from lxplus (port 1094 closed):
+timeout 10 bash -c "</dev/tcp/dtn-eic.jlab.org/1094" && echo open || echo closed
+# generator test (inside eic-shell), then the chain: gen once -> sim + reco old/new
+scripts/in_eic_shell.sh scripts/gen/gen_dis_lambda.sh N=10 SEED=3 OUT=t.hepmc
+scripts/in_eic_shell.sh scripts/sim/ddsim_hepmc.sh GEO=local IN=/tmp/$USER/eic_work/t/t.hepmc N=5 OUT=t.edm4hep.root
+scripts/production/dis_lambda_sample.sh 9 3 /tmp/$USER/dis_test        # smoke test
+for s in 301 302; do nohup setsid scripts/production/dis_lambda_sample.sh $s 500 \
+    > /tmp/$USER/dis_lambda_s$s.log 2>&1 < /dev/null & done
+root -l -b -q 'macros/dis/lambda_dis.C+("/eos/user/g/gninio/eic/lambda_dis/dis_lambda_new_s30?.eicreconpr3116.edm4eic.root","results/09_dis/dis_new")'
