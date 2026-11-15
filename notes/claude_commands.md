@@ -280,3 +280,16 @@ root -l -b -q 'macros/dis/lambda_dis.C+("/eos/user/g/gninio/eic/campaign/sidis_9
 scripts/make_results.sh 09
 # when was EICrecon#2901 (B0 truth seeds for secondaries) merged?
 curl -s https://api.github.com/repos/eic/EICrecon/pulls/2901 | python3 -c "import json,sys; print(json.load(sys.stdin)['merged_at'])"
+
+## 2026-11-15: 9x130 with both seeds
+```bash
+# condor job status from its event log (works when condor_q is slow/empty)
+grep -h -E "^(001|005|009|012) " ~/private/eic/condor_logs/dis.19773708.log
+# rerun the 9x130 analysis only (same as make_results.sh 09, 9x130 part)
+cd ~/private/eic/eic-B0-detector && source scripts/env.sh && source "$EIC_ROOT_SETUP"
+for g in old new; do
+  root -l -b -q "macros/dis/lambda_dis.C+(\"$EIC_DATA/lambda_dis_9x130/dis_lambda_9x130_${g}_s40?.eicreconpr3116.edm4eic.root\",\"results/09_dis/dis_9x130_$g\")"
+done
+# montage in a clean shell (no LCG)
+montage dis_9x130_old.png dis_9x130_new.png -tile 1x2 -geometry +0+10 side_dis_9x130.png
+```

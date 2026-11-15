@@ -135,7 +135,7 @@ particle gun (p = 50–100 GeV, θ = 8–18 mrad, 25 mrad crossing angle, 18×27
   the first report: the "other" Λs interacted (none left the world volume), and "88–90 % of p π⁻ decays
   before the B0" is conditional; per generated Λ the decay law holds.
 
-## 10. Λ-tagged DIS (2026-11-12, running)
+## 10. Λ-tagged DIS (2026-11-12 – 11-15)
 - From the particle gun to a physics process: Pythia8 8.316 (container) NC DIS, ep 18×275,
   Q² > 1 GeV², ePIC campaign settings; Λ stable in Pythia (Geant4 decays it); only events with a Λ
   at θ < 25 mrad are kept (`scripts/gen/`). No beam effects; ddsim applies the crossing angle
@@ -158,6 +158,26 @@ particle gun (p = 50–100 GeV, θ = 8–18 mrad, 25 mrad crossing angle, 18×27
   EICrecon#2901 (B0 truth seeds for secondaries, merged 2026-10-31) and has no hit seeding, so the B0
   tracking efficiency of the daughters is ~0 there: usable for rates, spectra and acceptance only.
   No campaign has the new B0 geometry or 18×275 ep DIS.
+
+- Results (results/09_dis; own samples 1000 events each, the same events in both geometries;
+  9×130 seed 402 ran on HTCondor, `scripts/condor/dis_lambda.sub`):
+
+  | | 18×275 old | 18×275 new | 9×130 old | 9×130 new |
+  |---|---|---|---|---|
+  | B0-direction Λ (5.5–20 mrad) | 417 | 417 | 703 | 703 |
+  | p π⁻ decays / before z = 5.8 m | 216 / 192 | 206 / 183 | 378 / 339 | 372 / 341 |
+  | both daughters accepted, per p π⁻ | 53.2 % | 16.0 % | 51.9 % | 21.8 % |
+  | eff p, truth / hit seeding | 93.5 / 98.8 % | 87.2 / 100 % | 95.1 / 99.7 % | 97.1 / 100 % |
+  | eff π⁻, truth / hit | 55.7 / 67.9 % | 52.6 / 56.1 % | 51.1 / 58.1 % | 45.2 / 53.2 % |
+  | A×ε both, per p π⁻ decay, truth / hit | 28.7 / 36.1 % | 7.3 / 10.2 % | 25.9 / 31.2 % | 10.5 / 12.6 % |
+  | both reco per B0-direction Λ, truth / hit | 14.9 / 18.7 % | 3.6 / 5.0 % | 13.9 / 16.8 % | 5.5 / 6.7 % |
+  | mass ±10 MeV, hit seeding, S / B | 54 / 54 | 18 / 10 | 89 / 24 | 34 / 8 |
+
+  Campaign SIDIS 9×130 (19 900 events): 3.4 % of events have a B0-direction Λ; both daughters
+  accepted 48.3 % of p π⁻ (as in our samples); truth-seeded eff p 6.4 %, π⁻ 3.0 %, A×ε 2.0 %.
+- The new geometry loses acceptance mainly through its ±45° φ gap (beam frame, electron side:
+  0 % there, 27 % of the decays) and at small θ (5.5–8 mrad: 11 vs 51 % at 18×275), where DIS Λs
+  pile up; hence a larger drop than for the gun. A×ε rises with p_Λ (π⁻ efficiency).
 
 ## Open points
 - Why the CKF loses soft π⁻ (rerun with CKF debug output on a few events).

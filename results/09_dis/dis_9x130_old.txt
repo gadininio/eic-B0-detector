@@ -1,9 +1,8 @@
-
 /eos/user/g/gninio/eic/lambda_dis_9x130/dis_lambda_9x130_old_s40?.eicreconpr3116.edm4eic.root
-events 500; generated Lambdas 510 (1.020 / event), at < 30 mrad 501, B0-direction (5.5-20 mrad) 344
-events with a B0-direction Lambda: 343 (68.6%)
-B0-direction Lambdas: p pi- 188 (54.7%), before z = 5.8 m 168 (48.8%), both accepted 101 (53.7% of p pi-)
-truth seeding  eff p  93.1% (134/144)  pi  50.9% (58/114)  both reco 48 = 25.5% per p pi- decay (AxE), 14.0% per B0-dir. Lambda;  events with one: 48 (9.60% of events)
-hit seeding    eff p  99.3% (143/144)  pi  59.6% (68/114)  both reco 62 = 33.0% per p pi- decay (AxE), 18.0% per B0-dir. Lambda;  events with one: 62 (12.40% of events)
-truth seeding  forward tracks / event 1.23; (+,-) pairs with p+/p- > 2.5: 83, signal 46; in +-10 MeV: S 39 B 8
-hit seeding    forward tracks / event 1.36; (+,-) pairs with p+/p- > 2.5: 104, signal 55; in +-10 MeV: S 45 B 14
+events 1000; generated Lambdas 1016 (1.016 / event), at < 30 mrad 1002, B0-direction (5.5-20 mrad) 703
+events with a B0-direction Lambda: 702 (70.2%)
+B0-direction Lambdas: p pi- 378 (53.8%), before z = 5.8 m 339 (48.2%), both accepted 196 (51.9% of p pi-)
+truth seeding  eff p  95.1% (272/286)  pi  51.1% (116/227)  both reco 98 = 25.9% per p pi- decay (AxE), 13.9% per B0-dir. Lambda;  events with one: 98 (9.80% of events)
+hit seeding    eff p  99.7% (285/286)  pi  58.1% (132/227)  both reco 118 = 31.2% per p pi- decay (AxE), 16.8% per B0-dir. Lambda;  events with one: 118 (11.80% of events)
+truth seeding  forward tracks / event 1.28; (+,-) pairs with p+/p- > 2.5: 169, signal 95; in +-10 MeV: S 83 B 13
+hit seeding    forward tracks / event 1.42; (+,-) pairs with p+/p- > 2.5: 200, signal 106; in +-10 MeV: S 89 B 24

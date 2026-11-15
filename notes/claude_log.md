@@ -503,3 +503,8 @@ Macro `~/private/eic/compare_tracks.C` (run in `~/private/eic`). Both use the co
   - vs p_Λ: rises with momentum (π⁻ efficiency): old ~12–20 % below 50 GeV → ~50–60 % at 100–160 GeV; new ~2 % → ~15–35 %.
   - Montages now old above new (each set 4 × 2). Note: montage in an LCG-sourced shell loses its fonts (magic.xml/type.xml warnings) → run it in a clean shell.
 - Condor: watcher now reads the job's own event log (005/009/012 lines) — the condor_q-based one gave a false "finished" (query returned nothing). Both condor jobs still idle at ~17:30.
+- 2026-11-14: condor jobs ran (both started 06:12 after ~15 h idle). 19773708 (9x130 s402): 37 min on 4 CPUs, ALL_OK, outputs in `$EIC_DATA/lambda_dis_9x130`. Test job 19768902 (3 events) also done (`/eos/user/g/gninio/eic/condor_test`). ⇒ condor chain works.
+- 2026-11-15: **Results 9x130, s401 + s402** (1000 events, 703 B0-direction Λs; 70.2 % of the kept events have one):
+  - old: p π⁻ 378, before 5.8 m 339, both accepted 196 (51.9 %); eff truth/hit p 95.1/99.7 %, π⁻ 51.1/58.1 %; A×ε per p π⁻ 25.9/31.2 %; both reco per B0-direction Λ 13.9/16.8 %; ±10 MeV truth S 83 B 13, hit S 89 B 24.
+  - new: p π⁻ 372, before 341, both accepted 81 (21.8 %); eff p 97.1/100 %, π⁻ 45.2/53.2 %; A×ε 10.5/12.6 %; per Λ 5.5/6.7 %; ±10 MeV truth S 31 B 6, hit S 34 B 8.
+  - Consistent with s401 alone. Montage (old above new) shown. claude_summary.md section 10: results table for both energies + campaign, section marked done.
