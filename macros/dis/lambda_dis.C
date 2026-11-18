@@ -9,6 +9,8 @@
 //   decayed before the B0  p pi- decay at z < 5.8 m, per B0-direction Lambda
 //   acceptance             accepted daughters (>= 3 B0 layers of own simulated hits) per p pi- decay
 //   tracking efficiency    reconstructed / accepted daughters
+//   fiducial efficiency    p, pi-, both reconstructed, for decays with both daughters accepted;
+//                          acceptance(both) x eff(both, fiducial) = fiducial A x eff
 //   acceptance x eff.      both daughters reconstructed, per p pi- decay (= A(both) x eff(both | accepted))
 //   yield                  both daughters reconstructed, per B0-direction Lambda
 // Mass: every (+,-) pair of FORWARD reconstructed particles (beam-frame theta < 30 mrad, i.e. B0
@@ -65,6 +67,7 @@ void lambda_dis(const char* files = "/eos/user/g/gninio/eic/lambda_dis/dis_lambd
   long nEv = 0, nEvB0 = 0, nLamAll = 0, nLamFwd = 0, nB0 = 0, nPPi = 0, nBef = 0, nAccB = 0;
   long nRecB[2] = {0, 0}, nEvRec[2] = {0, 0}, nFwdTrk[2] = {0, 0}, nPair[2] = {0, 0}, nPairS[2] = {0, 0};
   long nAccP = 0, nAccPi = 0, nRecP[2] = {0, 0}, nRecPi[2] = {0, 0};
+  long nFidP[2] = {0, 0}, nFidPi[2] = {0, 0}, nFidB[2] = {0, 0};   // reconstructed, both daughters accepted
 
   while (r.Next()) {
     ++nEv;
@@ -94,6 +97,7 @@ void lambda_dis(const char* files = "/eos/user/g/gninio/eic/lambda_dis/dis_lambd
           axe[s].Fill(rcB[s], p);
           if (ap)  { eP[s].Fill(rp, p);   nRecP[s] += rp; }
           if (api) { ePi[s].Fill(rpi, p); nRecPi[s] += rpi; }
+          if (ap && api) { nFidP[s] += rp; nFidPi[s] += rpi; nFidB[s] += rp && rpi; }
         }
       }
       for (int s = 0; s < 2; ++s) { yld[s].Fill(rcB[s], p); nRecB[s] += rcB[s]; evRec[s] |= rcB[s]; }
@@ -132,6 +136,9 @@ void lambda_dis(const char* files = "/eos/user/g/gninio/eic/lambda_dis/dis_lambd
            " %.1f%% per B0-dir. Lambda;  events with one: %ld (%.2f%% of events)\n", seed[s].Name(),
            Pct(nRecP[s], nAccP), nRecP[s], nAccP, Pct(nRecPi[s], nAccPi), nRecPi[s], nAccPi,
            nRecB[s], Pct(nRecB[s], nPPi), Pct(nRecB[s], nB0), nEvRec[s], Pct(nEvRec[s], nEv));
+  for (int s = 0; s < 2; ++s)
+    printf("%-14s fiducial (both accepted, %ld): eff p %5.1f%%  pi %5.1f%%  both %5.1f%%;  fiducial AxE %.1f%% per p pi- decay\n",
+           seed[s].Name(), nAccB, Pct(nFidP[s], nAccB), Pct(nFidPi[s], nAccB), Pct(nFidB[s], nAccB), Pct(nFidB[s], nPPi));
   for (int s = 0; s < 2; ++s) {
     int b1 = hS[s].FindBin(kMassLambda - 0.01), b2 = hS[s].FindBin(kMassLambda + 0.01);
     double S = hS[s].Integral(b1, b2), B = hB[s].Integral(b1, b2);
@@ -183,6 +190,8 @@ void lambda_dis(const char* files = "/eos/user/g/gninio/eic/lambda_dis/dis_lambd
   t.AddText(TString::Format("both accepted: %.1f%% of p#pi^{-} decays", Pct(nAccB, nPPi)));
   t.AddText("truth / hit seeding:");
   t.AddText(TString::Format("  eff. proton %.1f / %.1f%%,  #pi^{-} %.1f / %.1f%%", Pct(nRecP[0], nAccP), Pct(nRecP[1], nAccP), Pct(nRecPi[0], nAccPi), Pct(nRecPi[1], nAccPi)));
+  t.AddText(TString::Format("  fiducial eff. p %.1f / %.1f%%, #pi^{-} %.1f / %.1f%%, both %.1f / %.1f%%",
+            Pct(nFidP[0], nAccB), Pct(nFidP[1], nAccB), Pct(nFidPi[0], nAccB), Pct(nFidPi[1], nAccB), Pct(nFidB[0], nAccB), Pct(nFidB[1], nAccB)));
   t.AddText(TString::Format("  A#times#varepsilon per p#pi^{-} decay %.1f / %.1f%%", Pct(nRecB[0], nPPi), Pct(nRecB[1], nPPi)));
   t.AddText(TString::Format("  both reco per B0-dir. #Lambda %.1f / %.1f%%", Pct(nRecB[0], nB0), Pct(nRecB[1], nB0)));
   t.Draw();

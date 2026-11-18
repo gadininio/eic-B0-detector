@@ -4,5 +4,7 @@ events with a B0-direction Lambda: 702 (70.2%)
 B0-direction Lambdas: p pi- 372 (52.9%), before z = 5.8 m 341 (48.5%), both accepted 81 (21.8% of p pi-)
 truth seeding  eff p  97.1% (169/174)  pi  45.2% (56/124)  both reco 39 = 10.5% per p pi- decay (AxE), 5.5% per B0-dir. Lambda;  events with one: 39 (3.90% of events)
 hit seeding    eff p 100.0% (174/174)  pi  53.2% (66/124)  both reco 47 = 12.6% per p pi- decay (AxE), 6.7% per B0-dir. Lambda;  events with one: 47 (4.70% of events)
+truth seeding  fiducial (both accepted, 81): eff p  97.5%  pi  46.9%  both  46.9%;  fiducial AxE 10.2% per p pi- decay
+hit seeding    fiducial (both accepted, 81): eff p 100.0%  pi  56.8%  both  56.8%;  fiducial AxE 12.4% per p pi- decay
 truth seeding  forward tracks / event 0.72; (+,-) pairs with p+/p- > 2.5: 58, signal 35; in +-10 MeV: S 31 B 6
 hit seeding    forward tracks / event 0.77; (+,-) pairs with p+/p- > 2.5: 73, signal 40; in +-10 MeV: S 34 B 8

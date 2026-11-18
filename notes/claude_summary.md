@@ -173,6 +173,21 @@ particle gun (p = 50–100 GeV, θ = 8–18 mrad, 25 mrad crossing angle, 18×27
   | both reco per B0-direction Λ, truth / hit | 14.9 / 18.7 % | 3.6 / 5.0 % | 13.9 / 16.8 % | 5.5 / 6.7 % |
   | mass ±10 MeV, hit seeding, S / B | 54 / 54 | 18 / 10 | 89 / 24 | 34 / 8 |
 
+  Fiducial volume = p π⁻ decays with both daughters accepted; the efficiencies below are measured on
+  these decays only, so acceptance × ε(both) = fiducial A×ε exactly. The plain A×ε also counts the
+  few decays reconstructed although a daughter has < 3 layers of its own hits.
+
+  | beam | geometry | seeding | acceptance (both) | ε p | ε π⁻ | ε both | A×ε (fiducial) | A×ε (all) |
+  |---|---|---|---|---|---|---|---|---|
+  | 18×275 | old | truth | 53.2 % (115/216) | 92.2 % | 54.8 % | 52.2 % | 27.8 % | 28.7 % |
+  | 18×275 | old | hit   | 53.2 % | 99.1 % | 65.2 % | 64.3 % | 34.3 % | 36.1 % |
+  | 18×275 | new | truth | 16.0 % (33/206) | 78.8 % | 51.5 % | 42.4 % | 6.8 % | 7.3 % |
+  | 18×275 | new | hit   | 16.0 % | 100 % | 60.6 % | 60.6 % | 9.7 % | 10.2 % |
+  | 9×130 | old | truth | 51.9 % (196/378) | 95.9 % | 53.1 % | 50.0 % | 25.9 % | 25.9 % |
+  | 9×130 | old | hit   | 51.9 % | 100 % | 59.2 % | 59.2 % | 30.7 % | 31.2 % |
+  | 9×130 | new | truth | 21.8 % (81/372) | 97.5 % | 46.9 % | 46.9 % | 10.2 % | 10.5 % |
+  | 9×130 | new | hit   | 21.8 % | 100 % | 56.8 % | 56.8 % | 12.4 % | 12.6 % |
+
   Campaign SIDIS 9×130 (19 900 events): 3.4 % of events have a B0-direction Λ; both daughters
   accepted 48.3 % of p π⁻ (as in our samples); truth-seeded eff p 6.4 %, π⁻ 3.0 %, A×ε 2.0 %.
 - The new geometry loses acceptance mainly through its ±45° φ gap (beam frame, electron side:
