@@ -18,7 +18,7 @@
 // ../mass/lambda_mass_notruth.C. Truth only labels signal (both from the same Lambda -> p pi-).
 //
 // Input: comma-separated list of EICrecon output files or patterns.
-// Output: printout and <outbase>.png (4 x 2; the last pad lists the main numbers).
+// Output: printout and <outbase>.png / .pdf (4 x 2; the last pad names the input and lists the main numbers).
 // Usage (from the repository top):
 //   root -l -b -q 'macros/dis/lambda_dis.C+("/eos/user/g/gninio/eic/lambda_dis/dis_lambda_new_s30?.eicreconpr3116.edm4eic.root","results/09_dis/dis_new")'
 #include "../common/LambdaB0.h"
@@ -30,6 +30,7 @@
 #include "TF1.h"
 #include "TStyle.h"
 #include "TPaveText.h"
+#include "TSystem.h"
 #include <cstdio>
 
 void lambda_dis(const char* files = "/eos/user/g/gninio/eic/lambda_dis/dis_lambda_new_s30?.eicreconpr3116.edm4eic.root",
@@ -185,6 +186,7 @@ void lambda_dis(const char* files = "/eos/user/g/gninio/eic/lambda_dis/dis_lambd
   // main numbers (truth / hit seeding)
   c.cd(8);
   TPaveText t(0.05, 0.05, 0.95, 0.95, "NDC"); t.SetFillColor(0); t.SetBorderSize(0); t.SetTextAlign(12); t.SetTextFont(42);
+  t.AddText(gSystem->BaseName(files));
   t.AddText(TString::Format("%ld events, %ld B0-direction #Lambda", nEv, nB0));
   t.AddText(TString::Format("p#pi^{-} decays %ld, at z < 5.8 m %ld", nPPi, nBef));
   t.AddText(TString::Format("both accepted: %.1f%% of p#pi^{-} decays", Pct(nAccB, nPPi)));
@@ -196,4 +198,5 @@ void lambda_dis(const char* files = "/eos/user/g/gninio/eic/lambda_dis/dis_lambd
   t.AddText(TString::Format("  both reco per B0-dir. #Lambda %.1f / %.1f%%", Pct(nRecB[0], nB0), Pct(nRecB[1], nB0)));
   t.Draw();
   c.SaveAs(TString(outbase) + ".png");
+  c.SaveAs(TString(outbase) + ".pdf");
 }

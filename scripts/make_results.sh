@@ -108,5 +108,7 @@ if want 09; then
     run macros/dis/lambda_dis.C $R/dis_$g "$EIC_DATA/lambda_dis/dis_lambda_${g}_s30?.eicreconpr3116.edm4eic.root" "\"$R/dis_$g\""
     run macros/dis/lambda_dis.C $R/dis_9x130_$g "$EIC_DATA/lambda_dis_9x130/dis_lambda_9x130_${g}_s40?.eicreconpr3116.edm4eic.root" "\"$R/dis_9x130_$g\""
   done
+  # one PDF per geometry: page 1 18x275, page 2 9x130
+  for g in old new; do pdfunite $R/dis_$g.pdf $R/dis_9x130_$g.pdf $R/dis_${g}_geometry_18x275_9x130.pdf; done
   run macros/dis/lambda_dis.C $R/campaign_sidis_9x130 "$EIC_DATA/campaign/sidis_9x130/*.eicrecon.edm4eic.root" "\"$R/campaign_sidis_9x130\""
 fi

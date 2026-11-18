@@ -298,3 +298,9 @@ montage dis_9x130_old.png dis_9x130_new.png -tile 1x2 -geometry +0+10 side_dis_9
 ```bash
 rm -rf /eos/user/g/gninio/eic/condor_test   # 3-event condor test output
 ```
+
+## 2026-11-18: one PDF per geometry (page 1 18x275, page 2 9x130)
+```bash
+cd results/09_dis
+for g in old new; do pdfunite dis_$g.pdf dis_9x130_$g.pdf dis_${g}_geometry_18x275_9x130.pdf; done
+```
