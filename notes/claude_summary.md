@@ -194,6 +194,14 @@ particle gun (p = 50–100 GeV, θ = 8–18 mrad, 25 mrad crossing angle, 18×27
   0 % there, 27 % of the decays) and at small θ (5.5–8 mrad: 11 vs 51 % at 18×275), where DIS Λs
   pile up; hence a larger drop than for the gun. A×ε rises with p_Λ (π⁻ efficiency).
 
+- Why the new acceptance is so much lower (`scripts/geometry/b0area.py`, from the B0 tracker xml of
+  both epic commits): the old B0 has 4 layers of full silicon disks (36 trapezoids, r = 35–150 mm,
+  shorter on the electron side), 585–605 cm² per layer; the new one has 4 stations of 16×16 mm
+  AC-LGAD sensors on staves (both plate faces), 307–335 cm² per station (~52 %), no sensors at
+  |φ| < 45° (slot on the electron side). Straight lines from the IP hitting ≥ 3 stations, θ 5.5–20 mrad:
+  92 % (old) vs 56 % (new); 5.5–8 mrad 94 vs 32 %, 17–20 mrad 83 vs 33 %. Both daughters must be
+  covered, so the loss roughly squares (0.92² ≈ 0.85 vs 0.56² ≈ 0.31), and DIS Λs pile up at small θ.
+
 ## Open points
 - Why the CKF loses soft π⁻ (rerun with CKF debug output on a few events).
 - Realistic B0 seeding: works with #3116 (section 7); follow it until merged.

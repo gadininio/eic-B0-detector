@@ -310,3 +310,11 @@ for g in old new; do pdfunite dis_$g.pdf dis_9x130_$g.pdf dis_${g}_geometry_18x2
 cd results/09_dis   # clean shell (no LCG), montage needs its fonts
 for g in old new; do montage dis_$g.png dis_9x130_$g.png -tile 1x2 -geometry +0+10 dis_${g}_geometry_18x275_9x130.png; done
 ```
+
+## 2026-11-18: B0 sensitive area and straight-line coverage, old vs new geometry
+```bash
+D=b0geo; mkdir -p $D
+for c in 43f427e ec774d8; do for f in compact/far_forward/B0_tracker.xml src/B0Tracker_geo.cpp; do
+  curl -s -o $D/${c}_$(basename $f) https://raw.githubusercontent.com/eic/epic/$c/$f; done; done
+python3 scripts/geometry/b0area.py $D    # areas per station, coverage (>= 3 stations) vs theta and phi
+```
