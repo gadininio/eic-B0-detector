@@ -304,3 +304,9 @@ rm -rf /eos/user/g/gninio/eic/condor_test   # 3-event condor test output
 cd results/09_dis
 for g in old new; do pdfunite dis_$g.pdf dis_9x130_$g.pdf dis_${g}_geometry_18x275_9x130.pdf; done
 ```
+
+## 2026-11-18: one PNG per geometry (replaces the PDF attempt)
+```bash
+cd results/09_dis   # clean shell (no LCG), montage needs its fonts
+for g in old new; do montage dis_$g.png dis_9x130_$g.png -tile 1x2 -geometry +0+10 dis_${g}_geometry_18x275_9x130.png; done
+```
