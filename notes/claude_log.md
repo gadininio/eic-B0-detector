@@ -508,3 +508,4 @@ Macro `~/private/eic/compare_tracks.C` (run in `~/private/eic`). Both use the co
   - old: p π⁻ 378, before 5.8 m 339, both accepted 196 (51.9 %); eff truth/hit p 95.1/99.7 %, π⁻ 51.1/58.1 %; A×ε per p π⁻ 25.9/31.2 %; both reco per B0-direction Λ 13.9/16.8 %; ±10 MeV truth S 83 B 13, hit S 89 B 24.
   - new: p π⁻ 372, before 341, both accepted 81 (21.8 %); eff p 97.1/100 %, π⁻ 45.2/53.2 %; A×ε 10.5/12.6 %; per Λ 5.5/6.7 %; ±10 MeV truth S 31 B 6, hit S 34 B 8.
   - Consistent with s401 alone. Montage (old above new) shown. claude_summary.md section 10: results table for both energies + campaign, section marked done.
+- 2026-11-18: deleted the 3-event condor test output `/eos/user/g/gninio/eic/condor_test` (seed 9, ~21 MB; user request).

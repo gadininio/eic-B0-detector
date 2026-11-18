@@ -293,3 +293,8 @@ done
 # montage in a clean shell (no LCG)
 montage dis_9x130_old.png dis_9x130_new.png -tile 1x2 -geometry +0+10 side_dis_9x130.png
 ```
+
+## 2026-11-18: cleanup
+```bash
+rm -rf /eos/user/g/gninio/eic/condor_test   # 3-event condor test output
+```
