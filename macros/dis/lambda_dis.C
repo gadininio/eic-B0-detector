@@ -18,7 +18,8 @@
 // ../mass/lambda_mass_notruth.C. Truth only labels signal (both from the same Lambda -> p pi-).
 //
 // Input: comma-separated list of EICrecon output files or patterns.
-// Output: printout and <outbase>.png (4 x 2; the last pad lists the main numbers).
+// Output: printout and <outbase>.png (4 x 2 under a title naming the sample (from the file names); the last pad
+// lists the main numbers).
 // Usage (from the repository top):
 //   root -l -b -q 'macros/dis/lambda_dis.C+("/eos/user/g/gninio/eic/lambda_dis/dis_lambda_new_s30?.eicreconpr3116.edm4eic.root","results/09_dis/dis_new")'
 #include "../common/LambdaB0.h"
@@ -30,6 +31,7 @@
 #include "TF1.h"
 #include "TStyle.h"
 #include "TPaveText.h"
+#include "TLatex.h"
 #include <cstdio>
 
 void lambda_dis(const char* files = "/eos/user/g/gninio/eic/lambda_dis/dis_lambda_new_s30?.eicreconpr3116.edm4eic.root",
@@ -147,8 +149,15 @@ void lambda_dis(const char* files = "/eos/user/g/gninio/eic/lambda_dis/dis_lambd
   }
 
   gStyle->SetOptStat(0);
-  TCanvas c("c", "", 2400, 1000); c.Divide(4, 2);
-  c.cd(1);
+  // title: beam energies and geometry, from the file names
+  TString fs(files), beam = fs.Contains("9x130") ? "ep 9#times130 GeV" : "ep 18#times275 GeV";
+  TString title = fs.Contains("campaign") ? "ePIC campaign 26.07.3 SIDIS, " + beam + ", campaign geometry and reconstruction"
+                : "#Lambda-tagged DIS (Pythia8), " + beam + (fs.Contains("_old_") ? ", old B0 geometry (epic 43f427e)"
+                : fs.Contains("_new_") ? ", new B0 geometry (epic ec774d8)" : "");
+  TCanvas c("c", "", 2400, 1080);
+  TLatex tl; tl.SetNDC(); tl.SetTextAlign(22); tl.SetTextSize(0.035); tl.SetTextFont(62); tl.DrawLatex(0.5, 0.965, title);
+  TPad pm("pm", "", 0, 0, 1, 0.93); pm.Draw(); pm.Divide(4, 2);
+  pm.cd(1);
   hAll.SetLineColor(kBlack); hBef.SetLineColor(kBlue); hAcc.SetLineColor(kGreen + 2); hRec.SetLineColor(kRed);
   for (TH1D* h : {&hAll, &hBef, &hAcc, &hRec}) h->SetLineWidth(2);
   hAll.SetMinimum(0); hAll.Draw("hist"); hBef.Draw("hist same"); hAcc.Draw("hist same"); hRec.Draw("hist same");
@@ -156,7 +165,7 @@ void lambda_dis(const char* files = "/eos/user/g/gninio/eic/lambda_dis/dis_lambd
   l1.AddEntry(&hAll, "all", "l"); l1.AddEntry(&hBef, "p#pi^{-} decay at z < 5.8 m", "l");
   l1.AddEntry(&hAcc, "both daughters accepted", "l"); l1.AddEntry(&hRec, "both reconstructed (hit seeding)", "l"); l1.Draw();
   Style(aP, kBlue, 20); Style(aPi, kRed, 21); Style(aB, kBlack, 22);
-  c.cd(2); DrawEff({&aP, &aPi, &aB});
+  pm.cd(2); DrawEff({&aP, &aPi, &aB});
   TLegend l2(0.6, 0.72, 0.88, 0.88); l2.SetBorderSize(0);
   l2.AddEntry(&aP, "proton", "p"); l2.AddEntry(&aPi, "#pi^{-}", "p"); l2.AddEntry(&aB, "both", "p"); l2.Draw();
   for (int s = 0; s < 2; ++s) {
@@ -164,14 +173,14 @@ void lambda_dis(const char* files = "/eos/user/g/gninio/eic/lambda_dis/dis_lambd
     Style(eP[s], kBlue, m); Style(ePi[s], kRed, m + 1);
     Style(axe[s], s ? kRed + 1 : kBlue + 1, m); Style(yld[s], s ? kRed + 1 : kBlue + 1, m);
   }
-  c.cd(3); DrawEff({&eP[0], &eP[1], &ePi[0], &ePi[1]});
+  pm.cd(3); DrawEff({&eP[0], &eP[1], &ePi[0], &ePi[1]});
   TLegend l3(0.45, 0.15, 0.88, 0.38); l3.SetBorderSize(0);
   l3.AddEntry(&eP[0], "proton, truth seeding", "p"); l3.AddEntry(&eP[1], "proton, hit seeding", "p");
   l3.AddEntry(&ePi[0], "#pi^{-}, truth seeding", "p"); l3.AddEntry(&ePi[1], "#pi^{-}, hit seeding", "p"); l3.Draw();
-  c.cd(4); DrawEff({&axe[0], &axe[1]});
+  pm.cd(4); DrawEff({&axe[0], &axe[1]});
   TLegend l4(0.5, 0.75, 0.88, 0.88); l4.SetBorderSize(0);
   l4.AddEntry(&yld[0], "truth seeding", "p"); l4.AddEntry(&yld[1], "hit seeding", "p"); l4.Draw();
-  c.cd(5); DrawEff({&yld[0], &yld[1]}); l4.Draw();
+  pm.cd(5); DrawEff({&yld[0], &yld[1]}); l4.Draw();
   THStack st[2] = {THStack("st0", ""), THStack("st1", "")};
   TLegend l5(0.55, 0.72, 0.88, 0.88); l5.SetBorderSize(0);
   l5.AddEntry(&hS[0], "signal (truth label)", "f"); l5.AddEntry(&hB[0], "background", "f");
@@ -180,10 +189,10 @@ void lambda_dis(const char* files = "/eos/user/g/gninio/eic/lambda_dis/dis_lambd
     hB[s].SetFillColor(kGray); hB[s].SetLineColor(kGray + 2);
     st[s].SetTitle(TString::Format("forward (+,-) pairs, p(+)/p(-) > %.1f, %s;M(p#pi^{-}) [GeV];pairs / 3 MeV", minRatio, seed[s].Name()));
     st[s].Add(&hB[s]); st[s].Add(&hS[s]);
-    c.cd(6 + s); st[s].Draw("hist"); l5.Draw();
+    pm.cd(6 + s); st[s].Draw("hist"); l5.Draw();
   }
   // main numbers (truth / hit seeding)
-  c.cd(8);
+  pm.cd(8);
   TPaveText t(0.05, 0.05, 0.95, 0.95, "NDC"); t.SetFillColor(0); t.SetBorderSize(0); t.SetTextAlign(12); t.SetTextFont(42);
   t.AddText(TString::Format("%ld events, %ld B0-direction #Lambda", nEv, nB0));
   t.AddText(TString::Format("p#pi^{-} decays %ld, at z < 5.8 m %ld", nPPi, nBef));
