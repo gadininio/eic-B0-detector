@@ -328,5 +328,5 @@ python3 scripts/geometry/b0area.py $D results/02_geometric_acceptance/b0_coverag
 D=$EIC_TOP/b0geo; mkdir -p $D
 for c in 43f427e ec774d8; do for f in compact/far_forward/B0_tracker.xml src/B0Tracker_geo.cpp; do
   curl -s -o $D/${c}_$(basename $f) https://raw.githubusercontent.com/eic/epic/$c/$f; done; done
-scripts/make_results.sh 02   # geantino acceptance + b0_coverage_maps{,_beamline}.png
+scripts/make_results.sh 10   # results/10_b0_geometry/b0_coverage_maps{,_beamline}.png (moved from 02 on 2026-11-19)
 ```

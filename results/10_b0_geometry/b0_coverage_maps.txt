@@ -27,6 +27,6 @@ fraction of directions hitting >= 3 stations (straight line from the IP):
     90-135       99%    79%
    135-180       99%    70%
 
-wrote results/02_geometric_acceptance/b0_coverage_maps.png
+wrote results/10_b0_geometry/b0_coverage_maps.png
 
-wrote results/02_geometric_acceptance/b0_coverage_maps_beamline.png
+wrote results/10_b0_geometry/b0_coverage_maps_beamline.png

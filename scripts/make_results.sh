@@ -12,6 +12,7 @@
 #   $EIC_DATA/lambda_dis_9x130/ dis_lambda_9x130_{old,new}_s40{1,2}.* same at 9x130 (results/09)
 #   $EIC_DATA/campaign/sidis_9x130/ 100 files of the campaign 26.07.3 SIDIS 9x130 RECO (results/09)
 #   $EIC_DATA/geantino/        geantino_{old,new}_5000.*
+#   $EIC_TOP/b0geo/           B0 tracker xml of both epic commits, from GitHub (results/10)
 H=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 source "$H/scripts/env.sh"
 source "$EIC_ROOT_SETUP" > /dev/null 2>&1
@@ -50,11 +51,6 @@ if want 02; then
   for g in old new; do
     run macros/acceptance/b0_geometric_acceptance.C results/02_geometric_acceptance/geometric_acceptance_$g "$G/geantino_${g}_5000.edm4hep.root" '"results/02_geometric_acceptance/geometric_acceptance_'$g'"'
   done
-  # B0 sensitive area and coverage maps from the B0 tracker xml of both epic commits (downloaded from GitHub
-  # into $EIC_TOP/b0geo, see notes/claude_commands.md 2026-11-18); writes b0_coverage_maps{,_beamline}.png
-  echo "== results/02_geometric_acceptance/b0_coverage_maps"
-  python3 scripts/geometry/b0area.py "$EIC_TOP/b0geo" results/02_geometric_acceptance/b0_coverage_maps.png \
-    > results/02_geometric_acceptance/b0_coverage_maps.txt
 fi
 if want 03; then
   for g in old new; do
@@ -114,4 +110,14 @@ if want 09; then
     run macros/dis/lambda_dis.C $R/dis_9x130_$g "$EIC_DATA/lambda_dis_9x130/dis_lambda_9x130_${g}_s40?.eicreconpr3116.edm4eic.root" "\"$R/dis_9x130_$g\""
   done
   run macros/dis/lambda_dis.C $R/campaign_sidis_9x130 "$EIC_DATA/campaign/sidis_9x130/*.eicrecon.edm4eic.root" "\"$R/campaign_sidis_9x130\""
+fi
+
+# 10: B0 geometry, old vs new: sensitive area per station and straight-line coverage maps, from the B0 tracker
+# xml of both epic commits (downloaded from GitHub into $EIC_TOP/b0geo, see notes/claude_commands.md 2026-11-18);
+# writes b0_coverage_maps{,_beamline}.png (the second with the beam pipe, electron quadrupole and B0 magnet bore)
+if want 10; then
+  R=results/10_b0_geometry
+  mkdir -p $R
+  echo "== $R/b0_coverage_maps"
+  python3 scripts/geometry/b0area.py "$EIC_TOP/b0geo" $R/b0_coverage_maps.png > $R/b0_coverage_maps.txt
 fi
