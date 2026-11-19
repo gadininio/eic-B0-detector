@@ -5,7 +5,9 @@ Study of how well the ePIC far-forward **B0 tracker** reconstructs Λ hyperons t
 tracking efficiency, acceptance × efficiency, and the reconstructed Λ mass, for the B0 geometry
 before and after [eic/epic#1194](https://github.com/eic/epic/pull/1194); with truth seeding and
 with the hit (realistic) seeding of [EICrecon#3116](https://github.com/eic/EICrecon/pull/3116),
-and for Λ momenta from 50 to 275 GeV.
+and for Λ momenta from 50 to 275 GeV. Then with a physics process, **Λ-tagged DIS** (Pythia8 ep at
+18×275 and 9×130 GeV, and the ePIC campaign SIDIS 9×130 sample), and a comparison of the two B0
+geometries' **sensitive area and coverage** with the beamline around them.
 
 - Detailed write-up (3 Nov 2026, truth seeding, 50–100 GeV): [`docs/report/report.pdf`](docs/report/report.pdf),
   slides [`docs/slides/slides.pdf`](docs/slides/slides.pdf)
@@ -26,12 +28,13 @@ and for Λ momenta from 50 to 275 GeV.
 | Reconstruction | (a) EICrecon main `8b44cae` (built locally; contains EICrecon#2901, B0 truth seeding for displaced vertices); first report. (b) **EICrecon#3116 branch at `1ca147b`** (= main of 2026-11-11 + #3116; also contains #2901 and #3084, the 5 keV B0 threshold as default); update. The nightly EICrecon `a7bab3f` of 2026-11-02 has only 4 B0 tracks per 100 Λ |
 | Tracking | ACTS CKF. **Truth seeding** (`B0TrackerTruthSeeds`, #2901) → `ReconstructedTruthSeededChargedParticles`; **hit seeding** (Acts triplet seeder on 3 B0 stations, #3116, open) → `ReconstructedChargedParticles`. A #3116 build writes both, so they are compared on the same events |
 | Samples | 100 events per geometry (seed 42), 1000 events per geometry at 50–100 GeV (seeds 101, 102 × 500), 1000 events per geometry at 100–275 GeV (seeds 201, 202 × 500), 5000 geantinos per geometry |
+| DIS samples | Pythia8 8.316 (in eic-shell) NC DIS, Q² > 1 GeV², ePIC campaign settings, Λ stable in Pythia (Geant4 decays it); only events with a Λ at θ < 25 mrad are kept (`scripts/gen/`); no beam effects, ddsim applies the crossing angle. 18×275 (seeds 301, 302) and 9×130 (seeds 401, 402), 2 × 500 kept events each, the same events in both geometries, reconstructed with the #3116 build. Cross-check: ePIC campaign 26.07.3 SIDIS 9×130 (pythia6, 100 RECO files, 19 900 events, BNL xrootd) |
 
 ## Definitions
 
 | Quantity | Definition | Macro |
 |---|---|---|
-| Λ → p π⁻ decay | generated Λ (generatorStatus 1) with exactly two daughters, p and π⁻. (A Λ that interacts in material is also the parent of its products, but has more daughters.) | `macros/common/LambdaB0.h` |
+| Λ → p π⁻ decay | generated Λ (generatorStatus 1, or 2 in campaign files where the generator decays it) with exactly two daughters, p and π⁻. (A Λ that interacts in material is also the parent of its products, but has more daughters.) | `macros/common/LambdaB0.h` |
 | **Geometric acceptance** (Λ direction) | fraction of **straight lines** from the IP at the Λ gun angles crossing ≥ 3 B0 layers (geantino gun). Pure detector coverage; *not* the acceptance for Λs, which are neutral and leave no hits | `macros/acceptance/b0_geometric_acceptance.C` |
 | **Daughter acceptance** | (daughters whose own simulated B0 hits cover ≥ 3 layers) / (Λ → p π⁻ decays); for p, π⁻ and both. Full simulation (decay point, B0 dipole field, material), no digitization or tracking. Not a fiducial volume: a daughter must really leave hits in ≥ 3 layers | `macros/acceptance/lambda_daughter_acceptance.C` |
 | **Tracking efficiency** | (accepted daughters with a reconstructed particle) / (accepted daughters). The geometry cancels. Includes digitization (B0 threshold), seeding, CKF, track filtering | `macros/efficiency/lambda_tracking_efficiency.C` |
@@ -42,6 +45,9 @@ and for Λ momenta from 50 to 275 GeV.
 | B0 layers | hits grouped in z; a gap > 50 mm starts a new layer (4 layers / stations at z ≈ 5.8–6.7 m) | `LambdaB0.h` |
 | Angles | w.r.t. the proton beam (the 25 mrad crossing-angle rotation undone) | `LambdaB0.h` |
 | Threshold | EICrecon digitization: energy per pixel must exceed it (`B0TRK:B0TrackerRawHits:threshold`; 10 keV in main 8b44cae, **5 keV default since EICrecon#3084**, merged 2026-11-03) | `scripts/reco/eicrecon.sh` |
+| B0-direction Λ (DIS) | generated Λ at θ = 5.5–20 mrad from the proton beam (an angular proxy, not checked against the B0 layout) | `macros/dis/lambda_dis.C` |
+| Fiducial efficiency (DIS) | p, π⁻ and both reconstructed, for decays with **both** daughters accepted; acceptance (both) × ε(both) = fiducial A×ε exactly | `macros/dis/lambda_dis.C` |
+| Sensitive area / coverage | silicon area per station (cm²); fraction of straight lines from the IP in the 5.5–20 mrad cone (solid-angle weighted) that cross sensors in ≥ 3 stations | `scripts/geometry/b0area.py` |
 | Purity / cut efficiency | (signal candidates / selected candidates); (signal kept by the cut / signal before it) | `macros/mass/lambda_mass_notruth.C` |
 
 ## Main results
@@ -79,6 +85,49 @@ and for Λ momenta from 50 to 275 GeV.
 | 50–75 GeV | 48 % (47 %) | 52 / 53 % | 20.9 / 22.5 % | 9.8 / 10.0 % |
 | 150–175 GeV | 25–30 % (25 %) | 86 / 95 % | 24.6 / 26.1 % | 8.9 / 11.6 % |
 | 250–275 GeV | 18–23 % (17 %) | 93 / 100 % | 16.3 / 17.0 % | 8.9 / 9.6 % |
+
+### Update: Λ-tagged DIS (EICrecon#3116 build; `results/09_dis`)
+
+1000 events per beam energy and geometry. Efficiencies in the fiducial volume (both daughters accepted).
+
+| | 18×275 old | 18×275 new | 9×130 old | 9×130 new |
+|---|---|---|---|---|
+| B0-direction Λ (5.5–20 mrad) | 417 | 417 | 703 | 703 |
+| p π⁻ decays | 216 | 206 | 378 | 372 |
+| Both daughters accepted, per p π⁻ decay | 53.2 % | 16.0 % | 51.9 % | 21.8 % |
+| ε p / π⁻ / both, truth seeding | 92 / 55 / 52 % | 79 / 52 / 42 % | 96 / 53 / 50 % | 98 / 47 / 47 % |
+| ε p / π⁻ / both, hit seeding | 99 / 65 / 64 % | 100 / 61 / 61 % | 100 / 59 / 59 % | 100 / 57 / 57 % |
+| A×ε both, per p π⁻ decay, truth / hit | 27.8 / 34.3 % | 6.8 / 9.7 % | 25.9 / 30.7 % | 10.2 / 12.4 % |
+| Both reconstructed per B0-direction Λ, truth / hit | 14.9 / 18.7 % | 3.6 / 5.0 % | 13.9 / 16.8 % | 5.5 / 6.7 % |
+| Mass, forward (+,−) pairs, p(+)/p(−) > 2.5, ±10 MeV, hit: S / B | 54 / 54 | 18 / 10 | 89 / 24 | 34 / 8 |
+
+- Only ~50 % of the B0-direction Λs decay to p π⁻: 64 % branching ratio, and ~20 % never decay
+  (they interact in material, mostly at z = 5.8–20 m).
+- Inside the fiducial volume both geometries track about equally well; the difference is the
+  acceptance (3× lower in the new geometry at 18×275, 2.4× at 9×130).
+- Campaign SIDIS 9×130: 3.4 % of events have a B0-direction Λ, both daughters accepted for 48 % of
+  p π⁻ decays, but B0 tracking of the daughters is ~0 (truth-seeded ε p 6 %, π⁻ 3 %): the campaign
+  EICrecon predates #2901. Good for rates, spectra and acceptance only.
+
+### Update: B0 geometry, sensitive area and coverage (`results/10_b0_geometry`)
+
+From the B0 tracker xml of both epic commits (`scripts/geometry/b0area.py`).
+
+| | old (43f427e) | new (ec774d8) |
+|---|---|---|
+| Layout | 4 layers of full silicon disks, 36 trapezoids of 10°, r = 35–150 mm, shorter on the electron side | 4 stations of 16 × 16 mm AC-LGAD sensors on staves, both faces of a support plate |
+| Sensitive area per station | 585–605 cm² | 307–335 cm² (~52 %) |
+| Straight lines crossing ≥ 3 stations, θ = 5.5–20 mrad | 92 % | 56 % |
+| … θ = 5.5–8 / 8–17 / 17–20 mrad | 94 / ~97 / 83 % | 32 / ~72 / 33 % |
+| … φ = −45…+45° (electron side) | 70 % | 0 % |
+
+- In the B0 frame the proton beam pipe (r = 31 mm) goes through the centre; the electron beam runs
+  inside the final-focus quadrupole Q0EF (outer r = 61 mm), at x = +146 to +172 mm along the
+  tracker, and both sit inside the B0 magnet bore (r = 200 mm). The old disks are cut back just
+  enough for Q0EF; the new sensors stop ~40 mm before it, and a slot next to the proton pipe removes
+  the rest of the electron side.
+- Both daughters must be covered, so the loss roughly squares (0.92² ≈ 0.85 vs 0.56² ≈ 0.31), and
+  DIS Λs pile up at small θ, where the new coverage is lowest.
 
 Main findings
 - EICrecon#2901 is essential for truth seeding: with the nightly EICrecon (a7bab3f) the B0 truth
@@ -124,18 +173,25 @@ macros/
   mass/lambda_mass_notruth.C                M(p π⁻) without truth in the selection
   mass/lambda_ratio_truth.C                 check of the p(+)/p(−) cut against two-body kinematics
   mass/lambda_mass_seeding_compare.C        M(p π⁻) with truth-seeded vs hit-seeded tracks, overlaid
+  dis/lambda_dis.C                          Λ-tagged DIS: spectrum, acceptance, (fiducial) efficiency, A×ε, yield, mass
   exploration/b0_hit_origins.C              which particles make the B0 hits
   exploration/compare_tracks.C              hits, seeds, tracks: file vs file
 scripts/
   env.sh                 locations (EIC_TOP, EIC_WORK, EIC_DATA)
   in_eic_shell.sh        run a script inside eic-shell with variables
   sim/ddsim_gun.sh       Λ or geantino gun simulation (GEO, PMIN/PMAX)
+  sim/ddsim_hepmc.sh     simulation of a HepMC3 file (GEO, BEAM = 18x275 or 9x130)
+  gen/                   Pythia8 NC DIS with a forward Λ: pythia8_dis_lambda.cc, gen_dis_lambda.sh
   reco/eicrecon.sh       reconstruction (RECO = main, container or a local build dir), extra options
   production/            lambda_sample.sh: sim + reco (10 and 5 keV) + copy to EOS (PMIN, PMAX, SIM_ONLY);
-                         lambda_rereco.sh: reconstruct an existing sample again; geantino_sample.sh
+                         lambda_rereco.sh: reconstruct an existing sample again; geantino_sample.sh;
+                         dis_lambda_sample.sh: DIS gen + sim + reco in both geometries (BEAM);
+                         campaign_fetch.sh: copy campaign files from the BNL xrootd server
+  condor/                HTCondor submission of a DIS sample (dis_lambda.sub, dis_lambda_job.sh)
+  geometry/b0area.py     B0 sensitive area and coverage maps, old vs new, from the B0 tracker xml
   build/                 build epic and EICrecon: a commit (build_epic.sh DIR REF) or a PR (build_eicrecon.sh DIR PR)
   make_results.sh        run every macro, write results/
-results/                 plots (png) and printouts (txt) of every macro, by topic (01–08)
+results/                 plots (png) and printouts (txt) of every macro, by topic (01–10)
 docs/report, docs/slides                first report and slides (3 Nov 2026)
 docs/report_update, docs/slides_update  update (12 Nov 2026)
 notes/                   session logs, commands, summary
@@ -159,6 +215,12 @@ PMIN=100 PMAX=275 SIM_ONLY=1 scripts/production/lambda_sample.sh local lambda_ne
 scripts/production/lambda_rereco.sh local lambda_new_s201 EICrecon_pr3116 eicreconpr3116 "" $EIC_DATA/lambda_100to275
 scripts/production/geantino_sample.sh local geantino_new_5000 5000
 # old geometry: GEO=epic_43f427e (GEO=container is the old geometry only for the nightlies up to 2026-11-02)
+# Λ-tagged DIS: generation once, then old and new geometry (BEAM=9x130 for 9x130), or on HTCondor
+nohup setsid scripts/production/dis_lambda_sample.sh 301 500 > /tmp/$USER/dis_s301.log 2>&1 < /dev/null &
+condor_submit -a "queue BEAM,SEED,N,DEST from (9x130 402 500 default)" scripts/condor/dis_lambda.sub
+scripts/production/campaign_fetch.sh <campaign RECO folder> 100 $EIC_DATA/campaign/sidis_9x130
+# B0 geometry files for results/10 (once): B0_tracker.xml of both commits from GitHub into $EIC_TOP/b0geo
+#   (commands in notes/claude_commands.md, 2026-11-19)
 # analysis
 scripts/make_results.sh                     # all of results/ (or e.g. scripts/make_results.sh 07 08)
 # documents
@@ -173,6 +235,9 @@ Data (ROOT files, not in git) are in `/eos/user/g/gninio/eic/`, each folder with
   without seed momentum smearing.
 - `lambda_100to275/`: old/new, seeds 201, 202, 100–275 GeV; `eicreconpr3116`.
 - `geantino/`.
+- `lambda_dis/`, `lambda_dis_9x130/`: Λ-tagged DIS, old/new, seeds 301, 302 (18×275) and 401, 402
+  (9×130), with the HepMC files; `eicreconpr3116`.
+- `campaign/sidis_9x130/`: 100 RECO files of the campaign 26.07.3 SIDIS 9×130 (`files.txt`).
 
 ## Pitfalls met
 
@@ -189,5 +254,10 @@ Data (ROOT files, not in git) are in `/eos/user/g/gninio/eic/`, each folder with
   `-Pjana:nevents=-1` is ignored.
 - The eic-shell nightly changes under you: `GEO=container` stopped being the old geometry after
   2026-11-02; pin geometries to a commit (`build_epic.sh DIR REF`).
+- `pythia8-config` reads the environment variable `OUT`: run it as `env -u OUT pythia8-config ...`.
+- Background jobs on lxplus live only as long as the login session on that node; for long
+  productions use HTCondor (`scripts/condor/`).
+- ePIC campaign reconstruction (26.07.x) predates EICrecon#2901: no B0 tracks for displaced Λ
+  daughters; the campaign geometry is the old B0 and there is no 18×275 ep sample.
 - Two TEfficiency graphs on one pad: the x axis follows the first one; set it to the histogram range
   (`DrawEff` in `LambdaB0.h`).
