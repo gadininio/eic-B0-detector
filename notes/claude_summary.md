@@ -1,4 +1,4 @@
-# Summary: Λ → p π⁻ in the ePIC B0 tracker (sessions of 2026-11-02/03 and 2026-11-11)
+# Summary: Λ → p π⁻ in the ePIC B0 tracker (sessions of 2026-11-02 – 11-19)
 
 Only the Λ / B0 work; the full chronological log is `claude_log.md`, the commands
 `claude_commands.md`. Macros and scripts referred to below are in this repository
@@ -135,7 +135,7 @@ particle gun (p = 50–100 GeV, θ = 8–18 mrad, 25 mrad crossing angle, 18×27
   the first report: the "other" Λs interacted (none left the world volume), and "88–90 % of p π⁻ decays
   before the B0" is conditional; per generated Λ the decay law holds.
 
-## 10. Λ-tagged DIS (2026-11-12 – 11-15)
+## 10. Λ-tagged DIS (2026-11-12 – 11-19)
 - From the particle gun to a physics process: Pythia8 8.316 (container) NC DIS, ep 18×275,
   Q² > 1 GeV², ePIC campaign settings; Λ stable in Pythia (Geant4 decays it); only events with a Λ
   at θ < 25 mrad are kept (`scripts/gen/`). No beam effects; ddsim applies the crossing angle
@@ -149,7 +149,19 @@ particle gun (p = 50–100 GeV, θ = 8–18 mrad, 25 mrad crossing angle, 18×27
   Full DIS events: ~15 s/event in ddsim.
 - Analysis `macros/dis/lambda_dis.C` (results/09_dis): same chain per B0-direction Λ (decay before
   the B0, acceptance, tracking efficiency, yield), and the mass from all forward (+,−) track pairs,
-  where the rest of the DIS event now adds combinatorial background.
+  where the rest of the DIS event now adds combinatorial background. One PNG per sample (4 × 2
+  panels: spectrum, acceptance, efficiency, A×ε per p π⁻ decay, yield per B0-direction Λ, mass with
+  truth and hit seeding, main numbers), titled with the beam energies and the geometry.
+- Definitions. B0-direction Λ: generated Λ at θ = 5.5–20 mrad from the proton beam (an angular
+  proxy; Λs pointing into the new geometry's φ gap are still counted). Acceptance: both daughters with
+  their own simulated hits in ≥ 3 stations, per p π⁻ decay of a B0-direction Λ wherever it decays (decays
+  behind the first station are in the denominator; per decay before z = 5.8 m it would be 60 / 18 %
+  at 18×275 and 58 / 24 % at 9×130, old / new). Fiducial efficiency: p, π⁻, both reconstructed for
+  decays with both daughters accepted.
+- Only ~50 % of the B0-direction Λs decay to p π⁻ (18×275: old 216, new 206 of 417): n π⁰ 117 / 130,
+  and ~20 % never decay (84 / 81), mostly interacting at z = 5.8–20 m (B0 and downstream material).
+  Among the decays, p π⁻ / (p π⁻ + n π⁰) = 65 / 61 % ≈ BR 64 %. Old vs new differ only statistically
+  (Geant4 draws decays independently in each geometry run).
 
 - Also at **9×130** (own production, same chain, `BEAM=9x130`), and as a cross-check the ePIC campaign
   26.07.3 **SIDIS 9×130** (pythia6-lhapdf ep, x 1e-3–1e-2, 100 RECO files from the BNL xrootd server;
@@ -190,17 +202,42 @@ particle gun (p = 50–100 GeV, θ = 8–18 mrad, 25 mrad crossing angle, 18×27
 
   Campaign SIDIS 9×130 (19 900 events): 3.4 % of events have a B0-direction Λ; both daughters
   accepted 48.3 % of p π⁻ (as in our samples); truth-seeded eff p 6.4 %, π⁻ 3.0 %, A×ε 2.0 %.
+- Inside the fiducial volume both geometries track about equally well (π⁻ 50–65 %, proton ~100 %
+  with hit seeding); the difference in A×ε is almost all acceptance (old / new: 3.3× at 18×275,
+  2.4× at 9×130). The per-daughter efficiencies of the first table use all accepted protons
+  (pions), not only decays with both accepted, so acceptance × ε p × ε π⁻ does not reproduce A×ε;
+  the fiducial ones do (up to the small p–π⁻ correlation).
 - The new geometry loses acceptance mainly through its ±45° φ gap (beam frame, electron side:
   0 % there, 27 % of the decays) and at small θ (5.5–8 mrad: 11 vs 51 % at 18×275), where DIS Λs
   pile up; hence a larger drop than for the gun. A×ε rises with p_Λ (π⁻ efficiency).
 
-- Why the new acceptance is so much lower (`scripts/geometry/b0area.py`, from the B0 tracker xml of
-  both epic commits): the old B0 has 4 layers of full silicon disks (36 trapezoids, r = 35–150 mm,
-  shorter on the electron side), 585–605 cm² per layer; the new one has 4 stations of 16×16 mm
-  AC-LGAD sensors on staves (both plate faces), 307–335 cm² per station (~52 %), no sensors at
-  |φ| < 45° (slot on the electron side). Straight lines from the IP hitting ≥ 3 stations, θ 5.5–20 mrad:
-  92 % (old) vs 56 % (new); 5.5–8 mrad 94 vs 32 %, 17–20 mrad 83 vs 33 %. Both daughters must be
-  covered, so the loss roughly squares (0.92² ≈ 0.85 vs 0.56² ≈ 0.31), and DIS Λs pile up at small θ.
+- Why the new acceptance is so much lower: see section 11.
+
+## 11. B0 geometry: sensitive area, coverage and beamline (2026-11-18/19)
+- `scripts/geometry/b0area.py` (results/10_b0_geometry, `make_results.sh 10`) rasterizes the sensors
+  of both epic commits from their `B0_tracker.xml` (copied from GitHub into `$EIC_TOP/b0geo`) and
+  maps straight lines from the IP onto the stations (ion-axis frame, +x = electron side).
+- Old B0: 4 layers of full silicon disks, 36 trapezoids of 10°, r = 35–150 mm, shorter (outer
+  r = 85–105 mm) on the electron side: 585–605 cm² per layer. New B0: 4 stations of 16 × 16 mm
+  AC-LGAD sensors, 3 per stave, staves on both faces of a support plate (44/44/44/48 staves):
+  307–335 cm² per station (~52 %). Beam hole r = 36.75 mm (old inner r 35 mm), but the sensor grid
+  leaves an effective ~±45 mm square hole at stations 3–4 (θ ≈ 7 mrad); a slot next to the beam pipe
+  removes the sensors on the electron side.
+- Straight lines from the IP crossing ≥ 3 stations (solid-angle weighted), old / new: θ = 5.5–20 mrad
+  92 / 56 %; 5.5–8 mrad 94 / 32 %; 8–17 mrad ~97 / ~72 %; 17–20 mrad 83 / 33 %; φ = −45…+45° 70 / 0 %,
+  other φ 99 / 70–79 %. Consistent with the geantino scan (95.3 / 70.1 %, 8–18 mrad). Sensitive area
+  and coverage differ: area counts all silicon (the old disks reach beyond 20 mrad), coverage asks
+  where the silicon is relative to the cone and whether the stations line up (new: 52 % of the area,
+  61 % of the coverage).
+- Beamline (same in both geometries): the proton beam pipe (Be tube, r = 31 mm) runs through the centre
+  of the stations; the electron beam runs inside the final-focus quadrupole Q0EF (z = 5.8–7.0 m, outer
+  support r = 61 mm) at x = +146 to +172 mm from the ion axis (25 mrad crossing angle); both are inside
+  the B0 dipole bore (r = 200 mm, axis at global x = −145.8 mm). The old disks are cut back just to
+  Q0EF's edge (85 → 111 mm); the new sensors stop ~40 mm before it. Second figure
+  `b0_coverage_maps_beamline.png` draws them on the station maps.
+- Consequence for Λs: both daughters must be covered, so the loss roughly squares
+  (0.92² ≈ 0.85 vs 0.56² ≈ 0.31), and DIS Λs pile up at small θ, where the new coverage is lowest.
+  (Straight lines only: displaced decays and the B0 dipole bending the π⁻ are not in these numbers.)
 
 ## Open points
 - Why the CKF loses soft π⁻ (rerun with CKF debug output on a few events).
@@ -208,3 +245,7 @@ particle gun (p = 50–100 GeV, θ = 8–18 mrad, 25 mrad crossing angle, 18×27
 - The jump of the old-geometry truth-seeded efficiency between EICrecon builds (section 7).
 - The +2 MeV mass shift in the old geometry.
 - Real events (other tracks, beam background) need vertexing / decay-length cuts.
+- A strict Λ acceptance (only Λs whose straight line would enter ≥ 3 B0 stations) and the effect of
+  the B0 dipole on the π⁻ coverage.
+- Why the new support plates have a slot on the electron side next to the beam pipe (not stated in
+  the xml).
