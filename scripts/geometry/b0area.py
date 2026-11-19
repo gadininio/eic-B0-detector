@@ -1,5 +1,5 @@
 # Sensitive area and angular coverage of the B0 tracker, old (epic 43f427e) vs new (ec774d8) geometry.
-# Usage: python3 b0area.py <dir with {43f427e,ec774d8}_B0_tracker.xml> [out.png]
+# Usage: python3 b0area.py <dir with {43f427e,ec774d8}_B0_tracker.xml> [out.png]   (also writes out_beamline.png)
 #        (see notes/claude_commands.md, 2026-11-18); with out.png also draws the maps.
 # Rasterizes each station's sensors in the plane perpendicular to the ion axis (local x = beam-frame x,
 # +x = electron side), then maps to theta = atan(r / z_station) from the IP along the ion axis.
@@ -81,7 +81,16 @@ for lo in range(-180, 180, 45):
     w = th[s][:, None] * np.ones(p.sum())
     print(f"{lo:>6}-{lo + 45:<6} " + " ".join(f"{(cov[k][s][:, p] * w).sum() / w.sum() * 100:5.0f}%" for k in ("old", "new")))
 
-if len(sys.argv) > 2:
+# beamline elements in the ion-axis frame at z [mm], same in both geometries (eic/epic compact/far_forward,
+# src/forwardBeamPipeBrazil.cpp): hadron B0 beam pipe, Be tube r = 29-31 mm on the ion axis; electron final-focus
+# quadrupole Q0EF (z = 5.8-7.0 m) on the electron axis (global x = 0, i.e. x = +z tan(25 mrad) here), outer
+# support tube r = 60.9 mm; B0 dipole B0PF (z = 5.8-7.0 m), bore r = 200 mm, axis parallel to global z at
+# global x = -145.8 mm
+def beamline(z):
+    off = z * math.tan(0.025)                 # global x = 0 seen from the ion axis
+    return {"proton pipe": (0.0, 31.0), "electron quad Q0EF": (off, 60.9), "B0 magnet bore": (-145.8 + off, 200.0)}, off
+
+def draw(out, with_beamline):
     # left: sensitive area of each station (sensors in the station plane); right: straight-line coverage,
     # number of stations a line from the IP crosses, vs its direction (slopes x/z, y/z)
     import matplotlib
@@ -107,7 +116,21 @@ if len(sys.argv) > 2:
                       interpolation="nearest")
             for tm in (5.5, 20):                              # B0-direction cone at this z
                 ax.plot(z * tm / 1000 * np.cos(t), z * tm / 1000 * np.sin(t), color=ink, lw=0.8, ls="--")
-            ax.set_xlim(-170, 170); ax.set_ylim(-170, 170); ax.set_aspect("equal")
+            lim = 170
+            if with_beamline:
+                lim = 235
+                els, off = beamline(z)
+                style = {"proton pipe": ("#eb6834", "-", 2.0), "electron quad Q0EF": ("#1baf7a", "-", 2.0),
+                         "B0 magnet bore": ("#6250d6", ":", 1.6)}
+                for k, (x0, r) in els.items():
+                    c, ls, lw = style[k]
+                    ax.plot(x0 + r * np.cos(t), r * np.sin(t), color=c, ls=ls, lw=lw, label=k)
+                ax.plot([off], [0], marker="x", ms=7, mew=2, color="#1baf7a", ls="none", label="electron beam")
+                ax.plot([0], [0], marker="+", ms=8, mew=2, color="#eb6834", ls="none", label="proton beam")
+                if row == 0 and col == 0:
+                    ax.legend(loc="upper left", bbox_to_anchor=(-0.05, -0.2), ncol=5, fontsize=8.5, frameon=False,
+                              handlelength=2.2, columnspacing=1.2)
+            ax.set_xlim(-lim, lim); ax.set_ylim(-lim, lim); ax.set_aspect("equal")
             ax.set_title(f"station {col + 1}, z = {z:.0f} mm\n{m.sum() * A:.0f} cm²", fontsize=9.5)
             ax.set_xlabel("x [mm]  (+x: electron side)" if col == 0 else "x [mm]", fontsize=8.5)
             if col == 0: ax.set_ylabel("y [mm]", fontsize=8.5)
@@ -128,7 +151,12 @@ if len(sys.argv) > 2:
                      f"at 5.5–20 mrad (dashed)", fontsize=9.5)
         cb = fig.colorbar(im, ax=ax, ticks=range(5), fraction=0.046, pad=0.03)
         cb.set_label("stations crossed", fontsize=9); cb.ax.tick_params(labelsize=8)
-    fig.suptitle("B0 tracker coverage, old vs new geometry (ion-axis frame; dashed circles: θ = 5.5 and 20 mrad)",
-                 fontsize=13, color=ink)
-    fig.savefig(sys.argv[2], dpi=130)
-    print(f"\nwrote {sys.argv[2]}")
+    fig.suptitle("B0 tracker coverage, old vs new geometry (ion-axis frame; dashed circles: θ = 5.5 and 20 mrad)"
+                 + ("\nwith the beam pipe, the electron quadrupole and the B0 magnet bore at each station's z"
+                    if with_beamline else ""), fontsize=13, color=ink)
+    fig.savefig(out, dpi=130)
+    print(f"\nwrote {out}")
+
+if len(sys.argv) > 2:                         # out.png, and out_beamline.png with the beamline elements
+    draw(sys.argv[2], False)
+    draw(re.sub(r"(\.\w+)$", r"_beamline\1", sys.argv[2]), True)

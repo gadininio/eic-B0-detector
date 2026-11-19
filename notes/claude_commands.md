@@ -319,5 +319,5 @@ for c in 43f427e ec774d8; do for f in compact/far_forward/B0_tracker.xml src/B0T
 python3 scripts/geometry/b0area.py $D    # areas per station, coverage (>= 3 stations) vs theta and phi
 ```
 ```bash
-python3 scripts/geometry/b0area.py $D results/02_geometric_acceptance/b0_coverage_maps.png   # + coverage maps (matplotlib)
+python3 scripts/geometry/b0area.py $D results/02_geometric_acceptance/b0_coverage_maps.png   # + coverage maps (matplotlib), also writes b0_coverage_maps_beamline.png
 ```
