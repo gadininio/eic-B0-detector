@@ -532,3 +532,18 @@ Macro `~/private/eic/compare_tracks.C` (run in `~/private/eic`). Both use the co
 - 2026-11-19: coverage maps moved to their own folder `results/10_b0_geometry/` (b0_coverage_maps{,_beamline}.png + .txt; user request); new section `make_results.sh 10` (removed from 02). Rerun: figures byte-identical.
 - 2026-11-19: README updated for results/09_dis (Λ-tagged DIS: setup row, definitions of B0-direction Λ and fiducial efficiency, results table with fiducial efficiencies, findings, campaign) and results/10_b0_geometry (area and coverage table, beamline explanation); repository layout, reproduce commands, data folders and pitfalls (pythia8-config OUT, session-bound jobs → condor, campaign EICrecon pre-#2901) extended.
 - 2026-11-19: claude_summary.md: section 10 extended (plot layout, definitions, Λ fate breakdown, fiducial vs per-daughter efficiencies), new section 11 (B0 geometry: area, coverage, beamline), open points added.
+
+### Kaon structure function: what is missing (2026-11-19)
+- Question: what is needed to go from the Λ/B0 study to a kaon structure function measurement (Sullivan process e p → e′ K⁺(virtual) Λ X, tagged by a forward Λ).
+- Found: the ePIC campaign 26.07.3 has a dedicated Sullivan sample, RECO only: `/eic/EPIC/RECO/26.07.3/epic_craterlake/EXCLUSIVE/MESON_SF_ABCONV/eicMesonSFGen-1.0.0/ep/{5x41,10x100,9x130,9x275,18x275}`, all `K+Lambda`, only 2–4 files per energy, 100 events/file, ~70 MB. Λ status 1 (Geant4 decays it); K⁺ goes to the central detector.
+- Generated Λ angle wrt the proton beam (one file = 100 events each; beam frame = rotate by +25 mrad):
+  | beam | <4.5 mrad | 4.5–5.5 | 5.5–20 (B0) | 20–40 | <x_L> | Λ ends before 5.8 m |
+  |---|---|---|---|---|---|---|
+  | 5x41 | 0 | 1 | 27 | 72 | 0.71 | 97 |
+  | 10x100 | 7 | 2 | 91 | 0 | 0.74 | 62 |
+  | 9x130 | 11 | 7 | 82 | 0 | 0.74 | 50 |
+  | 18x275 | 73 | 27 | 0 | 0 | 0.75 | 42 |
+  ⇒ B0 Λ → p π⁻ is the main tag at 10x100 / 9x130; at 18x275 the Λ goes to ZDC / Roman-pot / off-momentum angles (n π⁰ in the ZDC, p π⁻ with the proton in RP/OMD).
+- 18x275 file: `ReconstructedLambdas` (EICrecon `LambdaReconstruction`, ZDC n + π⁰ → γγ) is empty in all 100 events; no charged-Λ (p π⁻) reconstruction exists in EICrecon main (#2926 open). Campaign reco predates #2901, so B0 tracking of Λ daughters ~0 there (as for the SIDIS sample) ⇒ must re-reconstruct, but MESON_SF is RECO only (no FULL) ⇒ resimulate from the generator.
+- Missing pieces listed in the answer: Sullivan generator in own chain (eicMesonSFGen); 9x130 / 10x100 focus; p π⁻ vertex + Λ 4-vector reconstruction (decay vertex, no truth); event kinematics (x, Q², y from the scattered electron), t and x_L from the Λ, x_K = x/(1−x_L); beam effects (afterburner) for t resolution; backgrounds (non-Sullivan Λ from Pythia DIS = our lambda_dis samples, Σ⁰ → Λγ); acceptance/efficiency in (x_K, Q², t, x_L) bins, flux-factor extraction, luminosity; ZDC n π⁰ channel and RP/OMD for 18x275.
+- Scratch files: /tmp/gninio/ksf (peek*.C, one file per energy).

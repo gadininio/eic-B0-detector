@@ -330,3 +330,13 @@ for c in 43f427e ec774d8; do for f in compact/far_forward/B0_tracker.xml src/B0T
   curl -s -o $D/${c}_$(basename $f) https://raw.githubusercontent.com/eic/epic/$c/$f; done; done
 scripts/make_results.sh 10   # results/10_b0_geometry/b0_coverage_maps{,_beamline}.png (moved from 02 on 2026-11-19)
 ```
+
+## Kaon SF: campaign Sullivan sample survey (2026-11-19)
+```bash
+source /cvmfs/sft.cern.ch/lcg/views/LCG_107/x86_64-el9-gcc13-opt/setup.sh
+X="xrdfs root://epicxrd1.sdcc.bnl.gov:1095"
+B=/eic/EPIC/RECO/26.07.3/epic_craterlake/EXCLUSIVE/MESON_SF_ABCONV/eicMesonSFGen-1.0.0/ep
+for e in 5x41 10x100 9x130 9x275 18x275; do $X ls $B/$e; done
+xrdcp -f root://epicxrd1.sdcc.bnl.gov:1095/$B/18x275/eicMesonSFGen-1.0.0_K+Lambda_ep_18x275_ab_run078.0014.eicrecon.edm4eic.root f.root
+root -l -b -q "peek3.C(\"f.root\",275)"   # scratch macro in /tmp/gninio/ksf: Λ θ (beam frame), <x_L>, Λ end z
+```
