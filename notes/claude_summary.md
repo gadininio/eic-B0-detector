@@ -249,3 +249,16 @@ particle gun (p = 50–100 GeV, θ = 8–18 mrad, 25 mrad crossing angle, 18×27
   the B0 dipole on the π⁻ coverage.
 - Why the new support plates have a slot on the electron side next to the beam pipe (not stated in
   the xml).
+
+## Next studies (planned 2026-11-19, each in its own session, in this repository)
+All three build on the forward Λ reconstructed through Λ → p π⁻ in the B0 (`macros/common/LambdaB0.h`,
+the DIS production and condor scripts, `make_results.sh`); each gets its own macro folder and
+`results/1x_…` section. Start a session with "read notes/claude_summary.md and start the … study".
+1. **Λ polarization** (first: can start from the existing DIS samples). Needs the proton angle in
+   the Λ rest frame, i.e. the full p π⁻ reconstruction and its angular acceptance × efficiency.
+   Pythia does not polarize the Λ: reweight the decay angle, or use a generator with polarization.
+2. **Kaon structure function** (Sullivan process, p → Λ K⁺ with the Λ as the forward tag): needs the
+   tagged-Λ acceptance and efficiency in a kaon-exchange (TDIS-type) sample, probably a dedicated
+   generator (check what ePIC uses).
+3. **Kaon EM form factor** (exclusive e p → e′ K⁺ Λ): the same Λ tag plus the exclusive K⁺ and the
+   t reconstruction; needs an exclusive generator.
