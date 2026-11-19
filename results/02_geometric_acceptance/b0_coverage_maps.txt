@@ -1,0 +1,32 @@
+new station 1: 44 staves, 132 sensors, sum of sensor areas 338 cm2
+new station 2: 44 staves, 132 sensors, sum of sensor areas 338 cm2
+new station 3: 44 staves, 132 sensors, sum of sensor areas 338 cm2
+new station 4: 48 staves, 144 sensors, sum of sensor areas 369 cm2
+
+old: sensitive area per station (union of both faces) [cm2]: z=5895: 585, z=6165: 594, z=6435: 599, z=6705: 605
+  smallest sensitive radius 35.0 mm
+
+new: sensitive area per station (union of both faces) [cm2]: z=5850: 307, z=6272: 307, z=6601: 307, z=6880: 335
+  smallest sensitive radius 36.9 mm
+
+fraction of directions hitting >= 3 stations (straight line from the IP):
+  theta [mrad]    old    new
+   5.5-8         94%    32%
+     8-11       100%    73%
+    11-14       100%    73%
+    14-17        91%    69%
+    17-20        83%    33%
+   5.5-20        92%    56%
+     phi [deg]    old    new   (theta 5.5-20 mrad)
+  -180--135      99%    70%
+  -135--90       99%    79%
+   -90--45       99%    76%
+   -45-0         70%     0%
+     0-45        70%     0%
+    45-90        99%    75%
+    90-135       99%    79%
+   135-180       99%    70%
+
+wrote results/02_geometric_acceptance/b0_coverage_maps.png
+
+wrote results/02_geometric_acceptance/b0_coverage_maps_beamline.png

@@ -50,6 +50,11 @@ if want 02; then
   for g in old new; do
     run macros/acceptance/b0_geometric_acceptance.C results/02_geometric_acceptance/geometric_acceptance_$g "$G/geantino_${g}_5000.edm4hep.root" '"results/02_geometric_acceptance/geometric_acceptance_'$g'"'
   done
+  # B0 sensitive area and coverage maps from the B0 tracker xml of both epic commits (downloaded from GitHub
+  # into $EIC_TOP/b0geo, see notes/claude_commands.md 2026-11-18); writes b0_coverage_maps{,_beamline}.png
+  echo "== results/02_geometric_acceptance/b0_coverage_maps"
+  python3 scripts/geometry/b0area.py "$EIC_TOP/b0geo" results/02_geometric_acceptance/b0_coverage_maps.png \
+    > results/02_geometric_acceptance/b0_coverage_maps.txt
 fi
 if want 03; then
   for g in old new; do

@@ -321,3 +321,12 @@ python3 scripts/geometry/b0area.py $D    # areas per station, coverage (>= 3 sta
 ```bash
 python3 scripts/geometry/b0area.py $D results/02_geometric_acceptance/b0_coverage_maps.png   # + coverage maps (matplotlib), also writes b0_coverage_maps_beamline.png
 ```
+
+## 2026-11-19: everything on lxplus
+```bash
+# geometry files for scripts/geometry/b0area.py (once), then section 02 of make_results.sh runs it
+D=$EIC_TOP/b0geo; mkdir -p $D
+for c in 43f427e ec774d8; do for f in compact/far_forward/B0_tracker.xml src/B0Tracker_geo.cpp; do
+  curl -s -o $D/${c}_$(basename $f) https://raw.githubusercontent.com/eic/epic/$c/$f; done; done
+scripts/make_results.sh 02   # geantino acceptance + b0_coverage_maps{,_beamline}.png
+```
