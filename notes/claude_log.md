@@ -673,3 +673,19 @@ Macro `~/private/eic/compare_tracks.C` (run in `~/private/eic`). Both use the co
 - Compared with eicMesonSFGen (campaign): physical (unweighted) distributions and consistent kinematics; but no HepMC,
   no X, forced n π⁰ decay, max_d4sigma must be checked at 9x130. Candidate signal model: run at 9x130 / 10x100, write
   e′ + undecayed Λ (+ X from a simple model or Pythia) to HepMC, afterburner, our chain.
+
+### More 9x130 Λ-tagged DIS events on condor: software update first (2026-11-25)
+- User: leave the Sullivan generators; produce more events with condor. Plan: 9x130, 20 jobs × 500 kept events
+  (seeds 403–422), both geometries, ~3.8 GB per job (~76 GB on EOS; 46 GB used). Condor queue of the user was empty.
+- Smoke test (2 events, seed 999, /tmp) with the current chain: gen and sim OK, **reco FAILED**: EICrecon_pr3116
+  cannot load libalgocore.so.1.0 — eic-shell uses the CVMFS "nightly", which moved to algorithms 2.2.0. Our build
+  links algorithms-2.0.0-sczj5f4… (+ edm4eic 2ae1454…, jana2 2026.03.01, podio 1.8, dd4hep 1.38, root 6.40.04);
+  no tagged image matches (26.11-stable 4/6). The production nightly of 2026-11-12/14 has no tag.
+- EICrecon#3116 was merged on 2026-11-23 (head 47e7365); the nightly of 2026-11-24 has EICrecon ff59ecf
+  (2026-11-22), 13 commits behind the merge ⇒ no hit seeding in the container yet.
+- Fix: pin the container in scripts/env.sh (SIF = nightly image of 2026-11-24,
+  /cvmfs/singularity.opensciencegrid.org/.images/c1/0bb172fa…) and build in it: EICrecon_main_1125 (main, with
+  #3116), epic_43f427e_n1124 (old B0), epic_ec774d8_n1124 (new B0, = 26.11.0). Production script: output tag RTAG
+  (default pr3116); condor .sub passes RECO, OLD, NEW, RTAG. New files: *.eicreconmain1125.edm4eic.root.
+- Note: new samples use a newer container and EICrecon than s401/s402; re-reconstruct those from their edm4hep for a
+  consistent set if needed.
