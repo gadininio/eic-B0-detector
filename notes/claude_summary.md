@@ -163,6 +163,8 @@ particle gun (p = 50–100 GeV, θ = 8–18 mrad, 25 mrad crossing angle, 18×27
   Among the decays, p π⁻ / (p π⁻ + n π⁰) = 65 / 61 % ≈ BR 64 %. Old vs new differ only statistically
   (Geant4 draws decays independently in each geometry run).
 
+- Λ filter efficiency at 9×130 (Q² > 1): 8.83 % of NC DIS events have a Λ (no θ filter), 6.7 % one at θ < 25 mrad
+  (the production filter), 4.6 % one at 5.5–20 mrad, 1.0 % one at 5.5–20 mrad with x_L > 0.6 (18×275: 9.6 % / 7.1 %).
 - Also at **9×130** (own production, same chain, `BEAM=9x130`), and as a cross-check the ePIC campaign
   26.07.3 **SIDIS 9×130** (pythia6-lhapdf ep, x 1e-3–1e-2, 100 RECO files from the BNL xrootd server;
   `scripts/production/campaign_fetch.sh`). Campaign files: Λ decayed by the generator (status 2, accepted

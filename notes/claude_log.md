@@ -648,3 +648,13 @@ Macro `~/private/eic/compare_tracks.C` (run in `~/private/eic`). Both use the co
 - Consequence: campaign Sullivan = unweighted phase space. Step 0 Sullivan fractions are phase-space fractions (the
   angle scaling stands). For a signal model run the generator ourselves, keep the weight, hadronize X.
 - Scratch macro /tmp/gninio/ksf/q2camp2.C.
+
+### Λ filter efficiency, 9x130 (2026-11-25)
+- User: what is the Λ filter efficiency of the Λ-tagged DIS generation, with and without the θ filter (9x130 only).
+- With the θ < 25 mrad filter (production logs): s401 500 / 7199 = 6.95 %, s402 500 / 7640 = 6.54 %, together 1000 / 14839 = 6.74 %.
+- Without it: same generator, THMAX = 3200 mrad (seed 912, 2000 kept, $EIC_WORK/nofilt_9x130, not kept): 2000 / 22661 = 8.83 %
+  of NC DIS events (Q² > 1) have a final-state Λ (3122; anti-Λ not counted), 0.090 Λ / event. Pythia σ(Q² > 1) = 0.484 µb.
+- Per generated event, from the same run: Λ at θ < 25 mrad 6.68 % (75.7 % of the Λ events; matches production 6.74 %),
+  Λ at 5.5–20 mrad 4.64 %, B0-range Λ with x_L > 0.6 1.00 %, any Λ with x_L > 0.6 1.50 %.
+- Side finding: the 18x275 s301 gen log is a copy of s302 (both say 7005 generated; the old shared gen.log bug); the
+  events differ (checked). s301 had 6991 generated per the 2026-11-12 log. Also an 18x275 no-filter run: 9.60 % with a Λ.
