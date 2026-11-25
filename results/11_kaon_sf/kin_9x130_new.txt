@@ -1,0 +1,18 @@
+/eos/user/g/gninio/eic/lambda_dis_9x130/dis_lambda_9x130_new_s40?.eicreconpr3116.edm4eic.root
+events 1000 (E_p = 130 GeV); reconstructed scattered electron (ScatteredElectronsTruth track) in 972 (97.2%)
+own true kinematics vs InclusiveKinematicsTruth: 0 events differ by > 0.1% in Q2
+electron method, reco/true - 1: median [16%, 84%]; own = true beams, EICrecon = InclusiveKinematicsElectron
+  y (true)     events  y_reco<=0 | own Q2                     own x                      own y                     | EICrecon Q2                EICrecon x
+  0.00-0.01      494        161 | -0.030 [-0.129, -0.008]    -0.908 [-0.984, -0.618]    +9.434 [+1.479, +54.311]  | -0.012 [-0.290, +0.302]    -0.974 [-1.145, -0.717]   
+  0.01-0.05      289         43 | -0.013 [-0.075, +0.008]    -0.393 [-0.777, +0.476]    +0.604 [-0.318, +3.088]   | -0.006 [-0.245, +0.258]    -0.452 [-0.997, +0.422]   
+  0.05-0.20      171          4 | -0.008 [-0.051, +0.015]    -0.084 [-0.383, +0.204]    +0.071 [-0.159, +0.544]   | -0.017 [-0.241, +0.198]    -0.084 [-0.517, +0.256]   
+  0.20-0.50       35          0 | +0.001 [-0.013, +0.009]    +0.003 [-0.054, +0.027]    -0.004 [-0.024, +0.036]   | -0.025 [-0.100, +0.105]    -0.025 [-0.097, +0.089]   
+  0.50-1.00       11          0 | -0.004 [-0.054, +0.004]    -0.005 [-0.054, +0.008]    +0.000 [-0.004, +0.003]   | +0.023 [-0.015, +0.042]    +0.006 [-0.018, +0.031]   
+Lambda side (x_L > 0.60): events with a generated B0-direction Lambda 162; with a reconstructed candidate (hit seeding, +-10 MeV) 9, signal 9 (100%)
+  y (true)     generated  candidates (signal)  no e- kinematics | x_K reco/true - 1 (signal)
+  0.00-0.01         111           5 (  5)             4       | n=1
+  0.01-0.05          29           1 (  1)             0       | n=1
+  0.05-0.20          19           3 (  3)             0       | +0.158 [-0.333, +0.158]
+  0.20-0.50           2           0 (  0)             0       | n=0
+  0.50-1.00           1           0 (  0)             0       | n=0
+  x_L reco - true (signal): -0.008 [-0.017, -0.005]

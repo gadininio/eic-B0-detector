@@ -580,3 +580,29 @@ Macro `~/private/eic/compare_tracks.C` (run in `~/private/eic`). Both use the co
   | x_L reco − true (hit): mean, RMS | +0.012, 0.033 | −0.010, 0.014 |
   | |t| reco − true (hit): mean, RMS [GeV²] | −0.025, 0.080 | −0.003, 0.049 |
 - vs no cut (results/09_dis): acceptance and π⁻ efficiency are higher at high x_L (harder π⁻), and the combinatorial background almost disappears (hit, ±10 MeV: old 89/24 → 31/2, new 34/8 → 11/0). Reconstructed Λs have larger mean |t| (1.58 / 1.83 vs 1.38 GeV² generated): acceptance favours larger angles. No beam effects in the simulation, so the |t| resolution is optimistic. Statistics small (18–43 reconstructed Λs).
+
+### Kaon SF step 2 (2026-11-25): DIS kinematics from the scattered electron
+- User: go ahead with the scattered electron; keep notes/claude_summary.md updated as we go (new section 12).
+- Collections: InclusiveKinematics{Truth,Electron,ESigma,Sigma,DA,JB,ML}; EICrecon (reco.cc) feeds all
+  reconstructed methods with ScatteredElectronsTruth (track truth-matched to the scattered e⁻, in
+  ReconstructedChargedParticles, podio ID 0x538857ff, resolved with podio-dump in eic-shell).
+- Diagnostics (scratch macros /tmp/gninio/ksf/kin_diag.C, ele_diag.C, 9x130 old, 1000 events):
+  own truth from MCParticles (beams status 4, scattered e⁻) = InclusiveKinematicsTruth exactly; but every
+  reco method had Q² spread ±25 % (16–84 %) and electron-method x −73 % median, while the electron track
+  itself is fine (dθ ≈ 0.3 mrad, dp/p 1–7 % at η −3.5…−2). Q² bias −36 % at η −3.5…−3.
+- Cause: EICrecon `round_beam_four_momentum` puts the beams into the ePIC frame (e⁻ along −z, crossing
+  0; proton at −25 mrad; 9 GeV is in its list). Our ddsim `--crossingAngleBoost -0.025` boosts the whole
+  event: beam e⁻ (−0.225, 0, −9.0), i.e. tilted 25 mrad. Campaign files (afterburner): beam e⁻ px/|pz|
+  ~1e-4, proton −0.025 (checked in MESON_SF 9x130 and SIDIS 9x130). Hadron side identical ⇒ B0 results ok.
+- New `macros/kaon/kaon_kinematics.C`: own electron-method invariants with the true beams; Λ candidate =
+  best hit-seeded forward pair in ±10 MeV with x_L > 0.6 (no truth); x_K = x / (1 − x_L). Added to
+  `make_results.sh 11` → results/11_kaon_sf/kin_9x130_{old,new}.{txt,png}.
+  - First version counted only candidates with valid electron kinematics (22 vs 31 signal of step 1);
+    10 events had reco y ≤ 0 (low y). Now all candidates are counted and "no e⁻ kinematics" is listed.
+- Results (old / new B0): scattered e⁻ found 97.8 / 97.2 %. Q² within a few %; x at y < 0.01 unusable
+  (median −0.90), 0.01–0.05 −0.33 [−0.73, +0.74] / −0.39 [−0.78, +0.48], 0.05–0.2 ±25–30 %, > 0.2 few %.
+  EICrecon's own: Q² ±25 % at all y (frame). Events with a B0-direction Λ at x_L > 0.6: 162 (111 at
+  y < 0.01, 29 at 0.01–0.05, 22 above). Candidates: old 32 (30 signal; 21 at y < 0.01, 8 without e⁻
+  kinematics), new 9 (9; 5 at y < 0.01). x_L reco − true +0.012 [−0.009, +0.031] old, −0.008 new.
+- Next: hadronic-final-state methods (Σ / eΣ / DA) in the right frame for low y; decide whether to
+  redo the simulation with the afterburner.

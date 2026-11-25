@@ -113,11 +113,14 @@ if want 09; then
 fi
 
 # 11: kaon structure function (Sullivan region): the 9x130 Lambda-tagged DIS samples of 09 with x_L > 0.6
-# on the B0-direction Lambdas and on the forward (+,-) pairs; also <out>_xl_t.png (x_L, |t|, resolutions).
+# on the B0-direction Lambdas and on the forward (+,-) pairs; also <out>_xl_t.png (x_L, |t|, resolutions);
+# kin_*: DIS kinematics from the scattered electron and x_K (macros/kaon/kaon_kinematics.C).
 if want 11; then
   R=results/11_kaon_sf
   for g in old new; do
     run macros/dis/lambda_dis.C $R/dis_9x130_${g}_xl06 "$EIC_DATA/lambda_dis_9x130/dis_lambda_9x130_${g}_s40?.eicreconpr3116.edm4eic.root" "\"$R/dis_9x130_${g}_xl06\"" 3 2.5 0.6
+    # DIS kinematics from the scattered electron (own invariants with the true beams) and x_K = x / (1 - x_L)
+    run macros/kaon/kaon_kinematics.C $R/kin_9x130_$g "$EIC_DATA/lambda_dis_9x130/dis_lambda_9x130_${g}_s40?.eicreconpr3116.edm4eic.root" "\"$R/kin_9x130_$g\""
   done
 fi
 

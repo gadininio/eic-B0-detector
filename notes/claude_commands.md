@@ -357,3 +357,15 @@ bash scripts/make_results.sh 11     # results/11_kaon_sf/dis_9x130_{old,new}_xl0
 # single run: last argument = xLMin
 root -l -b -q "macros/dis/lambda_dis.C+(\"$EIC_DATA/lambda_dis_9x130/dis_lambda_9x130_old_s40?.eicreconpr3116.edm4eic.root\",\"results/11_kaon_sf/dis_9x130_old_xl06\",3,2.5,0.6)"
 ```
+
+## Kaon SF step 2: scattered electron (2026-11-25)
+```bash
+bash scripts/make_results.sh 11     # also results/11_kaon_sf/kin_9x130_{old,new}
+root -l -b -q "macros/kaon/kaon_kinematics.C+(\"$EIC_DATA/lambda_dis_9x130/dis_lambda_9x130_old_s40?.eicreconpr3116.edm4eic.root\",\"results/11_kaon_sf/kin_9x130_old\")"
+# collection IDs (EOS is not mounted in eic-shell: copy the file to /tmp first)
+cp $EIC_DATA/lambda_dis_9x130/dis_lambda_9x130_old_s401.eicreconpr3116.edm4eic.root /tmp/gninio/ksf/f9.root
+echo "podio-dump /tmp/gninio/ksf/f9.root | grep -E \"ReconstructedChargedParticles|ScatteredElectrons\"" > /tmp/gninio/ksf/pd.sh
+bash scripts/in_eic_shell.sh /tmp/gninio/ksf/pd.sh
+# beam directions: campaign (afterburner) vs ours (ddsim --crossingAngleBoost)
+root -l -b -q -e "auto f=TFile::Open(\"<file>\"); ((TTree*)f->Get(\"events\"))->Scan(\"MCParticles.PDG:MCParticles.momentum.x/abs(MCParticles.momentum.z)\",\"MCParticles.generatorStatus==4\",\"\",2);"
+```

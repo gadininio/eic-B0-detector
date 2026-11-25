@@ -239,6 +239,63 @@ particle gun (p = 50–100 GeV, θ = 8–18 mrad, 25 mrad crossing angle, 18×27
   (0.92² ≈ 0.85 vs 0.56² ≈ 0.31), and DIS Λs pile up at small θ, where the new coverage is lowest.
   (Straight lines only: displaced decays and the B0 dipole bending the π⁻ are not in these numbers.)
 
+## 12. Kaon structure function (2026-11-19 – 11-25)
+Sullivan process e p → e′ Λ X: the photon probes a virtual K⁺ of the proton, the fast Λ is the tag.
+Variables: x_L = p_z(Λ, beam frame) / E_p, |t| = −(P_beam − P_Λ)², x_K = x / (1 − x_L). Measurement region:
+high x_L (here > 0.6) and small |t|.
+
+**Which Λs go where** (`macros/exploration/lambda_xl_theta.C`; generated Λs, angle from the proton beam).
+- Signal model: ePIC campaign 26.07.3 `EXCLUSIVE/MESON_SF_ABCONV/eicMesonSFGen-1.0.0` (Sullivan K⁺Λ, RECO only,
+  2–4 files × 100 events per beam energy, BNL xrootd). Λ pT ≈ 0.4–1.2 GeV at every energy, x_L ≥ 0.4,
+  |t| ≲ 1.9 GeV², so θ ≈ pT / (x_L E_p) ∝ 1/E_p; hard edge θ_max · E_p ≈ 1.5 GeV (generator phase space).
+- High-x_L (> 0.6) Λs in the B0 (5.5–20 mrad): Sullivan 9x130 239 / 299, 10x100 134 / 147, 18x275 **0 / 160**
+  (all < 5.5 mrad: ZDC / Roman pots / off-momentum detectors), 5x41 75 / 306 (mostly 20–40 mrad).
+  Our Pythia Λ-tagged DIS: 9x130 162 / 244 in the B0; 18x275 only 13 / 144 (at |t| ≈ 2 GeV²).
+- The B0-direction Λs of the 18x275 DIS sample (section 10) are real but 404 / 417 have x_L < 0.6
+  (remnant fragmentation). ⇒ **The B0 measurement of the kaon SF is a 9x130 / 10x100 measurement.**
+- The Pythia sample is the right final state and can be used to start; Pythia has no kaon-exchange
+  mechanism, so the Sullivan generator is needed later as the signal model (flux factor, t dependence).
+  The campaign MESON_SF reconstruction predates EICrecon#2901 (no B0 tracking of Λ daughters) and has no
+  FULL files ⇒ for B0 tracking it must be regenerated and simulated with our chain.
+
+**Step 1: x_L > 0.6 on the 9x130 DIS samples** (`lambda_dis.C`, new last argument `xLMin`;
+`make_results.sh 11` → results/11_kaon_sf/dis_9x130_{old,new}_xl06; with xLMin = 0 the old results are
+reproduced exactly). 162 B0-direction Λs with x_L > 0.6 in 1000 events; mean x_L 0.71, mean |t| 1.38 GeV²,
+none below |t| ≈ 0.5 GeV² (the B0 starts at 5.5 mrad ⇒ pT ≳ 0.5 GeV: the smallest |t| is out of reach).
+
+| 9x130, x_L > 0.6 | old B0 | new B0 |
+|---|---|---|
+| both daughters accepted, per p π⁻ decay | 61.9 % | 30.1 % |
+| A×ε per p π⁻ decay, truth / hit seeding | 42.9 / 51.2 % | 19.2 / 24.7 % |
+| both reconstructed per B0-direction Λ, truth / hit | 22.2 / 26.5 % | 8.6 / 11.1 % |
+| mass ±10 MeV, hit seeding, S / B | 31 / 2 | 11 / 0 |
+| x_L reco − true (hit): mean, RMS | +0.012, 0.033 | −0.010, 0.014 |
+| \|t\| reco − true (hit): mean, RMS [GeV²] | −0.025, 0.080 | −0.003, 0.049 |
+
+Higher acceptance and π⁻ efficiency than without the cut (harder π⁻), and almost no combinatorial
+background. Reconstructed Λs have larger |t| (acceptance favours larger angles). No beam effects
+in the simulation: the |t| resolution is optimistic.
+
+**Step 2: DIS kinematics from the scattered electron** (`macros/kaon/kaon_kinematics.C`,
+results/11_kaon_sf/kin_9x130_{old,new}).
+- **Crossing angle in our simulation:** ddsim `--crossingAngleBoost -0.025` is a pure Lorentz boost; it
+  gives *both* beams px/E = −0.025 (beam e⁻ px/|pz| = −0.025). The campaign afterburner files have the
+  electron beam along −z (px/|pz| ~ 1e-4) and the proton at −25 mrad. Proton side identical ⇒ the B0 / Λ
+  results are not affected. Electron side tilted by 25 mrad ⇒ EICrecon's InclusiveKinematics* (which put
+  the beams into the ePIC frame) are wrong for our samples: Q² reco/true spread ±25 %.
+- Fix used: Lorentz invariants Q² = −q², y = P·q / P·e, x = Q² / 2P·q from the true beam four-vectors of
+  the event (status 4) and the reconstructed scattered electron (the track EICrecon uses,
+  ScatteredElectronsTruth = truth-matched; found in 97–98 % of events). Own truth = InclusiveKinematicsTruth.
+- Electron method, old B0 (new similar), reco/true − 1, median [16 %, 84 %]: Q² −0.03 [−0.09, −0.01] at
+  y < 0.01 and within a few % above; x useless at y < 0.01 (−0.90; reco y ≤ 0 in 1/3 of these events),
+  −0.33 [−0.73, +0.74] at 0.01–0.05, ±25 % at 0.05–0.2, few % above 0.2.
+- The high-x_L events sit at low y: of the 162 events with a B0-direction Λ at x_L > 0.6, 111 have
+  y < 0.01, 29 have 0.01–0.05, 22 have y > 0.05. Reconstructed Λ candidates (no truth, best pair in
+  ±10 MeV): old 32 (30 signal), 21 at y < 0.01; new 9 (9), 5 at y < 0.01. x_L of the candidate:
+  +0.012 [−0.009, +0.031] (old).
+- ⇒ with the electron method only the few y > 0.05 events give a usable x_K. Next: hadronic-final-state
+  methods (Σ, eΣ, double angle) computed in the right frame, and the usual y cuts.
+
 ## Open points
 - Why the CKF loses soft π⁻ (rerun with CKF debug output on a few events).
 - Realistic B0 seeding: works with #3116 (section 7); follow it until merged.
@@ -249,6 +306,11 @@ particle gun (p = 50–100 GeV, θ = 8–18 mrad, 25 mrad crossing angle, 18×27
   the B0 dipole on the π⁻ coverage.
 - Why the new support plates have a slot on the electron side next to the beam pipe (not stated in
   the xml).
+- Electron side of our simulation: ddsim `--crossingAngleBoost` tilts the electron beam by 25 mrad
+  (section 12). Redo with the ePIC afterburner (abconv) before electron acceptance or EICrecon
+  kinematics are used; B0 / Λ results unaffected.
+- Kaon SF: low-y kinematics (Σ / eΣ / DA with the hadronic final state), Sullivan signal sample through
+  our chain, kaon flux / t-extrapolation, beam effects for |t|.
 
 ## Next studies (planned 2026-11-19, each in its own session, in this repository)
 All three build on the forward Λ reconstructed through Λ → p π⁻ in the B0 (`macros/common/LambdaB0.h`,
@@ -257,7 +319,7 @@ the DIS production and condor scripts, `make_results.sh`); each gets its own mac
 1. **Λ polarization** (first: can start from the existing DIS samples). Needs the proton angle in
    the Λ rest frame, i.e. the full p π⁻ reconstruction and its angular acceptance × efficiency.
    Pythia does not polarize the Λ: reweight the decay angle, or use a generator with polarization.
-2. **Kaon structure function** (Sullivan process, p → Λ K⁺ with the Λ as the forward tag): needs the
+2. **Kaon structure function** — started, see section 12 and results/11_kaon_sf. (Sullivan process, p → Λ K⁺ with the Λ as the forward tag): needs the
    tagged-Λ acceptance and efficiency in a kaon-exchange (TDIS-type) sample, probably a dedicated
    generator (check what ePIC uses).
 3. **Kaon EM form factor** (exclusive e p → e′ K⁺ Λ): the same Λ tag plus the exclusive K⁺ and the
