@@ -548,3 +548,19 @@ Macro `~/private/eic/compare_tracks.C` (run in `~/private/eic`). Both use the co
 - Missing pieces listed in the answer: Sullivan generator in own chain (eicMesonSFGen); 9x130 / 10x100 focus; p π⁻ vertex + Λ 4-vector reconstruction (decay vertex, no truth); event kinematics (x, Q², y from the scattered electron), t and x_L from the Λ, x_K = x/(1−x_L); beam effects (afterburner) for t resolution; backgrounds (non-Sullivan Λ from Pythia DIS = our lambda_dis samples, Σ⁰ → Λγ); acceptance/efficiency in (x_K, Q², t, x_L) bins, flux-factor extraction, luminosity; ZDC n π⁰ channel and RP/OMD for 18x275.
 - Scratch files: /tmp/gninio/ksf (peek*.C, one file per energy).
 - 2026-11-19: next studies (Λ polarization, kaon structure function, kaon EM form factor) added to claude_summary.md; each to be done in its own session, in this repository.
+
+### Kaon SF follow-up (2026-11-25): Λ-tagged DIS vs Sullivan, x_L vs θ
+- User: confused — the Pythia Λ-tagged DIS samples (18x275 and 9x130) had Λs in the B0, so why "0 % in B0 at 18x275", and why a new sample?
+- New `macros/exploration/lambda_xl_theta.C` (RDataFrame; a first TTree::Draw version with 3 columns of a vector branch gave misaligned garbage): generated Λs (status 1|2), x_L = p_z/E_p and θ in the beam frame, |t| = −(P_beam − P_Λ)², pT. Run on all campaign MESON_SF files (BNL xrootd) and the old-geometry DIS reco files (same generated events in both geometries).
+- High-x_L (> 0.6) Λs — the kaon SF region:
+  | sample | Λs | x_L > 0.6 | of which 5.5–20 mrad (B0) | θ median (x_L>0.6) | |t| median |
+  |---|---|---|---|---|---|
+  | Sullivan 5x41 | 400 | 306 | 75 | 26 mrad | 1.08 |
+  | Sullivan 10x100 | 200 | 147 | 134 | 10.5 | 1.05 |
+  | Sullivan 9x130 | 400 | 299 | 239 | 8.6 | 1.16 |
+  | Sullivan 18x275 | 200 | 160 | **0** | 4.0 | 1.14 |
+  | Pythia DIS 9x130 | 1016 | 244 | 162 | 7.2 | 0.90 |
+  | Pythia DIS 18x275 | 1036 | 144 | **13** (at |t| ≈ 2 GeV²) | 3.0 | 0.73 |
+- Pythia 18x275 B0-direction Λs: 417, of which 404 at x_L < 0.6 (167 / 180 / 57 in x_L 0–0.2 / 0.2–0.4 / 0.4–0.6) ⇒ the earlier B0 results are right, but those Λs are mostly not in the kaon SF region.
+- θ ≈ pT / (x_L E_p) with pT ≈ 0.4–1.2 GeV at every energy ⇒ θ scales as 1/E_p. Sullivan sample has a hard edge θ_max · E_p ≈ 1.5 GeV (5.47 mrad at 275, 11.2 at 130, 14.9 at 100, 36 at 41): a generator phase-space limit (x_L ≥ 0.4, |t| ≲ 1.9 GeV²), so 0 % in B0 at 18x275 is not a statistics effect.
+- Conclusion: at 18x275 kaon-SF Λs (both generators) go below the B0 (ZDC/RP/OMD); at 9x130 and 10x100 the B0 sees most of them. The Pythia Λ-tagged DIS sample can be used to start (cut x_L > 0.6, small |t|); the Sullivan generator is needed later as the signal model for the extraction (flux factor, t dependence), not to start.

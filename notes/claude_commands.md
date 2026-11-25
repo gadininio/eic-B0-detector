@@ -340,3 +340,13 @@ for e in 5x41 10x100 9x130 9x275 18x275; do $X ls $B/$e; done
 xrdcp -f root://epicxrd1.sdcc.bnl.gov:1095/$B/18x275/eicMesonSFGen-1.0.0_K+Lambda_ep_18x275_ab_run078.0014.eicrecon.edm4eic.root f.root
 root -l -b -q "peek3.C(\"f.root\",275)"   # scratch macro in /tmp/gninio/ksf: Λ θ (beam frame), <x_L>, Λ end z
 ```
+
+## Kaon SF: x_L vs θ, Sullivan vs Pythia DIS (2026-11-25)
+```bash
+source /cvmfs/sft.cern.ch/lcg/views/LCG_107/x86_64-el9-gcc13-opt/setup.sh
+R=root://epicxrd1.sdcc.bnl.gov:1095; B=/eic/EPIC/RECO/26.07.3/epic_craterlake/EXCLUSIVE/MESON_SF_ABCONV/eicMesonSFGen-1.0.0/ep
+F=$(xrdfs $R ls $B/9x130 | sed "s|^|$R/|" | tr "\n" " ")
+root -l -b -q "macros/exploration/lambda_xl_theta.C(\"Sullivan 9x130\",\"$F\",130)"
+D=$EIC_DATA/lambda_dis
+root -l -b -q "macros/exploration/lambda_xl_theta.C(\"Pythia DIS 18x275\",\"$D/dis_lambda_old_s301.eicreconpr3116.edm4eic.root $D/dis_lambda_old_s302.eicreconpr3116.edm4eic.root\",275)"
+```
