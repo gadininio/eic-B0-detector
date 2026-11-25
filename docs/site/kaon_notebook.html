@@ -1,0 +1,495 @@
+<title>Kaon Structure Function Notebook</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* Layout: lab notebook. Status block on top, a progress strip of the analysis chain, then dated step entries
+   (question / method / result / conclusion) in one reading column with a sticky contents rail on wide screens. */
+:root {
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --ink: #17202b;
+  --muted: #5a6675;
+  --line: #d9dee5;
+  --accent: #0b6e8a;        /* detector teal */
+  --accent-soft: #e2f0f4;
+  --ok: #2f7d4f;  --ok-soft: #e3f2e8;
+  --warn: #9a6200; --warn-soft: #fbf0db;
+  --bad: #a3332b; --bad-soft: #f8e4e2;
+  --todo: #6b7685; --todo-soft: #eceff3;
+  --code-bg: #eef1f5;
+  --f-display: "IBM Plex Sans Condensed", "Arial Narrow", system-ui, sans-serif;
+  --f-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #11161d; --surface: #18202a; --ink: #e4e9ef; --muted: #9aa6b4; --line: #2b3542;
+    --accent: #4fb8d4; --accent-soft: #173341;
+    --ok: #6cc58f; --ok-soft: #173326; --warn: #e2ad52; --warn-soft: #3a2d12;
+    --bad: #ec8a80; --bad-soft: #3d1f1c; --todo: #9aa6b4; --todo-soft: #222b36; --code-bg: #1f2833;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #11161d; --surface: #18202a; --ink: #e4e9ef; --muted: #9aa6b4; --line: #2b3542;
+  --accent: #4fb8d4; --accent-soft: #173341;
+  --ok: #6cc58f; --ok-soft: #173326; --warn: #e2ad52; --warn-soft: #3a2d12;
+  --bad: #ec8a80; --bad-soft: #3d1f1c; --todo: #9aa6b4; --todo-soft: #222b36; --code-bg: #1f2833;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 16px; line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0 4rem;
+}
+a { color: var(--accent); }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; line-height: 1.2; margin: 0; }
+h1 { font-size: clamp(1.9rem, 4vw, 2.6rem); font-weight: 700; letter-spacing: -0.01em; }
+h2 { font-size: 1.6rem; font-weight: 600; }
+h3 { font-size: 1.15rem; font-weight: 600; }
+p { margin: 0; }
+code, .mono { font-family: var(--f-mono); font-size: 0.86em; }
+code { background: var(--code-bg); padding: 0.1em 0.35em; border-radius: 3px; overflow-wrap: anywhere; }
+.num { font-variant-numeric: tabular-nums; }
+
+.wrap { max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 3rem; }
+@media (max-width: 900px) { .wrap { grid-template-columns: minmax(0, 1fr); gap: 0; } .rail { display: none; } }
+
+/* header */
+.masthead { max-width: 1180px; margin: 0 auto; padding-block: 2.5rem 1.5rem; display: grid; gap: 0.6rem; border-bottom: 1px solid var(--line); margin-bottom: 2rem; }
+.eyebrow { font-family: var(--f-mono); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.lede { max-width: 68ch; color: var(--muted); font-size: 1.05rem; }
+.meta { display: flex; flex-wrap: wrap; gap: 0.4rem 1.4rem; font-size: 0.88rem; color: var(--muted); }
+.meta b { color: var(--ink); font-weight: 600; }
+
+/* rail */
+.rail { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 1.5rem); align-self: start; font-size: 0.9rem; }
+.rail nav { display: grid; gap: 0.15rem; border-left: 2px solid var(--line); }
+.rail a { color: var(--muted); text-decoration: none; padding: 0.25rem 0 0.25rem 0.9rem; margin-left: -2px; border-left: 2px solid transparent; }
+.rail a:hover { color: var(--ink); border-left-color: var(--accent); }
+.rail .sub { padding-left: 1.7rem; font-size: 0.84rem; }
+
+main { display: grid; gap: 3.5rem; min-width: 0; }
+section { display: grid; gap: 1.1rem; min-width: 0; scroll-margin-top: 1.5rem; }
+.prose { display: grid; gap: 0.8rem; max-width: 72ch; }
+.prose ul { margin: 0; padding-left: 1.2rem; display: grid; gap: 0.35rem; }
+
+/* status block */
+.status { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 1.4rem 1.5rem; display: grid; gap: 1.1rem; }
+.status-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.4rem; }
+@media (max-width: 760px) { .status-grid { grid-template-columns: minmax(0, 1fr); } }
+.status-grid > div { display: grid; gap: 0.35rem; align-content: start; min-width: 0; }
+.label { font-family: var(--f-mono); font-size: 0.74rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+
+/* chain */
+.chain { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.6rem; }
+@media (max-width: 760px) { .chain { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.link { border: 1px solid var(--line); border-radius: 6px; padding: 0.7rem 0.8rem; background: var(--surface); display: grid; gap: 0.3rem; align-content: start; min-width: 0; }
+.link p { font-size: 0.86rem; color: var(--muted); line-height: 1.45; }
+.link h3 { font-size: 1rem; }
+.pill { justify-self: start; font-family: var(--f-mono); font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.1rem 0.45rem; border-radius: 999px; }
+.pill.ok { background: var(--ok-soft); color: var(--ok); }
+.pill.warn { background: var(--warn-soft); color: var(--warn); }
+.pill.todo { background: var(--todo-soft); color: var(--todo); }
+.pill.bad { background: var(--bad-soft); color: var(--bad); }
+
+/* step entries */
+.step { border-top: 1px solid var(--line); padding-top: 1.6rem; display: grid; gap: 1.1rem; min-width: 0; scroll-margin-top: 1.5rem; }
+.step-head { display: grid; gap: 0.3rem; }
+.step-head .label { color: var(--accent); }
+.qmrc { display: grid; grid-template-columns: 8.5rem minmax(0, 1fr); gap: 0.9rem 1.4rem; max-width: 900px; }
+@media (max-width: 600px) { .qmrc { grid-template-columns: minmax(0, 1fr); gap: 0.3rem; } .qmrc > .label { margin-top: 0.7rem; } }
+.qmrc > .label { padding-top: 0.25rem; }
+.qmrc > div { display: grid; gap: 0.6rem; min-width: 0; }
+.qmrc ul { margin: 0; padding-left: 1.2rem; display: grid; gap: 0.35rem; }
+.conclusion { border-left: 3px solid var(--accent); background: var(--accent-soft); padding: 0.7rem 1rem; border-radius: 0 4px 4px 0; }
+.finding { border-left: 3px solid var(--warn); background: var(--warn-soft); padding: 0.7rem 1rem; border-radius: 0 4px 4px 0; }
+
+/* tables */
+.tbl { overflow-x: auto; max-width: 100%; }
+table { border-collapse: collapse; font-size: 0.9rem; font-variant-numeric: tabular-nums; min-width: 100%; }
+th, td { text-align: left; padding: 0.4rem 0.75rem; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th { font-weight: 600; color: var(--muted); font-size: 0.8rem; }
+td.r, th.r { text-align: right; }
+tr.hl td { background: var(--accent-soft); }
+td.zero { color: var(--bad); font-weight: 600; }
+
+/* figures */
+figure { margin: 0; display: grid; gap: 0.5rem; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 0.8rem; min-width: 0; }
+figure img { width: 100%; height: auto; display: block; background: #fff; border-radius: 3px; cursor: zoom-in; }
+figcaption { font-size: 0.86rem; color: var(--muted); }
+.fig-bar { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; justify-content: space-between; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 5px; overflow: hidden; }
+.seg button { font: 500 0.8rem var(--f-body); border: 0; background: transparent; color: var(--muted); padding: 0.25rem 0.7rem; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--accent); color: var(--surface); }
+dialog { border: 0; padding: 0; max-width: min(96vw, 1800px); background: transparent; }
+dialog::backdrop { background: rgba(10, 14, 20, 0.8); }
+dialog img { max-width: 100%; max-height: 92vh; display: block; background: #fff; }
+dialog button { position: absolute; top: 8px; right: 8px; font: 600 0.85rem var(--f-body); background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 4px; padding: 0.3rem 0.6rem; cursor: pointer; }
+
+.files { font-size: 0.85rem; color: var(--muted); display: flex; flex-wrap: wrap; gap: 0.3rem 1rem; }
+dl.defs { display: grid; grid-template-columns: minmax(8rem, max-content) minmax(0, 1fr); gap: 0.55rem 1.4rem; margin: 0; max-width: 900px; }
+dl.defs dt { font-weight: 600; }
+dl.defs dd { margin: 0; color: var(--ink); }
+@media (max-width: 600px) { dl.defs { grid-template-columns: minmax(0, 1fr); gap: 0.1rem; } dl.defs dd { margin-bottom: 0.6rem; } }
+pre { background: var(--code-bg); padding: 0.8rem 1rem; border-radius: 5px; overflow-x: auto; font-family: var(--f-mono); font-size: 0.82rem; line-height: 1.5; margin: 0; max-width: 100%; }
+.issues { display: grid; gap: 0.6rem; max-width: 900px; }
+.issue { display: grid; grid-template-columns: 6.5rem minmax(0, 1fr); gap: 1rem; align-items: start; padding-bottom: 0.6rem; border-bottom: 1px solid var(--line); }
+@media (max-width: 600px) { .issue { grid-template-columns: minmax(0, 1fr); gap: 0.3rem; } }
+footer { max-width: 1180px; margin: 4rem auto 0; padding-top: 1rem; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.85rem; }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+html { scroll-behavior: smooth; }
+</style>
+
+<header class="masthead">
+  <div class="eyebrow">ePIC · far-forward B0 tracker · Λ → pπ⁻</div>
+  <h1>Kaon Structure Function Notebook</h1>
+  <p class="lede">Measuring the kaon structure function through the Sullivan process, e p → e′ Λ X, with the Λ reconstructed in the B0 tracker. Each step records the question, the method, the result and what it means. Built on the earlier B0 / Λ reconstruction work.</p>
+  <div class="meta">
+    <span>Last updated <b class="num">2026-11-25</b></span>
+    <span>Current step <b>2 · scattered electron</b></span>
+    <span>Code and results <a href="https://github.com/gadininio/eic-B0-detector" target="_blank" rel="noopener">eic-B0-detector</a></span>
+    <span>Results folder <code>results/11_kaon_sf</code></span>
+  </div>
+</header>
+
+<div class="wrap">
+  <aside class="rail" aria-label="Contents">
+    <nav>
+      <a href="#status">Where we are</a>
+      <a href="#chain">Analysis chain</a>
+      <a href="#steps">Kaon SF steps</a>
+      <a class="sub" href="#step0">0 · Where the Λs go</a>
+      <a class="sub" href="#step1">1 · High-x<sub>L</sub> Λs</a>
+      <a class="sub" href="#step2">2 · Scattered electron</a>
+      <a href="#foundation">B0 / Λ foundation</a>
+      <a href="#issues">Open issues</a>
+      <a href="#defs">Definitions</a>
+      <a href="#repro">Reproduce</a>
+    </nav>
+  </aside>
+
+  <main>
+    <!-- ================= STATUS ================= -->
+    <section id="status" aria-labelledby="status-h">
+      <h2 id="status-h" class="visually-hidden" hidden>Where we are</h2>
+      <div class="status">
+        <div class="status-grid">
+          <div>
+            <span class="label">Where we are</span>
+            <p>The B0 reconstructs high-x<sub>L</sub> Λs cleanly at 9×130 (old geometry 31 signal / 2 background in ±10 MeV). Q² from the scattered electron is good to a few percent.</p>
+          </div>
+          <div>
+            <span class="label">Latest conclusion</span>
+            <p>111 of the 162 high-x<sub>L</sub> Λ events have y &lt; 0.01, where the electron method cannot measure x. x<sub>K</sub> from the electron alone works only for the few events with y &gt; 0.05.</p>
+          </div>
+          <div>
+            <span class="label">Next</span>
+            <p>Low-y kinematics from the hadronic final state (Σ, eΣ, double angle) in the correct frame, and the usual y cuts. Decide whether to redo the simulation with the ePIC afterburner.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= CHAIN ================= -->
+    <section id="chain" aria-labelledby="chain-h">
+      <h2 id="chain-h">Analysis chain</h2>
+      <p class="prose" style="color:var(--muted)">What a kaon structure function measurement needs, and how far each piece has got.</p>
+      <div class="chain">
+        <div class="link"><span class="pill ok">done</span><h3>Λ → pπ⁻ in the B0</h3><p>Acceptance, tracking efficiency, mass peak, no-truth selection, hit seeding (EICrecon#3116).</p></div>
+        <div class="link"><span class="pill ok">done</span><h3>Where the Λs go</h3><p>High-x<sub>L</sub> Λs reach the B0 at 9×130 and 10×100, not at 18×275.</p></div>
+        <div class="link"><span class="pill ok">done</span><h3>x<sub>L</sub> and t of the Λ</h3><p>x<sub>L</sub> to 1.4–3.3 %, |t| to 0.05–0.08 GeV² (no beam effects yet).</p></div>
+        <div class="link"><span class="pill warn">partial</span><h3>x, Q², y from the electron</h3><p>Q² good. x fails at y &lt; 0.05, where most events are.</p></div>
+        <div class="link"><span class="pill todo">next</span><h3>Hadronic-final-state kinematics</h3><p>Σ, eΣ, double angle, computed in the right frame, for low y.</p></div>
+        <div class="link"><span class="pill todo">to do</span><h3>Sullivan signal sample</h3><p>eicMesonSFGen through our own simulation and reconstruction (campaign files can't be re-reconstructed).</p></div>
+        <div class="link"><span class="pill todo">to do</span><h3>Beam effects</h3><p>Angular divergence and momentum spread; needed for a realistic |t| resolution. Also fixes the electron-beam tilt.</p></div>
+        <div class="link"><span class="pill todo">to do</span><h3>Extraction</h3><p>Acceptance × efficiency in (x<sub>K</sub>, Q², t, x<sub>L</sub>) bins, background (Σ⁰ → Λγ, fragmentation Λs), kaon flux, t extrapolation.</p></div>
+      </div>
+    </section>
+
+    <!-- ================= STEPS ================= -->
+    <section id="steps" aria-labelledby="steps-h">
+      <h2 id="steps-h">Kaon SF steps</h2>
+
+      <!-- STEP 0 -->
+      <article class="step" id="step0">
+        <div class="step-head">
+          <span class="label">Step 0 · 2026-11-19 and 11-25</span>
+          <h3>Where do the kaon-structure-function Λs go?</h3>
+        </div>
+        <div class="qmrc">
+          <span class="label">Question</span>
+          <div><p>The Λ-tagged DIS samples put many Λs into the B0 at 18×275. Are these the Λs a kaon structure function measurement needs, and do we need a different sample?</p></div>
+
+          <span class="label">Method</span>
+          <div>
+            <p>Count generated Λs by x<sub>L</sub> and by angle from the proton beam, in two kinds of sample:</p>
+            <ul>
+              <li>the ePIC campaign Sullivan sample <code>EXCLUSIVE/MESON_SF_ABCONV/eicMesonSFGen-1.0.0</code> (K⁺Λ, 2–4 files of 100 events per beam energy);</li>
+              <li>our Pythia8 Λ-tagged DIS samples (1000 events each, events kept only if they have a Λ below 25 mrad).</li>
+            </ul>
+            <p>Macro <code>macros/exploration/lambda_xl_theta.C</code>.</p>
+          </div>
+
+          <span class="label">Result</span>
+          <div>
+            <div class="tbl">
+              <table>
+                <thead><tr><th>sample</th><th class="r">Λs</th><th class="r">x<sub>L</sub> &gt; 0.6</th><th class="r">of those in the B0</th><th class="r">median angle</th></tr></thead>
+                <tbody>
+                  <tr><td>Sullivan 5×41</td><td class="r">400</td><td class="r">306</td><td class="r">75</td><td class="r">26 mrad</td></tr>
+                  <tr class="hl"><td>Sullivan 10×100</td><td class="r">200</td><td class="r">147</td><td class="r">134</td><td class="r">10.5 mrad</td></tr>
+                  <tr class="hl"><td>Sullivan 9×130</td><td class="r">400</td><td class="r">299</td><td class="r">239</td><td class="r">8.6 mrad</td></tr>
+                  <tr><td>Sullivan 18×275</td><td class="r">200</td><td class="r">160</td><td class="r zero">0</td><td class="r">4.0 mrad</td></tr>
+                  <tr class="hl"><td>Pythia DIS 9×130</td><td class="r">1016</td><td class="r">244</td><td class="r">162</td><td class="r">7.2 mrad</td></tr>
+                  <tr><td>Pythia DIS 18×275</td><td class="r">1036</td><td class="r">144</td><td class="r zero">13</td><td class="r">3.0 mrad</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <ul>
+              <li>The angle is roughly p<sub>T</sub> / (x<sub>L</sub> E<sub>p</sub>). p<sub>T</sub> is 0.4–1.2 GeV at every beam energy, so the angle halves from 130 to 275 GeV and the high-x<sub>L</sub> Λs fall below the B0's 5.5 mrad edge.</li>
+              <li>Of the 417 Λs in the B0 direction in the 18×275 DIS sample, 404 have x<sub>L</sub> &lt; 0.6. They come from fragmentation of the proton remnant.</li>
+              <li>The Sullivan sample has a hard edge, maximum angle × E<sub>p</sub> ≈ 1.5 GeV, so the 0 at 18×275 is not a statistics effect.</li>
+            </ul>
+          </div>
+
+          <span class="label">Conclusion</span>
+          <div>
+            <p class="conclusion">The B0 measurement of the kaon structure function is a 9×130 / 10×100 measurement. At 18×275 the Λ goes to the ZDC, the Roman pots and the off-momentum detectors. The Pythia sample is the right final state to start with; the Sullivan generator is needed later as the signal model for the extraction.</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- STEP 1 -->
+      <article class="step" id="step1">
+        <div class="step-head">
+          <span class="label">Step 1 · 2026-11-25</span>
+          <h3>High-x<sub>L</sub> Λs at 9×130: acceptance, mass, x<sub>L</sub> and t</h3>
+        </div>
+        <div class="qmrc">
+          <span class="label">Question</span>
+          <div><p>How many Λs with x<sub>L</sub> &gt; 0.6 does the B0 reconstruct at 9×130, how clean is the mass peak, and how well are x<sub>L</sub> and t measured?</p></div>
+
+          <span class="label">Method</span>
+          <div>
+            <ul>
+              <li>New argument <code>xLMin</code> in <code>macros/dis/lambda_dis.C</code> (default 0 leaves the old results unchanged; checked).</li>
+              <li>The cut applies to generated B0-direction Λs (for acceptance and efficiency) and to the reconstructed (+,−) pairs (for the mass, no truth used in the selection).</li>
+              <li>Extra figure: x<sub>L</sub> and |t| generated vs reconstructed, and their resolution.</li>
+            </ul>
+          </div>
+
+          <span class="label">Result</span>
+          <div>
+            <div class="tbl">
+              <table>
+                <thead><tr><th>9×130, x<sub>L</sub> &gt; 0.6 (162 B0-direction Λs)</th><th class="r">old B0</th><th class="r">new B0</th></tr></thead>
+                <tbody>
+                  <tr><td>both daughters accepted, per pπ⁻ decay</td><td class="r">61.9 %</td><td class="r">30.1 %</td></tr>
+                  <tr><td>acceptance × efficiency per pπ⁻ decay (truth / hit seeding)</td><td class="r">42.9 / 51.2 %</td><td class="r">19.2 / 24.7 %</td></tr>
+                  <tr><td>reconstructed per B0-direction Λ (truth / hit)</td><td class="r">22.2 / 26.5 %</td><td class="r">8.6 / 11.1 %</td></tr>
+                  <tr class="hl"><td>mass ±10 MeV, hit seeding: signal / background</td><td class="r">31 / 2</td><td class="r">11 / 0</td></tr>
+                  <tr><td>x<sub>L</sub> reco − true: mean, RMS</td><td class="r">+0.012, 0.033</td><td class="r">−0.010, 0.014</td></tr>
+                  <tr><td>|t| reco − true: mean, RMS [GeV²]</td><td class="r">−0.025, 0.080</td><td class="r">−0.003, 0.049</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <ul>
+              <li>Compared with no cut, acceptance and π⁻ efficiency are higher (the π⁻ is harder) and the combinatorial background almost disappears.</li>
+              <li>No generated Λ in the B0 has |t| below about 0.5 GeV²: the B0 starts at 5.5 mrad, so p<sub>T</sub> ≳ 0.5 GeV. Reconstructed Λs lean towards larger |t|.</li>
+            </ul>
+            <figure data-fig>
+              <div class="fig-bar"><span class="label">Acceptance, efficiency and mass</span>
+                <div class="seg" role="group" aria-label="B0 geometry"><button type="button" aria-pressed="true" data-src="figs/dis_9x130_old_xl06.png">old B0</button><button type="button" aria-pressed="false" data-src="figs/dis_9x130_new_xl06.png">new B0</button></div></div>
+              <img src="figs/dis_9x130_old_xl06.png" alt="Lambda-tagged DIS 9x130 with x_L above 0.6: momentum spectrum, acceptance, tracking efficiency, acceptance times efficiency, yield and the p pi- mass for truth and hit seeding." loading="lazy">
+              <figcaption>Top: spectrum, acceptance, tracking efficiency, A×ε per pπ⁻ decay. Bottom: yield per B0-direction Λ, mass with truth and hit seeding (green = truth-labelled signal), main numbers.</figcaption>
+            </figure>
+            <figure data-fig>
+              <div class="fig-bar"><span class="label">x<sub>L</sub> and |t|</span>
+                <div class="seg" role="group" aria-label="B0 geometry"><button type="button" aria-pressed="true" data-src="figs/dis_9x130_old_xl06_xl_t.png">old B0</button><button type="button" aria-pressed="false" data-src="figs/dis_9x130_new_xl06_xl_t.png">new B0</button></div></div>
+              <img src="figs/dis_9x130_old_xl06_xl_t.png" alt="x_L and |t| distributions of selected Lambdas, generated and reconstructed, and the x_L and |t| resolution." loading="lazy">
+              <figcaption>x<sub>L</sub> and |t| of the selected Λs (black generated, red reconstructed), and the resolution of the reconstructed Λ (hit seeding).</figcaption>
+            </figure>
+          </div>
+
+          <span class="label">Conclusion</span>
+          <div><p class="conclusion">At 9×130 the B0 delivers a clean high-x<sub>L</sub> Λ sample with good x<sub>L</sub> and t resolution. The lowest |t|, where kaon exchange dominates most, is out of the B0's reach. The new geometry keeps about 40 % of the old geometry's yield.</p></div>
+        </div>
+      </article>
+
+      <!-- STEP 2 -->
+      <article class="step" id="step2">
+        <div class="step-head">
+          <span class="label">Step 2 · 2026-11-25</span>
+          <h3>DIS kinematics from the scattered electron, and x<sub>K</sub></h3>
+        </div>
+        <div class="qmrc">
+          <span class="label">Question</span>
+          <div><p>How well do we measure x, Q² and y for these events, and so x<sub>K</sub> = x / (1 − x<sub>L</sub>)?</p></div>
+
+          <span class="label">Method</span>
+          <div>
+            <ul>
+              <li>Start from EICrecon's <code>InclusiveKinematics*</code> collections (truth, electron, Σ, eΣ, double angle, Jacquet–Blondel).</li>
+              <li>Recompute the true kinematics from the beam particles and the scattered electron: they agree exactly with <code>InclusiveKinematicsTruth</code>.</li>
+              <li>Compare the reconstructed electron track with the true electron.</li>
+              <li>New macro <code>macros/kaon/kaon_kinematics.C</code>: Q², x and y as Lorentz invariants from the true beam four-vectors of each event and the reconstructed electron track. Λ candidate per event without truth; x<sub>K</sub> reconstructed vs true.</li>
+            </ul>
+          </div>
+
+          <span class="label">Finding</span>
+          <div>
+            <p class="finding"><b>Our simulation tilts the electron beam by 25 mrad.</b> ddsim's <code>--crossingAngleBoost -0.025</code> is a pure boost, so both beams get p<sub>x</sub>/E = −0.025. In the official campaign files (ePIC afterburner) the electron beam runs along −z. The proton side is the same in both, so the B0 / Λ results stand. EICrecon assumes the campaign layout, so its reconstructed kinematics are wrong for our samples (Q² spread ±25 %, while the electron track itself is measured to 0.3 mrad and a few % in momentum).</p>
+          </div>
+
+          <span class="label">Result</span>
+          <div>
+            <div class="tbl">
+              <table>
+                <thead><tr><th>true y</th><th class="r">events</th><th class="r">Q² reco/true − 1</th><th class="r">x reco/true − 1</th><th class="r">EICrecon Q²</th></tr></thead>
+                <tbody>
+                  <tr><td>&lt; 0.01</td><td class="r">494</td><td class="r">−0.03 [−0.09, −0.01]</td><td class="r zero">−0.90 [−0.98, −0.57]</td><td class="r">−0.01 [−0.27, +0.30]</td></tr>
+                  <tr><td>0.01–0.05</td><td class="r">289</td><td class="r">−0.01 [−0.06, +0.01]</td><td class="r">−0.33 [−0.73, +0.74]</td><td class="r">−0.01 [−0.22, +0.28]</td></tr>
+                  <tr><td>0.05–0.2</td><td class="r">171</td><td class="r">−0.00 [−0.04, +0.01]</td><td class="r">−0.04 [−0.29, +0.22]</td><td class="r">−0.01 [−0.23, +0.19]</td></tr>
+                  <tr><td>0.2–0.5</td><td class="r">35</td><td class="r">−0.01 [−0.02, +0.01]</td><td class="r">−0.02 [−0.06, +0.01]</td><td class="r">−0.03 [−0.11, +0.10]</td></tr>
+                  <tr><td>&gt; 0.5</td><td class="r">11</td><td class="r">−0.00 [−0.05, +0.00]</td><td class="r">−0.00 [−0.05, +0.01]</td><td class="r">−0.00 [−0.05, +0.04]</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p style="font-size:0.86rem;color:var(--muted)">9×130, old B0, all 1000 events; median [16 %, 84 %]. Our own values use the true beam four-vectors; the last column is EICrecon's electron method. New B0 is similar. The scattered electron is found in 97–98 % of events.</p>
+            <div class="tbl">
+              <table>
+                <thead><tr><th>events with a B0-direction Λ, x<sub>L</sub> &gt; 0.6</th><th class="r">y &lt; 0.01</th><th class="r">0.01–0.05</th><th class="r">&gt; 0.05</th><th class="r">total</th></tr></thead>
+                <tbody>
+                  <tr><td>generated</td><td class="r">111</td><td class="r">29</td><td class="r">22</td><td class="r">162</td></tr>
+                  <tr><td>Λ candidate reconstructed, old B0 (signal)</td><td class="r">21 (20)</td><td class="r">7 (6)</td><td class="r">4 (4)</td><td class="r">32 (30)</td></tr>
+                  <tr><td>Λ candidate reconstructed, new B0 (signal)</td><td class="r">5 (5)</td><td class="r">1 (1)</td><td class="r">3 (3)</td><td class="r">9 (9)</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <figure data-fig>
+              <div class="fig-bar"><span class="label">Kinematics and x<sub>K</sub></span>
+                <div class="seg" role="group" aria-label="B0 geometry"><button type="button" aria-pressed="true" data-src="figs/kin_9x130_old.png">old B0</button><button type="button" aria-pressed="false" data-src="figs/kin_9x130_new.png">new B0</button></div></div>
+              <img src="figs/kin_9x130_old.png" alt="x-Q2 coverage of high-x_L Lambda events, their y distribution, x_K true and reconstructed, Q2 resolution own versus EICrecon, and x resolution versus y." loading="lazy">
+              <figcaption>Top: x–Q² of events with a high-x<sub>L</sub> Λ (boxes: Λ reconstructed), their y, and x<sub>K</sub>. Bottom: Q² resolution (blue, our invariants; grey, EICrecon in the wrong frame), and x resolution against y.</figcaption>
+            </figure>
+          </div>
+
+          <span class="label">Conclusion</span>
+          <div><p class="conclusion">Q² is fine, but the high-x<sub>L</sub> Λ events sit at very low y, where the electron method can't measure x. Getting x<sub>K</sub> for most of them needs the hadronic final state (Σ, eΣ, double angle) in the correct frame. The electron side of our simulation should eventually be redone with the afterburner.</p></div>
+        </div>
+      </article>
+    </section>
+
+    <!-- ================= FOUNDATION ================= -->
+    <section id="foundation" aria-labelledby="found-h">
+      <h2 id="found-h">B0 / Λ foundation</h2>
+      <div class="prose">
+        <p>The kaon work builds on reconstructing Λ → pπ⁻ in the far-forward B0 tracker, done between 2026-11-02 and 11-19. Full details are in <code>notes/claude_summary.md</code>, sections 1–11.</p>
+        <ul>
+          <li><b>Seeding.</b> B0 tracks of Λ daughters need seeds for secondaries (EICrecon#2901) or hit seeding (EICrecon#3116, still open). Hit seeding finds a seed for every accepted daughter.</li>
+          <li><b>Mass.</b> Particle-gun Λs: peak at the PDG mass with σ ≈ 6–7 MeV. Without truth, a momentum-ratio cut p(+)/p(−) &gt; 2.5 keeps 98 % of the signal.</li>
+          <li><b>Soft π⁻.</b> π⁻ below about 10 GeV are often lost in the track finder (CKF). Not a seeding problem; cause still open.</li>
+          <li><b>Geometry.</b> The new B0 (AC-LGAD stations) covers 56 % of straight lines at 5.5–20 mrad, against 92 % for the old disks. It has a ±45° gap on the electron side and a larger effective beam hole.</li>
+        </ul>
+      </div>
+      <div class="tbl">
+        <table>
+          <thead><tr><th>Λ-tagged DIS, all x<sub>L</sub>, hit seeding</th><th class="r">18×275 old</th><th class="r">18×275 new</th><th class="r">9×130 old</th><th class="r">9×130 new</th></tr></thead>
+          <tbody>
+            <tr><td>B0-direction Λs (1000 events)</td><td class="r">417</td><td class="r">417</td><td class="r">703</td><td class="r">703</td></tr>
+            <tr><td>both daughters accepted, per pπ⁻ decay</td><td class="r">53.2 %</td><td class="r">16.0 %</td><td class="r">51.9 %</td><td class="r">21.8 %</td></tr>
+            <tr><td>acceptance × efficiency per pπ⁻ decay</td><td class="r">36.1 %</td><td class="r">10.2 %</td><td class="r">31.2 %</td><td class="r">12.6 %</td></tr>
+            <tr><td>reconstructed per B0-direction Λ</td><td class="r">18.7 %</td><td class="r">5.0 %</td><td class="r">16.8 %</td><td class="r">6.7 %</td></tr>
+            <tr><td>mass ±10 MeV: signal / background</td><td class="r">54 / 54</td><td class="r">18 / 10</td><td class="r">89 / 24</td><td class="r">34 / 8</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <figure data-fig>
+        <div class="fig-bar"><span class="label">Λ-tagged DIS 9×130, all x<sub>L</sub></span>
+          <div class="seg" role="group" aria-label="B0 geometry"><button type="button" aria-pressed="true" data-src="figs/dis_9x130_old.png">old B0</button><button type="button" aria-pressed="false" data-src="figs/dis_9x130_new.png">new B0</button></div></div>
+        <img src="figs/dis_9x130_old.png" alt="Lambda-tagged DIS 9x130 without an x_L cut: spectrum, acceptance, efficiency, yield and mass." loading="lazy">
+        <figcaption>The same analysis without the x<sub>L</sub> cut, for comparison with step 1.</figcaption>
+      </figure>
+      <figure>
+        <div class="fig-bar"><span class="label">B0 coverage, old vs new geometry</span></div>
+        <img src="figs/b0_coverage_maps_beamline.png" alt="Straight-line coverage maps of the four B0 stations for the old and new geometry, with the proton beam pipe, the electron quadrupole and the B0 magnet bore." loading="lazy">
+        <figcaption>Where straight lines from the interaction point cross the B0 stations, with the beam pipe, the electron final-focus quadrupole and the B0 magnet bore.</figcaption>
+      </figure>
+    </section>
+
+    <!-- ================= ISSUES ================= -->
+    <section id="issues" aria-labelledby="issues-h">
+      <h2 id="issues-h">Open issues</h2>
+      <div class="issues">
+        <div class="issue"><span class="pill warn">decide</span><p><b>Electron side of the simulation.</b> ddsim <code>--crossingAngleBoost</code> tilts the electron beam by 25 mrad. Redo with the ePIC afterburner before using electron acceptance or EICrecon kinematics. B0 / Λ results are unaffected.</p></div>
+        <div class="issue"><span class="pill todo">next</span><p><b>Low-y kinematics.</b> Σ, eΣ and double-angle methods with the hadronic final state, computed in the correct frame.</p></div>
+        <div class="issue"><span class="pill todo">to do</span><p><b>Sullivan signal sample</b> through our simulation and reconstruction, and the kaon flux / t extrapolation.</p></div>
+        <div class="issue"><span class="pill todo">to do</span><p><b>Beam effects</b> for a realistic |t| resolution.</p></div>
+        <div class="issue"><span class="pill todo">open</span><p><b>Soft π⁻ lost in the CKF</b>; old-geometry truth-seeded efficiency jump between EICrecon builds; +2 MeV mass shift in the old geometry.</p></div>
+        <div class="issue"><span class="pill todo">open</span><p><b>Real events</b> (other tracks, beam background) will need vertexing and decay-length cuts.</p></div>
+      </div>
+    </section>
+
+    <!-- ================= DEFINITIONS ================= -->
+    <section id="defs" aria-labelledby="defs-h">
+      <h2 id="defs-h">Definitions</h2>
+      <dl class="defs">
+        <dt>Sullivan process</dt><dd>e p → e′ Λ X: the proton fluctuates into Λ + virtual K⁺, the photon probes the K⁺, the Λ flies forward as the tag.</dd>
+        <dt>x<sub>L</sub></dt><dd>Λ momentum along the proton beam divided by the beam momentum (beam frame, 25 mrad crossing angle undone).</dd>
+        <dt>|t|</dt><dd>−(P<sub>beam</sub> − P<sub>Λ</sub>)², the four-momentum transfer to the Λ.</dd>
+        <dt>x<sub>K</sub></dt><dd>x / (1 − x<sub>L</sub>), the momentum fraction of the struck quark in the kaon.</dd>
+        <dt>x, Q², y</dt><dd>DIS invariants from q = e<sub>beam</sub> − e′: Q² = −q², y = P·q / P·e<sub>beam</sub>, x = Q² / (2 P·q).</dd>
+        <dt>B0-direction Λ</dt><dd>Generated Λ at 5.5–20 mrad from the proton beam.</dd>
+        <dt>Accepted daughter</dt><dd>Its own simulated hits in at least 3 B0 layers.</dd>
+        <dt>Truth / hit seeding</dt><dd>B0 tracks seeded from the true vertex and momentum (EICrecon#2901), or from triplets of hits (EICrecon#3116).</dd>
+        <dt>Old / new B0</dt><dd>epic 43f427e (silicon disks) and epic ec774d8 (AC-LGAD stations, eic/epic#1194).</dd>
+      </dl>
+    </section>
+
+    <!-- ================= REPRODUCE ================= -->
+    <section id="repro" aria-labelledby="repro-h">
+      <h2 id="repro-h">Reproduce</h2>
+      <div class="prose"><p>From the top of the repository on lxplus. Samples are on EOS under <code>$EIC_DATA</code>; the notes in <code>notes/</code> list every command run.</p></div>
+      <pre>bash scripts/make_results.sh 11        # kaon SF: x_L &gt; 0.6 and scattered-electron kinematics, 9x130
+bash scripts/make_results.sh 09        # Λ-tagged DIS without the x_L cut, 18x275 and 9x130
+bash scripts/make_results.sh 10        # B0 geometry coverage maps
+
+# single runs
+root -l -b -q 'macros/dis/lambda_dis.C+("&lt;files&gt;","&lt;outbase&gt;",3,2.5,0.6)'      # last argument: x_L cut
+root -l -b -q 'macros/kaon/kaon_kinematics.C+("&lt;files&gt;","&lt;outbase&gt;")'
+root -l -b -q 'macros/exploration/lambda_xl_theta.C("&lt;label&gt;","&lt;files&gt;",130)'  # x_L vs angle</pre>
+    </section>
+  </main>
+</div>
+
+<footer>Updated after each step together with <code>notes/claude_log.md</code>, <code>notes/claude_commands.md</code> and <code>notes/claude_summary.md</code>.</footer>
+
+<dialog id="zoom" aria-label="Figure"><button type="button" id="zoom-close">Close</button><img id="zoom-img" alt=""></dialog>
+
+<script>
+(function () {
+  document.querySelectorAll('figure[data-fig]').forEach(function (fig) {
+    var img = fig.querySelector('img');
+    fig.querySelectorAll('.seg button').forEach(function (b) {
+      b.addEventListener('click', function () {
+        fig.querySelectorAll('.seg button').forEach(function (o) { o.setAttribute('aria-pressed', o === b ? 'true' : 'false'); });
+        img.src = b.dataset.src;
+      });
+    });
+  });
+  var dlg = document.getElementById('zoom'), zimg = document.getElementById('zoom-img');
+  document.querySelectorAll('figure img').forEach(function (img) {
+    img.addEventListener('click', function () {
+      zimg.src = img.src; zimg.alt = img.alt;
+      if (dlg.showModal) dlg.showModal();
+    });
+  });
+  document.getElementById('zoom-close').addEventListener('click', function () { dlg.close(); });
+  dlg.addEventListener('click', function (e) { if (e.target === dlg) dlg.close(); });
+})();
+</script>

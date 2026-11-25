@@ -606,3 +606,12 @@ Macro `~/private/eic/compare_tracks.C` (run in `~/private/eic`). Both use the co
   kinematics), new 9 (9; 5 at y < 0.01). x_L reco − true +0.012 [−0.009, +0.031] old, −0.008 new.
 - Next: hadronic-final-state methods (Σ / eΣ / DA) in the right frame for low y; decide whether to
   redo the simulation with the afterburner.
+
+### Project website (2026-11-25)
+- User: in addition to the notes, keep a website to follow steps, methods and conclusions.
+- Page "Kaon Structure Function Notebook" (private claude.ai artifact, https://claude.ai/artifact/QCeLBwphJFRByy3osqmvMo):
+  status (where we are / latest conclusion / next), analysis-chain progress, one entry per step
+  (question, method, result, conclusion, figures with an old/new B0 toggle), B0/Λ foundation, open
+  issues, definitions, how to reproduce. Master copy: `docs/site/kaon_notebook.html` + `docs/site/figs/`
+  (copies of results PNGs). Publishing needs a staging copy in the Mac working directory (~/code/epic/site).
+  Updated after each step, together with these notes.
