@@ -350,3 +350,10 @@ root -l -b -q "macros/exploration/lambda_xl_theta.C(\"Sullivan 9x130\",\"$F\",13
 D=$EIC_DATA/lambda_dis
 root -l -b -q "macros/exploration/lambda_xl_theta.C(\"Pythia DIS 18x275\",\"$D/dis_lambda_old_s301.eicreconpr3116.edm4eic.root $D/dis_lambda_old_s302.eicreconpr3116.edm4eic.root\",275)"
 ```
+
+## Kaon SF step 1: x_L > 0.6 on 9x130 (2026-11-25)
+```bash
+bash scripts/make_results.sh 11     # results/11_kaon_sf/dis_9x130_{old,new}_xl06{.txt,.png,_xl_t.png}
+# single run: last argument = xLMin
+root -l -b -q "macros/dis/lambda_dis.C+(\"$EIC_DATA/lambda_dis_9x130/dis_lambda_9x130_old_s40?.eicreconpr3116.edm4eic.root\",\"results/11_kaon_sf/dis_9x130_old_xl06\",3,2.5,0.6)"
+```

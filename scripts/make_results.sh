@@ -112,6 +112,15 @@ if want 09; then
   run macros/dis/lambda_dis.C $R/campaign_sidis_9x130 "$EIC_DATA/campaign/sidis_9x130/*.eicrecon.edm4eic.root" "\"$R/campaign_sidis_9x130\""
 fi
 
+# 11: kaon structure function (Sullivan region): the 9x130 Lambda-tagged DIS samples of 09 with x_L > 0.6
+# on the B0-direction Lambdas and on the forward (+,-) pairs; also <out>_xl_t.png (x_L, |t|, resolutions).
+if want 11; then
+  R=results/11_kaon_sf
+  for g in old new; do
+    run macros/dis/lambda_dis.C $R/dis_9x130_${g}_xl06 "$EIC_DATA/lambda_dis_9x130/dis_lambda_9x130_${g}_s40?.eicreconpr3116.edm4eic.root" "\"$R/dis_9x130_${g}_xl06\"" 3 2.5 0.6
+  done
+fi
+
 # 10: B0 geometry, old vs new: sensitive area per station and straight-line coverage maps, from the B0 tracker
 # xml of both epic commits (downloaded from GitHub into $EIC_TOP/b0geo, see notes/claude_commands.md 2026-11-18);
 # writes b0_coverage_maps{,_beamline}.png (the second with the beam pipe, electron quadrupole and B0 magnet bore)

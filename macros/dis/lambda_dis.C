@@ -17,6 +17,13 @@
 // tracks; the central tracker starts at ~40 mrad), + as proton, - as pi-, p(+)/p(-) > 2.5 as in
 // ../mass/lambda_mass_notruth.C. Truth only labels signal (both from the same Lambda -> p pi-).
 //
+// Kaon structure function (Sullivan region): xLMin > 0 keeps only B0-direction Lambdas with
+// x_L = p_z(beam frame) / E_p > xLMin, and only (+,-) pairs whose summed momentum has x_L > xLMin
+// (E_p from the file names: 9x130, 10x100, 5x41, else 275 GeV). It then also writes
+// <outbase>_xl_t.png: x_L and |t| = -(P_beam - P_Lambda)^2 of the selected Lambdas (generated and
+// both daughters reconstructed, hit seeding) and the x_L, |t| resolution of the reconstructed
+// Lambda (p + pi- momenta, Lambda mass).
+//
 // Input: comma-separated list of EICrecon output files or patterns.
 // Output: printout and <outbase>.png (4 x 2 under a title naming the sample (from the file names); the last pad
 // lists the main numbers).
@@ -35,10 +42,22 @@
 #include <cstdio>
 
 void lambda_dis(const char* files = "/eos/user/g/gninio/eic/lambda_dis/dis_lambda_new_s30?.eicreconpr3116.edm4eic.root",
-                const char* outbase = "dis_new", int minLayers = lb0::kMinLayers, double minRatio = 2.5)
+                const char* outbase = "dis_new", int minLayers = lb0::kMinLayers, double minRatio = 2.5,
+                double xLMin = 0)
 {
   using namespace lb0;
   const double thLo = 5.5, thHi = 20, thFwd = 30;   // mrad
+  TString fsn(files);
+  const double Ep = fsn.Contains("9x130") ? 130 : fsn.Contains("10x100") ? 100 : fsn.Contains("5x41") ? 41 : 275;   // GeV
+  const double Eb = std::sqrt(Ep * Ep + kMassProton * kMassProton);
+  const bool kSF = xLMin > 0;
+  auto XL = [&](const TVector3& p) { return BeamFrame(p).Z() / Ep; };
+  // |t| = -(P_beam - P_Lambda)^2, beam frame, Lambda mass for the energy
+  auto MinusT = [&](const TVector3& p) {
+    TVector3 b = BeamFrame(p);
+    double E = std::sqrt(b.Mag2() + kMassLambda * kMassLambda), dz = Ep - b.Z();
+    return -((Eb - E) * (Eb - E) - (b.X() * b.X() + b.Y() * b.Y() + dz * dz));
+  };
   TChain* ch = new TChain("events");
   TObjArray* list = TString(files).Tokenize(",");
   for (auto* o : *list) ch->Add(((TObjString*)o)->GetString());
@@ -65,6 +84,10 @@ void lambda_dis(const char* files = "/eos/user/g/gninio/eic/lambda_dis/dis_lambd
   const int nm = 60; const double mLo = 1.08, mHi = 1.26;   // 3 MeV bins
   TH1D hS[2] = {TH1D("hS0", "", nm, mLo, mHi), TH1D("hS1", "", nm, mLo, mHi)};
   TH1D hB[2] = {TH1D("hB0", "", nm, mLo, mHi), TH1D("hB1", "", nm, mLo, mHi)};
+  TH1D hXLg("hXLg", "selected B0-direction #Lambda;x_{L} (true);#Lambda / 0.025", 24, 0.4, 1.0), hXLr("hXLr", "", 24, 0.4, 1.0);
+  TH1D hTg("hTg", "selected B0-direction #Lambda;|t| (true) [GeV^{2}];#Lambda / 0.1 GeV^{2}", 30, 0, 3), hTr("hTr", "", 30, 0, 3);
+  TH1D hdXL("hdXL", "both daughters reconstructed (hit seeding);x_{L}^{reco} - x_{L}^{true};#Lambda", 40, -0.1, 0.1);
+  TH1D hdT("hdT", "both daughters reconstructed (hit seeding);|t|^{reco} - |t|^{true} [GeV^{2}];#Lambda", 40, -1, 1);
 
   long nEv = 0, nEvB0 = 0, nLamAll = 0, nLamFwd = 0, nB0 = 0, nPPi = 0, nBef = 0, nAccB = 0;
   long nRecB[2] = {0, 0}, nEvRec[2] = {0, 0}, nFwdTrk[2] = {0, 0}, nPair[2] = {0, 0}, nPairS[2] = {0, 0};
@@ -80,9 +103,11 @@ void lambda_dis(const char* files = "/eos/user/g/gninio/eic/lambda_dis/dis_lambd
       double th = BeamFrame(ev.P(L.idx)).Theta() * 1000;
       if (th < thFwd) ++nLamFwd;
       if (th < thLo || th > thHi) continue;
+      if (kSF && XL(ev.P(L.idx)) < xLMin) continue;
       evB0 = true; ++nB0;
       double p = ev.P(L.idx).Mag();
       hAll.Fill(p);
+      hXLg.Fill(XL(ev.P(L.idx))); hTg.Fill(MinusT(ev.P(L.idx)));
       bool pp = L.fate == MCEvent::kPPi;
       bool before = pp && ev.ez[L.idx] < kZFrontB0;
       nPPi += pp; nBef += before;
@@ -103,7 +128,12 @@ void lambda_dis(const char* files = "/eos/user/g/gninio/eic/lambda_dis/dis_lambd
         }
       }
       for (int s = 0; s < 2; ++s) { yld[s].Fill(rcB[s], p); nRecB[s] += rcB[s]; evRec[s] |= rcB[s]; }
-      if (rcB[1]) hRec.Fill(p);
+      if (rcB[1]) {
+        hRec.Fill(p);
+        TVector3 pr = reco1.P(recoOf[1][L.p]) + reco1.P(recoOf[1][L.pi]);
+        double xt = XL(ev.P(L.idx)), tt = MinusT(ev.P(L.idx));
+        hXLr.Fill(xt); hTr.Fill(tt); hdXL.Fill(XL(pr) - xt); hdT.Fill(MinusT(pr) - tt);
+      }
     }
     nEvB0 += evB0;
     for (int s = 0; s < 2; ++s) nEvRec[s] += evRec[s];
@@ -119,6 +149,7 @@ void lambda_dis(const char* files = "/eos/user/g/gninio/eic/lambda_dis/dis_lambd
         TLorentzVector vp, vpi;
         vp.SetVectM(rc.P(a), kMassProton); vpi.SetVectM(rc.P(b), kMassPion);
         if (vp.P() / vpi.P() <= minRatio) continue;
+        if (kSF && XL(vp.Vect() + vpi.Vect()) < xLMin) continue;
         int lp = ev.LambdaOf(mc[a], 2212), lpi = ev.LambdaOf(mc[b], -211);
         bool sig = lp >= 0 && lp == lpi;
         ++nPair[s]; nPairS[s] += sig;
@@ -130,6 +161,7 @@ void lambda_dis(const char* files = "/eos/user/g/gninio/eic/lambda_dis/dis_lambd
   printf("%s\n", files);
   printf("events %ld; generated Lambdas %ld (%.3f / event), at < 30 mrad %ld, B0-direction (5.5-20 mrad) %ld\n",
          nEv, nLamAll, double(nLamAll) / nEv, nLamFwd, nB0);
+  if (kSF) printf("kaon-SF selection: x_L > %.2f (E_p = %.0f GeV) on the B0-direction Lambdas and on the (+,-) pairs\n", xLMin, Ep);
   printf("events with a B0-direction Lambda: %ld (%.1f%%)\n", nEvB0, Pct(nEvB0, nEv));
   printf("B0-direction Lambdas: p pi- %ld (%.1f%%), before z = 5.8 m %ld (%.1f%%), both accepted %ld (%.1f%% of p pi-)\n",
          nPPi, Pct(nPPi, nB0), nBef, Pct(nBef, nB0), nAccB, Pct(nAccB, nPPi));
@@ -148,12 +180,20 @@ void lambda_dis(const char* files = "/eos/user/g/gninio/eic/lambda_dis/dis_lambd
            seed[s].Name(), double(nFwdTrk[s]) / nEv, minRatio, nPair[s], nPairS[s], S, B);
   }
 
+  if (kSF) {
+    printf("selected Lambdas: x_L mean %.3f, |t| mean %.3f GeV^2; both reconstructed (hit seeding) %.0f: x_L mean %.3f, |t| mean %.3f GeV^2\n",
+           hXLg.GetMean(), hTg.GetMean(), hXLr.GetEntries(), hXLr.GetMean(), hTr.GetMean());
+    printf("reconstructed Lambda (hit seeding): x_L reco-true mean %.4f RMS %.4f; |t| reco-true mean %.3f RMS %.3f GeV^2 (under/overflow %.0f/%.0f)\n",
+           hdXL.GetMean(), hdXL.GetRMS(), hdT.GetMean(), hdT.GetRMS(), hdT.GetBinContent(0), hdT.GetBinContent(hdT.GetNbinsX() + 1));
+  }
+
   gStyle->SetOptStat(0);
   // title: beam energies and geometry, from the file names
   TString fs(files), beam = fs.Contains("9x130") ? "ep 9#times130 GeV" : "ep 18#times275 GeV";
   TString title = fs.Contains("campaign") ? "ePIC campaign 26.07.3 SIDIS, " + beam + ", campaign geometry and reconstruction"
                 : "#Lambda-tagged DIS (Pythia8), " + beam + (fs.Contains("_old_") ? ", old B0 geometry (epic 43f427e)"
                 : fs.Contains("_new_") ? ", new B0 geometry (epic ec774d8)" : "");
+  if (kSF) title += TString::Format(", x_{L} > %.2g", xLMin);
   TCanvas c("c", "", 2400, 1080);
   TLatex tl; tl.SetNDC(); tl.SetTextAlign(22); tl.SetTextSize(0.035); tl.SetTextFont(62); tl.DrawLatex(0.5, 0.965, title);
   TPad pm("pm", "", 0, 0, 1, 0.93); pm.Draw(); pm.Divide(4, 2);
@@ -205,4 +245,20 @@ void lambda_dis(const char* files = "/eos/user/g/gninio/eic/lambda_dis/dis_lambd
   t.AddText(TString::Format("  both reco per B0-dir. #Lambda %.1f / %.1f%%", Pct(nRecB[0], nB0), Pct(nRecB[1], nB0)));
   t.Draw();
   c.SaveAs(TString(outbase) + ".png");
+
+  if (kSF) {
+    TCanvas c2("c2", "", 1600, 1200);
+    TLatex t2; t2.SetNDC(); t2.SetTextAlign(22); t2.SetTextSize(0.028); t2.SetTextFont(62); t2.DrawLatex(0.5, 0.97, title);
+    TPad p2("p2", "", 0, 0, 1, 0.94); p2.Draw(); p2.Divide(2, 2);
+    TLegend lg(0.15, 0.72, 0.6, 0.88); lg.SetBorderSize(0);
+    for (TH1D* h : {&hXLg, &hTg}) { h->SetLineColor(kBlack); h->SetLineWidth(2); h->SetMinimum(0); }
+    for (TH1D* h : {&hXLr, &hTr}) { h->SetLineColor(kRed); h->SetLineWidth(2); }
+    lg.AddEntry(&hXLg, "generated", "l"); lg.AddEntry(&hXLr, "both reconstructed (hit seeding)", "l");
+    p2.cd(1); hXLg.Draw("hist"); hXLr.Draw("hist same"); lg.Draw();
+    p2.cd(2); hTg.Draw("hist"); hTr.Draw("hist same"); lg.Draw();
+    gStyle->SetOptStat(1110);
+    p2.cd(3); hdXL.SetLineWidth(2); hdXL.Draw("hist");
+    p2.cd(4); hdT.SetLineWidth(2); hdT.Draw("hist");
+    c2.SaveAs(TString(outbase) + "_xl_t.png");
+  }
 }

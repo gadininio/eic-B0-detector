@@ -564,3 +564,19 @@ Macro `~/private/eic/compare_tracks.C` (run in `~/private/eic`). Both use the co
 - Pythia 18x275 B0-direction Λs: 417, of which 404 at x_L < 0.6 (167 / 180 / 57 in x_L 0–0.2 / 0.2–0.4 / 0.4–0.6) ⇒ the earlier B0 results are right, but those Λs are mostly not in the kaon SF region.
 - θ ≈ pT / (x_L E_p) with pT ≈ 0.4–1.2 GeV at every energy ⇒ θ scales as 1/E_p. Sullivan sample has a hard edge θ_max · E_p ≈ 1.5 GeV (5.47 mrad at 275, 11.2 at 130, 14.9 at 100, 36 at 41): a generator phase-space limit (x_L ≥ 0.4, |t| ≲ 1.9 GeV²), so 0 % in B0 at 18x275 is not a statistics effect.
 - Conclusion: at 18x275 kaon-SF Λs (both generators) go below the B0 (ZDC/RP/OMD); at 9x130 and 10x100 the B0 sees most of them. The Pythia Λ-tagged DIS sample can be used to start (cut x_L > 0.6, small |t|); the Sullivan generator is needed later as the signal model for the extraction (flux factor, t dependence), not to start.
+
+### Kaon SF step 1 (2026-11-25): x_L > 0.6 on the 9x130 Λ-tagged DIS samples
+- `macros/dis/lambda_dis.C`: new last argument `xLMin` (default 0 = unchanged; regression check on 9x130 old: printout identical to results/09_dis). With xLMin > 0: B0-direction Λs need x_L = p_z(beam frame)/E_p > xLMin (E_p from the file name), forward (+,−) pairs need x_L of the summed momentum > xLMin (no truth); title gets "x_L > …"; extra `<out>_xl_t.png`: x_L and |t| of the selected Λs (generated, both reconstructed with hit seeding) and the reco − true x_L, |t| of the reconstructed Λ (p + π⁻ momenta, Λ mass).
+- `make_results.sh 11` → results/11_kaon_sf/dis_9x130_{old,new}_xl06 (~2 min).
+- Results, 1000 events each, 162 B0-direction Λs with x_L > 0.6 (both geometries; mean x_L 0.71, mean |t| 1.38 GeV², none below ~0.5 GeV² — the 5.5 mrad lower edge of the B0 means pT ≳ 0.4–0.5 GeV):
+  | 9x130, x_L > 0.6 | old | new |
+  |---|---|---|
+  | p π⁻ / before 5.8 m | 84 / 71 | 73 / 58 |
+  | both accepted, per p π⁻ | 61.9 % | 30.1 % |
+  | fiducial eff both, truth / hit | 69.2 / 82.7 % | 63.6 / 81.8 % |
+  | A×ε per p π⁻, truth / hit | 42.9 / 51.2 % | 19.2 / 24.7 % |
+  | both reco per B0-dir. Λ, truth / hit | 22.2 / 26.5 % | 8.6 / 11.1 % |
+  | mass ±10 MeV, truth: S / B; hit: S / B | 30 / 1; 31 / 2 | 9 / 0; 11 / 0 |
+  | x_L reco − true (hit): mean, RMS | +0.012, 0.033 | −0.010, 0.014 |
+  | |t| reco − true (hit): mean, RMS [GeV²] | −0.025, 0.080 | −0.003, 0.049 |
+- vs no cut (results/09_dis): acceptance and π⁻ efficiency are higher at high x_L (harder π⁻), and the combinatorial background almost disappears (hit, ±10 MeV: old 89/24 → 31/2, new 34/8 → 11/0). Reconstructed Λs have larger mean |t| (1.58 / 1.83 vs 1.38 GeV² generated): acceptance favours larger angles. No beam effects in the simulation, so the |t| resolution is optimistic. Statistics small (18–43 reconstructed Λs).
