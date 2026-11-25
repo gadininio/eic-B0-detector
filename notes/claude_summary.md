@@ -258,6 +258,19 @@ high x_L (here > 0.6) and small |t|.
   The campaign MESON_SF reconstruction predates EICrecon#2901 (no B0 tracking of Λ daughters) and has no
   FULL files ⇒ for B0 tracking it must be regenerated and simulated with our chain.
 
+**The campaign Sullivan generator (checked 2026-11-25).** eicMesonSFGen 1.0.0 = github.com/JeffersonLab/eic_mesonsf_generator
+tag v1.0.0, `src/EIC_mesonMC_Lambda.cpp` (R. Trotta, A. Singh; the meson-structure group's fast MC, arXiv:2102.11788).
+It samples phase space flat: Q² uniform, ln x uniform, e′ φ uniform, and the Λ isotropic with |p| ≤ pSMax in the
+proton rest frame; the physics is only a weight σ_tagged = σ_DIS(CTEQ6) × f_K/F2_N with f_K = kaon splitting
+function × kaon F2 (s-exponential form factor). The HepMC output writes no weight, and X is not hadronized: the
+final state is e′, Λ and a "K⁺" whose momentum is −q (it is computed as p_spectator − Λ − X). In the campaign files
+EventHeader weights are 0/empty, momentum is not conserved, and the K⁺ was tracked by Geant4 as a real 10–15 GeV
+kaon. Q² at 9x130: median 185 GeV² (vs 2 GeV² in Pythia DIS), y median 0.20 (vs 0.01).
+⇒ The campaign files are unweighted phase space: usable for Λ acceptance / efficiency vs (x_L, t, θ) and for
+e′ reconstruction, not for rates or physical distributions, and not for HFS methods. The step 0 Sullivan
+fractions are phase-space fractions; the angle scaling (θ ∝ pT / (x_L E_p)) and the 18x275 edge stand.
+For a signal model: run the generator ourselves and keep the weight, and hadronize X (or take it from Pythia).
+
 **Step 1: x_L > 0.6 on the 9x130 DIS samples** (`lambda_dis.C`, new last argument `xLMin`;
 `make_results.sh 11` → results/11_kaon_sf/dis_9x130_{old,new}_xl06; with xLMin = 0 the old results are
 reproduced exactly). 162 B0-direction Λs with x_L > 0.6 in 1000 events; mean x_L 0.71, mean |t| 1.38 GeV²,
@@ -335,8 +348,8 @@ results/11_kaon_sf/kin_9x130_{old,new}).
 - Electron side of our simulation: ddsim `--crossingAngleBoost` tilts the electron beam by 25 mrad
   (section 12). Redo with the ePIC afterburner (abconv) before electron acceptance or EICrecon
   kinematics are used; B0 / Λ results unaffected.
-- Kaon SF: tune the hybrid switch; Sullivan signal sample through our chain (with the afterburner, which
-  also fixes the electron side); more 9x130 statistics; kaon flux / t-extrapolation; beam effects for |t|.
+- Kaon SF: tune the hybrid switch; Sullivan signal sample through our chain (run eicMesonSFGen ourselves
+  keeping its weight, hadronize X; with the afterburner, which also fixes the electron side); more 9x130 statistics; kaon flux / t-extrapolation; beam effects for |t|.
 
 ## Next studies (planned 2026-11-19, each in its own session, in this repository)
 All three build on the forward Λ reconstructed through Λ → p π⁻ in the B0 (`macros/common/LambdaB0.h`,

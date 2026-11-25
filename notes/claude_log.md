@@ -631,3 +631,20 @@ Macro `~/private/eic/compare_tracks.C` (run in `~/private/eic`). Both use the co
 - Website: now the "EIC B0 Notebook" (same URL https://claude.ai/artifact/QCeLBwphJFRByy3osqmvMo, version 2) for all
   B0 work: studies overview (Λ in the B0 done; kaon SF in progress; kaon EM form factor next; Λ polarization planned),
   kaon SF steps 0–3, open issues, definitions, reproduce. Master copy docs/site/kaon_notebook.html.
+
+### What is eicMesonSFGen (2026-11-25)
+- User: are Sullivan and our Pythia DIS the same process? (No: Pythia = remnant fragmentation, Sullivan = kaon
+  exchange; same final state.) Then: what is eicMesonSFGen and how does it work?
+- Source: github.com/JeffersonLab/eic_mesonsf_generator, tag v1.0.0 (only tag), src/EIC_mesonMC_Lambda.cpp. No repo
+  named eicMesonSFGen. Fork/maintainer copy avnishphy/EIC_mesonsf_generator; kaon projections also cite
+  avnishphy/kaon_sullivan_gen and JeffersonLab/meson-structure.
+- How it works: flat sampling (Q² uniform in [Q2Min, Q2Max], ln x uniform, e′ φ uniform, Λ isotropic in the proton
+  rest frame with |p| ≤ pSMax, uniform in p³); weight xsec_tagged_dis = cdissigma_p (CTEQ6 inclusive) × fk/F2N,
+  fk = f2kp (kaon splitting function, s-exp form factor, cutoff L) × kaon F2; options t-exp or ZEUS-type F2L.
+  t_min cut. Outputs ROOT trees (with weights), LUND, "pythia" text and HepMC3; HepMC "E" line has no weight; K⁺ =
+  pSpectator_Rest − (Λ + X) which equals −q (checked: K⁺ = e′ − e_beam in every event).
+- Campaign files (9x130, 400 events): EventHeader.weight 0, _EventHeader_weights empty, GP* empty; final state exactly
+  e′, K⁺, Λ; momentum not conserved. Q² median 185 GeV² [29, 418], x 0.20, y 0.20 (our Pythia: Q² 2.0, x 0.053, y 0.0105).
+- Consequence: campaign Sullivan = unweighted phase space. Step 0 Sullivan fractions are phase-space fractions (the
+  angle scaling stands). For a signal model run the generator ourselves, keep the weight, hadronize X.
+- Scratch macro /tmp/gninio/ksf/q2camp2.C.
