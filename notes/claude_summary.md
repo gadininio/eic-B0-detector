@@ -272,6 +272,9 @@ kaon. Q² at 9x130: median 185 GeV² (vs 2 GeV² in Pythia DIS), y median 0.20 (
 e′ reconstruction, not for rates or physical distributions, and not for HFS methods. The step 0 Sullivan
 fractions are phase-space fractions; the angle scaling (θ ∝ pT / (x_L E_p)) and the 18x275 edge stand.
 For a signal model: run the generator ourselves and keep the weight, and hadronize X (or take it from Pythia).
+Alternative signal model: tagged-Lambda-DIS (github.com/rong-wang-impcas/tagged-Lambda-DIS, EicC study arXiv:2109.08483):
+unweighted accept/reject on d⁴σ/dQ² dx dx_L dt with an s-exponential kaon flux and the IMParton kaon F2; exact e′ and Λ
+kinematics; but ROOT-tree output only, no X, Λ forced to n π⁰. Not used yet.
 
 **Step 1: x_L > 0.6 on the 9x130 DIS samples** (`lambda_dis.C`, new last argument `xLMin`;
 `make_results.sh 11` → results/11_kaon_sf/dis_9x130_{old,new}_xl06; with xLMin = 0 the old results are

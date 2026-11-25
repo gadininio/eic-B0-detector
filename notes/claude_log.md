@@ -658,3 +658,18 @@ Macro `~/private/eic/compare_tracks.C` (run in `~/private/eic`). Both use the co
   Λ at 5.5–20 mrad 4.64 %, B0-range Λ with x_L > 0.6 1.00 %, any Λ with x_L > 0.6 1.50 %.
 - Side finding: the 18x275 s301 gen log is a copy of s302 (both say 7005 generated; the old shared gen.log bug); the
   events differ (checked). s301 had 6991 generated per the 2026-11-12 log. Also an 18x275 no-filter run: 9.60 % with a Λ.
+
+### tagged-Lambda-DIS generator (2026-11-25)
+- User: did we use `tagged-Lambda-DIS` as well? No (not in the repo, not in any ePIC campaign: RECO 26.07.x has only
+  EXCLUSIVE/MESON_SF_ABCONV for this physics).
+- github.com/rong-wang-impcas/tagged-Lambda-DIS (R. Wang, IMP CAS; G. Xie et al., Chin. Phys. C 46 (2022) 064107,
+  arXiv:2109.08483, kaon SF at EicC); last push 2023-08, no tags. ROOT macro (test.cpp), output = ROOT tree only.
+- How it works: sample Q², x_B, x_L, t uniformly (t within the kinematic t_min/t_max for M_X²); build e′ and Λ
+  four-vectors exactly (Λ from t and x_L in the proton rest frame, boost to the collider frame; crossing angle settable);
+  d⁴σ/dQ² dx_B dx_L dt = (4πα²/x Q⁴)(1 − y + y²/2) F2_K(x_K, Q²) · f_K/p(x_L, t), f = (1/2π)·14.688·(1 − x_L)(−t)/(m_K² − t)²
+  · exp(−(m_K² − t)/(1 − x_L)); F2_K from the IMParton kaon global-fit grid; SamplingMode 1 = accept/reject against a
+  fixed max_d4sigma = 100 nb ⇒ unweighted, physical events. X only as M_X² (not generated). Λ decay forced to n π⁰
+  (π⁰ → γγ), with EicC-type smearing and decay vertices in the tree.
+- Compared with eicMesonSFGen (campaign): physical (unweighted) distributions and consistent kinematics; but no HepMC,
+  no X, forced n π⁰ decay, max_d4sigma must be checked at 9x130. Candidate signal model: run at 9x130 / 10x100, write
+  e′ + undecayed Λ (+ X from a simple model or Pythia) to HepMC, afterburner, our chain.
