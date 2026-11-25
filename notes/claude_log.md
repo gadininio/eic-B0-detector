@@ -615,3 +615,16 @@ Macro `~/private/eic/compare_tracks.C` (run in `~/private/eic`). Both use the co
   issues, definitions, how to reproduce. Master copy: `docs/site/kaon_notebook.html` + `docs/site/figs/`
   (copies of results PNGs). Publishing needs a staging copy in the Mac working directory (~/code/epic/site).
   Updated after each step, together with these notes.
+
+### Kaon SF step 3 (2026-11-25): hadronic-final-state methods
+- User: go ahead with the HFS methods; the website will hold all EIC B0 work (next EM form factor, then Λ polarization).
+- EICrecon HadronicFinalState = ReconstructedParticles (MatchClusters: hit-seeded charged particles + ECal clusters;
+  no HCal) minus the scattered electron, boosted with the rounded ePIC beams ⇒ wrong frame for our samples.
+- Dev macros /tmp/gninio/ksf/hfs_dev.C, sig_split.C: inverse boost β_x = −p_x/E(total beams) gives beam |p_x| 2e-11;
+  closure exact except −6 % at y < 0.01; reco Σ_h 25–60 % low; generated Σ_h at y < 0.01: 53 % at η > 3.5.
+- `kaon_kinematics.C` rewritten: methods electron, JB, DA, Σ, eΣ, hybrid (DA if y_DA < yHybrid = 0.05) in the
+  head-on frame; closure printout; x and Q² resolution per method and y bin (all events and high-x_L Λ events);
+  x_K per method for signal candidates, all and with y_DA > yMin = 0.01; 4 x 2 figure. `make_results.sh 11` rerun.
+- Results: see summary section 12, step 3. Old: candidates with y_DA > 0.01 13 (12), x_K hybrid −0.00 [−0.17, +0.21];
+  new 4 (4), +0.16 [+0.02, +0.82]. DA best at low y; electron best above y ≈ 0.05.
+- Commit 0cd38bd.

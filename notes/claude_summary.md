@@ -296,6 +296,32 @@ results/11_kaon_sf/kin_9x130_{old,new}).
 - ⇒ with the electron method only the few y > 0.05 events give a usable x_K. Next: hadronic-final-state
   methods (Σ, eΣ, double angle) computed in the right frame, and the usual y cuts.
 
+**Step 3: hadronic-final-state methods** (`kaon_kinematics.C` rewritten; same outputs kin_9x130_{old,new}).
+- Head-on frame: undo the ddsim x boost with β_x = −p_x/E of the summed true beams (beam |p_x| < 1e-10 GeV
+  afterwards). HFS = ReconstructedParticles (tracks + ECal clusters, no HCal) minus the scattered electron.
+  Methods JB, DA, Σ, eΣ and a hybrid (DA if y_DA < 0.05, else electron); x = Q² / (s y).
+- Closure on the generated final state: all methods reproduce the true x (−6 % at y < 0.01 from the neglected
+  proton-mass term in Σ(E − p_z)).
+- Reconstructed Σ_h is 25–60 % low. Generated Σ_h split: at y < 0.01, 53 % is at η > 3.5 (no detector),
+  charged 29 %, photons 14 %, neutral hadrons 4 %; at y > 0.05 neutral hadrons 16 %, η > 3.5 2 %.
+  ⇒ the low-y loss is acceptance, not the missing HCal.
+- x reco/true − 1, all events, old B0 (median [16 %, 84 %]):
+
+  | y (true) | electron | JB | DA | Σ | hybrid |
+  |---|---|---|---|---|---|
+  | < 0.01 | −0.90 [−0.98, −0.57] | −0.45 [−0.91, +0.56] | −0.01 [−0.67, +0.83] | +0.43 [−0.26, +2.90] | −0.02 [−0.68, +0.82] |
+  | 0.01–0.05 | −0.33 [−0.73, +0.74] | −0.07 [−0.60, +0.93] | +0.10 [−0.27, +0.78] | +0.25 [−0.10, +1.23] | +0.13 [−0.24, +0.84] |
+  | 0.05–0.2 | −0.04 [−0.28, +0.22] | −0.05 [−0.68, +1.54] | +0.31 [−0.24, +1.60] | +0.48 [+0.08, +1.94] | +0.13 [−0.16, +1.58] |
+  | 0.2–0.5 | −0.02 [−0.06, +0.01] | −0.47 [−0.78, +0.38] | +0.15 [−0.20, +1.04] | +0.37 [+0.10, +1.07] | −0.01 [−0.05, +0.02] |
+
+  DA Q² is good to ~1 % at y < 0.05. New B0 similar.
+- Λ candidates with a reconstructed y_DA > 0.01: old 13 of 32 (12 signal), x_K hybrid reco/true − 1 =
+  −0.00 [−0.17, +0.21]; new 4 of 9 (4), +0.16 [+0.02, +0.82].
+- ⇒ DA is the best method at low y; below y ≈ 0.01 x cannot be measured (forward acceptance). With
+  y_DA > 0.01 about 40 % of the high-x_L Λ candidates remain and x_K is measured to ~20 % (old B0, 12
+  events). The hybrid switch point (0.05) should be tuned: at true y 0.05–0.2 it is worse than the electron
+  method alone. x_K bins must be wide (a few per decade).
+
 ## Open points
 - Why the CKF loses soft π⁻ (rerun with CKF debug output on a few events).
 - Realistic B0 seeding: works with #3116 (section 7); follow it until merged.
@@ -309,8 +335,8 @@ results/11_kaon_sf/kin_9x130_{old,new}).
 - Electron side of our simulation: ddsim `--crossingAngleBoost` tilts the electron beam by 25 mrad
   (section 12). Redo with the ePIC afterburner (abconv) before electron acceptance or EICrecon
   kinematics are used; B0 / Λ results unaffected.
-- Kaon SF: low-y kinematics (Σ / eΣ / DA with the hadronic final state), Sullivan signal sample through
-  our chain, kaon flux / t-extrapolation, beam effects for |t|.
+- Kaon SF: tune the hybrid switch; Sullivan signal sample through our chain (with the afterburner, which
+  also fixes the electron side); more 9x130 statistics; kaon flux / t-extrapolation; beam effects for |t|.
 
 ## Next studies (planned 2026-11-19, each in its own session, in this repository)
 All three build on the forward Λ reconstructed through Λ → p π⁻ in the B0 (`macros/common/LambdaB0.h`,

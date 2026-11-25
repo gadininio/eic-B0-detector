@@ -369,3 +369,10 @@ bash scripts/in_eic_shell.sh /tmp/gninio/ksf/pd.sh
 # beam directions: campaign (afterburner) vs ours (ddsim --crossingAngleBoost)
 root -l -b -q -e "auto f=TFile::Open(\"<file>\"); ((TTree*)f->Get(\"events\"))->Scan(\"MCParticles.PDG:MCParticles.momentum.x/abs(MCParticles.momentum.z)\",\"MCParticles.generatorStatus==4\",\"\",2);"
 ```
+
+## Kaon SF step 3: HFS methods (2026-11-25)
+```bash
+bash scripts/make_results.sh 11     # kin_9x130_{old,new}: all methods, x_K
+# arguments: files, outbase, xLMin=0.6, minRatio=2.5, mWin=0.010, yHybrid=0.05, yMin=0.01
+root -l -b -q "macros/kaon/kaon_kinematics.C+(\"$EIC_DATA/lambda_dis_9x130/dis_lambda_9x130_old_s40?.eicreconpr3116.edm4eic.root\",\"results/11_kaon_sf/kin_9x130_old\",0.6,2.5,0.010,0.05,0.01)"
+```
