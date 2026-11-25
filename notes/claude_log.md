@@ -628,3 +628,6 @@ Macro `~/private/eic/compare_tracks.C` (run in `~/private/eic`). Both use the co
 - Results: see summary section 12, step 3. Old: candidates with y_DA > 0.01 13 (12), x_K hybrid −0.00 [−0.17, +0.21];
   new 4 (4), +0.16 [+0.02, +0.82]. DA best at low y; electron best above y ≈ 0.05.
 - Commit 0cd38bd.
+- Website: now the "EIC B0 Notebook" (same URL https://claude.ai/artifact/QCeLBwphJFRByy3osqmvMo, version 2) for all
+  B0 work: studies overview (Λ in the B0 done; kaon SF in progress; kaon EM form factor next; Λ polarization planned),
+  kaon SF steps 0–3, open issues, definitions, reproduce. Master copy docs/site/kaon_notebook.html.
