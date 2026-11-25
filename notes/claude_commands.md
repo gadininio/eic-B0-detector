@@ -376,3 +376,19 @@ bash scripts/make_results.sh 11     # kin_9x130_{old,new}: all methods, x_K
 # arguments: files, outbase, xLMin=0.6, minRatio=2.5, mWin=0.010, yHybrid=0.05, yMin=0.01
 root -l -b -q "macros/kaon/kaon_kinematics.C+(\"$EIC_DATA/lambda_dis_9x130/dis_lambda_9x130_old_s40?.eicreconpr3116.edm4eic.root\",\"results/11_kaon_sf/kin_9x130_old\",0.6,2.5,0.010,0.05,0.01)"
 ```
+
+## Software rebuild in a pinned container and 9x130 production (2026-11-25)
+```bash
+# scripts/env.sh now exports SIF (nightly image of 2026-11-24); builds made in it
+scripts/build/build_eicrecon.sh EICrecon_main_1125                     # main 378d6ae (with #3116)
+scripts/build/build_epic.sh epic_43f427e_n1124 43f427e736223b963d02adefcda44bfa225d577b   # old B0
+scripts/build/build_epic.sh epic_ec774d8_n1124 ec774d8fa33f02ec24fb5aa867c236af13b1f78a   # new B0
+# smoke test
+BEAM=9x130 RECO=EICrecon_main_1125 OLD=epic_43f427e_n1124 NEW=epic_ec774d8_n1124 RTAG=main1125 \
+  scripts/production/dis_lambda_sample.sh 998 10 /tmp/gninio/smoke2
+# production: 20 x 500 events, seeds 403-422
+for s in $(seq 403 422); do printf "9x130 %d 500 default\n" $s; done > /tmp/gninio/queue_9x130.txt
+condor_submit -a RECO=EICrecon_main_1125 -a OLD=epic_43f427e_n1124 -a NEW=epic_ec774d8_n1124 -a RTAG=main1125 \
+  -a "queue BEAM,SEED,N,DEST from /tmp/gninio/queue_9x130.txt" scripts/condor/dis_lambda.sub   # cluster 20204682
+condor_q 20204682 -totals; grep -l ALL_OK ~/private/eic/condor_logs/dis_9x130_s4*.20204682.out | wc -l
+```

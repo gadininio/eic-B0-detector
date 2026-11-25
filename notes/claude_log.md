@@ -700,3 +700,14 @@ Macro `~/private/eic/compare_tracks.C` (run in `~/private/eic`). Both use the co
 - Old B0: generated x_K median 0.35 (mostly > 0.2); 51 of 162 at y > 0.01. Candidates with y_DA > 0.01 (12) sit at
   x_K ≈ 0.01–0.2: the y cut removes high x_K (large x ↔ small y at Q² 1–5). x_K hybrid −0.00 [−0.17, +0.21].
   Candidates with y_DA ≤ 0.01 still lie near the diagonal (DA ~20–30 % high): to recheck with more statistics.
+
+### 9x130 production submitted (2026-11-25)
+- Builds in the pinned container (SIF nightly 2026-11-24): EICrecon_main_1125 = EICrecon main 378d6ae
+  (2026-11-25, contains #3116), epic_43f427e_n1124 (old B0), epic_ec774d8_n1124 (new B0). All BUILD_OK.
+- Smoke test 10 events (seed 998, /tmp/gninio/smoke2): ALL_OK in 2 min; lambda_dis.C runs on the
+  *.eicreconmain1125.edm4eic.root files; hit-seeded B0 tracks present (proton 2/2, one Λ in the new geometry).
+- x_K axes now linear (user request); in linear bins generated x_K is broad over 0–1 with most events < 0.1
+  (median 0.33); events with y > 0.01 are all at x_K < 0.2.
+- Condor cluster 20204682: 20 jobs, BEAM 9x130, seeds 403–422, N = 500 kept each (10 000 events), RECO=EICrecon_main_1125,
+  OLD=epic_43f427e_n1124, NEW=epic_ec774d8_n1124, RTAG=main1125 → $EIC_DATA/lambda_dis_9x130/dis_lambda_9x130_{old,new}_s4NN.*;
+  logs ~/private/eic/condor_logs/dis_9x130_s4NN.20204682.{out,err}. Expected ~40 min per job once running.
