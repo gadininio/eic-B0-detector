@@ -689,3 +689,14 @@ Macro `~/private/eic/compare_tracks.C` (run in `~/private/eic`). Both use the co
   (default pr3116); condor .sub passes RECO, OLD, NEW, RTAG. New files: *.eicreconmain1125.edm4eic.root.
 - Note: new samples use a newer container and EICrecon than s401/s402; re-reconstruct those from their edm4hep for a
   consistent set if needed.
+
+### x_K distributions (2026-11-25)
+- User: plot the x_K distributions (in addition to the other x plots) for the Sullivan-like sample (= our Pythia
+  Λ-tagged DIS with a B0-direction Λ at x_L > 0.6, 9x130).
+- `kaon_kinematics.C` now also writes `<outbase>_xK.png` (3 x 2): generated x_K (all, y > 0.01) and true x_K of the
+  reconstructed signal candidates (all, y_DA > 0.01); reconstructed x_K per method vs true for the same candidates;
+  reco vs true event by event (pass / fail y_DA > 0.01); resolution per method; x_K vs Q² (true) with the candidates.
+  results/11_kaon_sf/kin_9x130_{old,new}_xK.png (numbers unchanged).
+- Old B0: generated x_K median 0.35 (mostly > 0.2); 51 of 162 at y > 0.01. Candidates with y_DA > 0.01 (12) sit at
+  x_K ≈ 0.01–0.2: the y cut removes high x_K (large x ↔ small y at Q² 1–5). x_K hybrid −0.00 [−0.17, +0.21].
+  Candidates with y_DA ≤ 0.01 still lie near the diagonal (DA ~20–30 % high): to recheck with more statistics.

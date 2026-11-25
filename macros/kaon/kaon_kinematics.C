@@ -31,7 +31,8 @@
 // pair closest to the Lambda mass. Signal = both tracks from the same Lambda -> p pi- (truth label).
 // x_L = p_z(beam frame) / E_p, E_p from the file name (9x130, 10x100, 5x41, else 275 GeV).
 //
-// Output: printout and <outbase>.png (4 x 2).
+// Output: printout, <outbase>.png (4 x 2) and <outbase>_xK.png (3 x 2: x_K distributions, reco vs true,
+// resolution per method, x_K vs Q2).
 // Usage (from the repository top):
 //   root -l -b -q 'macros/kaon/kaon_kinematics.C+("/eos/user/g/gninio/eic/lambda_dis_9x130/dis_lambda_9x130_old_s40?.eicreconpr3116.edm4eic.root","results/11_kaon_sf/kin_9x130_old")'
 #include "../common/LambdaB0.h"
@@ -43,6 +44,9 @@
 #include "TStyle.h"
 #include "TLatex.h"
 #include "TPaveText.h"
+#include "TGraph.h"
+#include "TF1.h"
+#include "TMarker.h"
 #include <cstdio>
 
 namespace {
@@ -124,6 +128,15 @@ void kaon_kinematics(const char* files = "/eos/user/g/gninio/eic/lambda_dis_9x13
   TH2D hdXyD("hdXyD", "x, double-angle method, all events;log_{10} y (true);x_{reco} / x_{true} - 1", 20, -4, 0, 50, -1, 1);
   TH1D hXK("hXK", "x_{K} = x / (1 - x_{L});x_{K};events", 30, bx.data());
   TH1D hXKR("hXKR", "", 30, bx.data()), hXKRS("hXKRS", "", 30, bx.data());
+  // x_K figure
+  TH1D hXKg("hXKg", "x_{K}, events with a B0-direction #Lambda (x_{L} > 0.6);x_{K} (true);events", 30, bx.data());
+  TH1D hXKgY("hXKgY", "", 30, bx.data()), hXKs("hXKs", "", 30, bx.data()), hXKsC("hXKsC", "", 30, bx.data());
+  TH1D hXKrH("hXKrH", "x_{K}, signal candidates with y_{DA} > cut;x_{K};candidates", 30, bx.data());
+  TH1D hXKrE("hXKrE", "", 30, bx.data()), hXKrD("hXKrD", "", 30, bx.data()), hXKtC("hXKtC", "", 30, bx.data());
+  TH1D hdXKm[3] = {TH1D("hdXKm0", "x_{K} resolution, signal candidates, y_{DA} > cut;x_{K}^{reco} / x_{K}^{true} - 1;candidates", 20, -1, 1),
+                   TH1D("hdXKm1", "", 20, -1, 1), TH1D("hdXKm2", "", 20, -1, 1)};   // electron, DA, hybrid
+  TH2D hXKQ("hXKQ", "x_{K} vs Q^{2} (true), B0-direction #Lambda, x_{L} > 0.6;x_{K} (true);Q^{2} (true) [GeV^{2}]", 30, bx.data(), 20, bq.data());
+  std::vector<double> gT, gR, gTf, gRf, cXK, cQ2;   // reco vs true (pass / fail the y cut); candidate (x_K, Q2) true
   TH1D hdXKh("hdXKh", TString::Format("x_{K}, #Lambda candidates (signal);x_{K}^{reco} / x_{K}^{true} - 1;candidates"), 20, -1, 1), hdXKe("hdXKe", "", 20, -1, 1);
 
   while (r.Next()) {
@@ -171,7 +184,11 @@ void kaon_kinematics(const char* files = "/eos/user/g/gninio/eic/lambda_dis_9x13
       if (th < thLo || th > thHi || XL(pl) < xLMin) continue;
       xLt = std::max(xLt, XL(pl));
     }
-    if (xLt > 0) { ++nSel; ++nSelY[iy]; hQx.Fill(kt.x, kt.Q2); hY.Fill(kt.y); hXK.Fill(kt.x / (1 - xLt)); }
+    if (xLt > 0) {
+      ++nSel; ++nSelY[iy]; hQx.Fill(kt.x, kt.Q2); hY.Fill(kt.y); hXK.Fill(kt.x / (1 - xLt));
+      double xKg = kt.x / (1 - xLt);
+      hXKg.Fill(xKg); if (kt.y > yMin) hXKgY.Fill(xKg); hXKQ.Fill(xKg, kt.Q2);
+    }
 
     // reconstructed kinematics
     Kin kr[kNM];
@@ -228,6 +245,14 @@ void kaon_kinematics(const char* files = "/eos/user/g/gninio/eic/lambda_dis_9x13
           dXK[m].push_back(d); if (pass) dXKcut[m].push_back(d);
         }
         if (pass && kr[kHyb].ok) hdXKh.Fill(kr[kHyb].x / (1 - xLr) / xKt - 1);
+        hXKs.Fill(xKt); cXK.push_back(xKt); cQ2.push_back(kt.Q2);
+        if (kr[kHyb].ok) { (pass ? gT : gTf).push_back(xKt); (pass ? gR : gRf).push_back(kr[kHyb].x / (1 - xLr)); }
+        if (pass) {
+          hXKsC.Fill(xKt); hXKtC.Fill(xKt);
+          if (kr[kHyb].ok) { hXKrH.Fill(kr[kHyb].x / (1 - xLr)); hdXKm[2].Fill(kr[kHyb].x / (1 - xLr) / xKt - 1); }
+          if (kr[kE].ok)   { hXKrE.Fill(kr[kE].x / (1 - xLr));   hdXKm[0].Fill(kr[kE].x / (1 - xLr) / xKt - 1); }
+          if (kr[kDA].ok)  { hXKrD.Fill(kr[kDA].x / (1 - xLr));  hdXKm[1].Fill(kr[kDA].x / (1 - xLr) / xKt - 1); }
+        }
         if (pass && kr[kE].ok) hdXKe.Fill(kr[kE].x / (1 - xLr) / xKt - 1);
       }
     }
@@ -318,4 +343,61 @@ void kaon_kinematics(const char* files = "/eos/user/g/gninio/eic/lambda_dis_9x13
   t.AddText(TString::Format("x_{K} hybrid, y_{DA} > %.2g: %s", yMin, Spread(dXKcut[kHyb]).Data()));
   t.Draw();
   c.SaveAs(TString(outbase) + ".png");
+
+  // ---- x_K figure ----
+  TCanvas c2("c2", "", 2100, 1250);
+  TLatex t2; t2.SetNDC(); t2.SetTextAlign(22); t2.SetTextSize(0.028); t2.SetTextFont(62);
+  t2.DrawLatex(0.5, 0.97, "#Lambda-tagged DIS (Pythia8), " + beam + (fsn.Contains("_old_") ? ", old B0 geometry" : fsn.Contains("_new_") ? ", new B0 geometry" : "")
+               + TString::Format(", x_{L} > %.2g: x_{K} = x / (1 - x_{L})", xLMin));
+  TPad p2("p2", "", 0, 0, 1, 0.94); p2.Draw(); p2.Divide(3, 2);
+  auto LineH = [](TH1D& h, int col, int sty = 1) { h.SetLineColor(col); h.SetLineWidth(2); h.SetLineStyle(sty); };
+  // 1: generated and reconstructed (at true x_K)
+  p2.cd(1); gPad->SetLogx();
+  LineH(hXKg, kBlack); LineH(hXKgY, kGray + 2, 2); LineH(hXKs, kRed); LineH(hXKsC, kGreen + 2);
+  hXKg.SetMinimum(0); hXKg.Draw("hist"); hXKgY.Draw("hist same"); hXKs.Draw("hist same"); hXKsC.Draw("hist same");
+  TLegend k1(0.13, 0.66, 0.6, 0.88); k1.SetBorderSize(0); k1.SetTextSize(0.035);
+  k1.AddEntry(&hXKg, "generated", "l"); k1.AddEntry(&hXKgY, TString::Format("generated, y > %.2g", yMin), "l");
+  k1.AddEntry(&hXKs, "#Lambda reconstructed (signal), true x_{K}", "l");
+  k1.AddEntry(&hXKsC, TString::Format("  and y_{DA} > %.2g", yMin), "l"); k1.Draw();
+  // 2: reconstructed x_K per method vs true, same candidates
+  p2.cd(2); gPad->SetLogx();
+  LineH(hXKtC, kGreen + 2); LineH(hXKrH, kViolet + 1); LineH(hXKrE, kBlue, 2); LineH(hXKrD, kOrange + 7, 2);
+  hXKrH.SetMaximum(1.4 * std::max({hXKtC.GetMaximum(), hXKrH.GetMaximum(), hXKrE.GetMaximum(), hXKrD.GetMaximum()}) + 1);
+  hXKrH.SetTitle(TString::Format("x_{K}, signal candidates with y_{DA} > %.2g;x_{K};candidates", yMin));
+  hXKrH.Draw("hist"); hXKtC.Draw("hist same"); hXKrE.Draw("hist same"); hXKrD.Draw("hist same");
+  TLegend k2(0.13, 0.68, 0.55, 0.88); k2.SetBorderSize(0); k2.SetTextSize(0.035);
+  k2.AddEntry(&hXKtC, "true", "l"); k2.AddEntry(&hXKrH, "reco, hybrid", "l"); k2.AddEntry(&hXKrE, "reco, electron", "l"); k2.AddEntry(&hXKrD, "reco, DA", "l"); k2.Draw();
+  // 3: reco vs true, event by event
+  p2.cd(3); gPad->SetLogx(); gPad->SetLogy();
+  TH2D fr("fr", "x_{K}, signal candidates;x_{K} (true);x_{K} (reco, hybrid)", 10, 1e-3, 1, 10, 1e-3, 3); fr.SetStats(0); fr.Draw();
+  TGraph g1(gT.size(), gT.data(), gR.data()), g2(gTf.size(), gTf.data(), gRf.data());
+  g1.SetMarkerStyle(20); g1.SetMarkerColor(kViolet + 1); g2.SetMarkerStyle(24); g2.SetMarkerColor(kGray + 2);
+  if (g2.GetN()) g2.Draw("P same"); if (g1.GetN()) g1.Draw("P same");
+  TF1 diag("diag", "x", 1e-3, 1); diag.SetLineColor(kBlack); diag.SetLineStyle(2); diag.Draw("same");
+  TLegend k3(0.13, 0.76, 0.55, 0.88); k3.SetBorderSize(0); k3.SetTextSize(0.035);
+  k3.AddEntry(&g1, TString::Format("y_{DA} > %.2g", yMin), "p"); k3.AddEntry(&g2, TString::Format("y_{DA} #leq %.2g", yMin), "p"); k3.Draw();
+  // 4: resolution per method
+  p2.cd(4);
+  LineH(hdXKm[0], kBlue); LineH(hdXKm[1], kOrange + 7); LineH(hdXKm[2], kViolet + 1);
+  hdXKm[0].SetMaximum(1.4 * std::max({hdXKm[0].GetMaximum(), hdXKm[1].GetMaximum(), hdXKm[2].GetMaximum()}) + 1);
+  hdXKm[0].Draw("hist"); hdXKm[1].Draw("hist same"); hdXKm[2].Draw("hist same");
+  TLegend k4(0.13, 0.7, 0.62, 0.88); k4.SetBorderSize(0); k4.SetTextSize(0.035);
+  k4.AddEntry(&hdXKm[0], "electron " + Spread(dXKcut[kE]), "l"); k4.AddEntry(&hdXKm[1], "DA " + Spread(dXKcut[kDA]), "l");
+  k4.AddEntry(&hdXKm[2], "hybrid " + Spread(dXKcut[kHyb]), "l"); k4.Draw();
+  // 5: x_K vs Q2 (true) with the reconstructed candidates
+  p2.cd(5); gPad->SetLogx(); gPad->SetLogy(); gPad->SetRightMargin(0.13);
+  hXKQ.SetStats(0); hXKQ.Draw("colz");
+  TGraph g3(cXK.size(), cXK.data(), cQ2.data()); g3.SetMarkerStyle(24); g3.SetMarkerColor(kRed); if (g3.GetN()) g3.Draw("P same");
+  TLegend k5(0.13, 0.8, 0.6, 0.88); k5.SetBorderSize(0); k5.SetTextSize(0.035); k5.AddEntry(&g3, "#Lambda reconstructed (signal)", "p"); k5.Draw();
+  // 6: numbers
+  p2.cd(6);
+  TPaveText t3(0.03, 0.03, 0.97, 0.97, "NDC"); t3.SetFillColor(0); t3.SetBorderSize(0); t3.SetTextAlign(12); t3.SetTextFont(42); t3.SetTextSize(0.045);
+  t3.AddText(TString::Format("%ld events, %ld with a B0-direction #Lambda at x_{L} > %.2g", nEv, nSel, xLMin));
+  t3.AddText(TString::Format("  of which y > %.2g (true): %.0f", yMin, hXKgY.GetEntries()));
+  t3.AddText(TString::Format("signal candidates %.0f; with y_{DA} > %.2g: %.0f", hXKs.GetEntries(), yMin, hXKsC.GetEntries()));
+  t3.AddText(TString::Format("x_{K} reco/true - 1 (y_{DA} > %.2g), median [16%%, 84%%]:", yMin));
+  t3.AddText("  electron " + Spread(dXKcut[kE])); t3.AddText("  DA " + Spread(dXKcut[kDA])); t3.AddText("  hybrid " + Spread(dXKcut[kHyb]));
+  t3.AddText(TString::Format("x_{K} true: generated median %.2f", [&] { std::vector<double> v; for (int b = 1; b <= hXKg.GetNbinsX(); ++b) for (int i = 0; i < hXKg.GetBinContent(b); ++i) v.push_back(hXKg.GetBinCenter(b)); std::sort(v.begin(), v.end()); return v.empty() ? 0. : v[v.size() / 2]; }()));
+  t3.Draw();
+  c2.SaveAs(TString(outbase) + "_xK.png");
 }
