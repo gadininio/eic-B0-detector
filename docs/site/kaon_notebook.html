@@ -198,7 +198,7 @@ footer { max-width: 1180px; margin: 4rem auto 0; padding-top: 1rem; border-top: 
           </div>
           <div>
             <span class="label">Next</span>
-            <p>Sullivan signal sample through our own chain, with the ePIC afterburner (also fixes the electron-beam tilt). Then the kaon EM form factor, then Λ polarization.</p>
+            <p>Sullivan signal sample run by us, with the cross-section weight kept and X hadronized (the campaign files are unweighted phase space), then our chain with the ePIC afterburner. Then the kaon EM form factor, then Λ polarization.</p>
           </div>
         </div>
       </div>
@@ -316,8 +316,14 @@ footer { max-width: 1180px; margin: 4rem auto 0; padding-top: 1rem; border-top: 
               <li>The Sullivan sample has a hard edge, maximum angle × E<sub>p</sub> ≈ 1.5 GeV, so the 0 at 18×275 is not a statistics effect.</li>
             </ul>
           </div>
+          <span class="label">Finding</span>
+          <div>
+            <p class="finding"><b>The campaign Sullivan files are unweighted phase space</b> (checked 2026-11-25). eicMesonSFGen 1.0.0 is <a href="https://github.com/JeffersonLab/eic_mesonsf_generator" target="_blank" rel="noopener">JeffersonLab/eic_mesonsf_generator</a> v1.0.0. It samples Q² uniformly, ln x uniformly and the Λ isotropically in the proton rest frame, and puts the physics (inclusive DIS × kaon splitting function × kaon F2) into a weight that the HepMC output does not carry. The hadronic system X is not generated: the "K⁺" in the files has momentum −q. At 9×130 the median Q² is 185 GeV², against 2 GeV² in Pythia DIS.</p>
+            <p>So the Sullivan fractions in the table above are phase-space fractions, not rates. The angle scaling with beam energy is kinematics and stands.</p>
+          </div>
+
           <span class="label">Conclusion</span>
-          <div><p class="conclusion">The B0 measurement of the kaon structure function is a 9×130 / 10×100 measurement. At 18×275 the Λ goes to the ZDC, the Roman pots and the off-momentum detectors. The Pythia sample is the right final state to start with; the Sullivan generator is needed later as the signal model.</p></div>
+          <div><p class="conclusion">The B0 measurement of the kaon structure function is a 9×130 / 10×100 measurement. At 18×275 the Λ goes to the ZDC, the Roman pots and the off-momentum detectors. The Pythia sample is the right final state to start with; the Sullivan generator is needed later as the signal model, run by us with its weight kept and X hadronized.</p></div>
         </div>
       </article>
 
@@ -497,7 +503,7 @@ footer { max-width: 1180px; margin: 4rem auto 0; padding-top: 1rem; border-top: 
       <h2 id="issues-h">Open issues</h2>
       <div class="issues">
         <div class="issue"><span class="pill warn">decide</span><p><b>Electron side of the simulation.</b> ddsim <code>--crossingAngleBoost</code> tilts the electron beam by 25 mrad. Redo with the ePIC afterburner before using electron acceptance or EICrecon kinematics. B0 / Λ results are unaffected.</p></div>
-        <div class="issue"><span class="pill todo">next</span><p><b>Kaon SF signal sample.</b> eicMesonSFGen at 9×130 / 10×100 through our chain; more statistics; tune the hybrid switch; kaon flux and t extrapolation; beam effects for |t|.</p></div>
+        <div class="issue"><span class="pill todo">next</span><p><b>Kaon SF signal sample.</b> Run eicMesonSFGen ourselves at 9×130 / 10×100, keep its cross-section weight and hadronize X (the campaign files have neither), then our chain with the afterburner. Also: more statistics, tune the hybrid switch, kaon flux and t extrapolation, beam effects for |t|.</p></div>
         <div class="issue"><span class="pill todo">open</span><p><b>Soft π⁻ lost in the CKF</b>; old-geometry truth-seeded efficiency jump between EICrecon builds; +2 MeV mass shift in the old geometry.</p></div>
         <div class="issue"><span class="pill todo">open</span><p><b>Real events</b> (other tracks, beam background) will need vertexing and decay-length cuts.</p></div>
         <div class="issue"><span class="pill todo">open</span><p><b>Realistic B0 seeding</b> (EICrecon#3116) is not merged yet.</p></div>
