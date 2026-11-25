@@ -198,7 +198,7 @@ footer { max-width: 1180px; margin: 4rem auto 0; padding-top: 1rem; border-top: 
           </div>
           <div>
             <span class="label">Next</span>
-            <p>Sullivan signal sample run by us, with the cross-section weight kept and X hadronized (the campaign files are unweighted phase space), then our chain with the ePIC afterburner. Then the kaon EM form factor, then Λ polarization.</p>
+            <p>10 000 more 9×130 Λ-tagged DIS events are running on condor (20 × 500, submitted 2026-11-25), with EICrecon main that now includes B0 hit seeding. Then rerun the kaon SF steps with 10× the statistics. Later: the kaon EM form factor, then Λ polarization.</p>
           </div>
         </div>
       </div>
@@ -468,7 +468,7 @@ footer { max-width: 1180px; margin: 4rem auto 0; padding-top: 1rem; border-top: 
               <img src="figs/kin_9x130_old_xK.png" alt="x_K distributions: generated and reconstructed, reconstructed per method versus true, event-by-event reco versus true, resolution per method, and x_K versus Q2." loading="lazy">
               <figcaption>Top: x<sub>K</sub> generated (all, y &gt; 0.01) and at the true value for reconstructed signal candidates; reconstructed x<sub>K</sub> per method against the true one for the candidates with y<sub>DA</sub> &gt; 0.01; reco against true event by event. Bottom: resolution per method, x<sub>K</sub> against Q² with the reconstructed candidates, numbers.</figcaption>
             </figure>
-            <p>Generated x<sub>K</sub> is mostly above 0.2 (median 0.35), but those events sit at low y. With y<sub>DA</sub> &gt; 0.01 the surviving candidates are at x<sub>K</sub> ≈ 0.01–0.2, so at 9×130 the y cut limits the reach to x<sub>K</sub> ≲ 0.3. Candidates below the cut still follow the diagonal with DA (about 20–30 % high), which is worth rechecking with more events.</p>
+            <p>Generated x<sub>K</sub> spreads over the whole range 0–1, with the most events below 0.1 (median 0.33). Events with y &gt; 0.01 are all below x<sub>K</sub> ≈ 0.2, and so are the candidates that pass y<sub>DA</sub> &gt; 0.01: at 9×130 the y cut limits the reach to x<sub>K</sub> ≲ 0.2–0.3. Candidates below the cut still follow the diagonal with DA (about 20–30 % high), which is worth rechecking with more events.</p>
           </div>
           <span class="label">Conclusion</span>
           <div><p class="conclusion">The double-angle method is the best at low y, the electron method above y ≈ 0.05. Below y ≈ 0.01 no method measures x, because half of the hadronic E − p<sub>z</sub> goes beyond η = 3.5 where there is no detector; adding the HCal would not change that. With y<sub>DA</sub> &gt; 0.01 about 40 % of the candidates remain and x<sub>K</sub> is measured to about 20 % (old B0, 12 events). x<sub>K</sub> bins must be wide, and the hybrid switch point still needs tuning.</p></div>
@@ -514,7 +514,7 @@ footer { max-width: 1180px; margin: 4rem auto 0; padding-top: 1rem; border-top: 
         <div class="issue"><span class="pill todo">next</span><p><b>Kaon SF signal sample.</b> Two candidate generators. eicMesonSFGen: run it ourselves at 9×130 / 10×100, keep its cross-section weight and hadronize X (the campaign files have neither). <a href="https://github.com/rong-wang-impcas/tagged-Lambda-DIS" target="_blank" rel="noopener">tagged-Lambda-DIS</a> (EicC study, arXiv:2109.08483): already unweighted with exact e′ and Λ kinematics, but ROOT-tree output only, no X, and the Λ forced to nπ⁰. Either way, then our chain with the afterburner. Also: more statistics, tune the hybrid switch, kaon flux and t extrapolation, beam effects for |t|.</p></div>
         <div class="issue"><span class="pill todo">open</span><p><b>Soft π⁻ lost in the CKF</b>; old-geometry truth-seeded efficiency jump between EICrecon builds; +2 MeV mass shift in the old geometry.</p></div>
         <div class="issue"><span class="pill todo">open</span><p><b>Real events</b> (other tracks, beam background) will need vertexing and decay-length cuts.</p></div>
-        <div class="issue"><span class="pill todo">open</span><p><b>Realistic B0 seeding</b> (EICrecon#3116) is not merged yet.</p></div>
+        <div class="issue"><span class="pill run">running</span><p><b>More statistics.</b> Condor cluster 20204682: 9×130, seeds 403–422, 500 events each, both geometries. The eic-shell container is now pinned (the daily nightly broke our builds), and EICrecon main includes B0 hit seeding (#3116, merged 2026-11-23). New files end in <code>.eicreconmain1125.edm4eic.root</code>; the existing 1000 events used the older PR build.</p></div>
       </div>
     </section>
 
