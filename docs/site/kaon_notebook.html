@@ -198,7 +198,7 @@ footer { max-width: 1180px; margin: 4rem auto 0; padding-top: 1rem; border-top: 
           </div>
           <div>
             <span class="label">Next</span>
-            <p>10 000 more 9×130 Λ-tagged DIS events are running on condor (20 × 500, submitted 2026-11-25), with EICrecon main that now includes B0 hit seeding. Then rerun the kaon SF steps with 10× the statistics. Later: the kaon EM form factor, then Λ polarization.</p>
+            <p>10 000 more 9×130 Λ-tagged DIS events are done (condor, 2026-11-25), reconstructed with EICrecon main that now includes B0 hit seeding. Next: rerun the kaon SF steps with 10× the statistics. Later: the kaon EM form factor, then Λ polarization.</p>
           </div>
         </div>
       </div>
@@ -514,7 +514,7 @@ footer { max-width: 1180px; margin: 4rem auto 0; padding-top: 1rem; border-top: 
         <div class="issue"><span class="pill todo">next</span><p><b>Kaon SF signal sample.</b> Two candidate generators. eicMesonSFGen: run it ourselves at 9×130 / 10×100, keep its cross-section weight and hadronize X (the campaign files have neither). <a href="https://github.com/rong-wang-impcas/tagged-Lambda-DIS" target="_blank" rel="noopener">tagged-Lambda-DIS</a> (EicC study, arXiv:2109.08483): already unweighted with exact e′ and Λ kinematics, but ROOT-tree output only, no X, and the Λ forced to nπ⁰. Either way, then our chain with the afterburner. Also: more statistics, tune the hybrid switch, kaon flux and t extrapolation, beam effects for |t|.</p></div>
         <div class="issue"><span class="pill todo">open</span><p><b>Soft π⁻ lost in the CKF</b>; old-geometry truth-seeded efficiency jump between EICrecon builds; +2 MeV mass shift in the old geometry.</p></div>
         <div class="issue"><span class="pill todo">open</span><p><b>Real events</b> (other tracks, beam background) will need vertexing and decay-length cuts.</p></div>
-        <div class="issue"><span class="pill run">running</span><p><b>More statistics.</b> Condor cluster 20204682: 9×130, seeds 403–422, 500 events each, both geometries. The eic-shell container is now pinned (the daily nightly broke our builds), and EICrecon main includes B0 hit seeding (#3116, merged 2026-11-23). New files end in <code>.eicreconmain1125.edm4eic.root</code>; the existing 1000 events used the older PR build.</p></div>
+        <div class="issue"><span class="pill ok">done</span><p><b>More statistics.</b> Condor cluster 20204682 finished on 2026-11-25: 20 / 20 jobs OK, 10 000 events at 9×130 (seeds 403–422, both geometries; 152 781 generated). Analysis rerun on them is next. The eic-shell container is now pinned (the daily nightly broke our builds), and EICrecon main includes B0 hit seeding (#3116, merged 2026-11-23). New files end in <code>.eicreconmain1125.edm4eic.root</code>; the existing 1000 events used the older PR build.</p></div>
       </div>
     </section>
 
