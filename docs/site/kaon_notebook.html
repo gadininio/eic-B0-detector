@@ -151,9 +151,17 @@ pre { background: var(--code-bg); padding: 0.8rem 1rem; border-radius: 5px; over
 footer { max-width: 1180px; margin: 4rem auto 0; padding-top: 1rem; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.85rem; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 </style>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
+  svg: { fontCache: 'global' },
+  options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js"></script>
 
 <header class="masthead">
-  <div class="eyebrow">ePIC · far-forward B0 tracker · Λ → pπ⁻</div>
+  <div class="eyebrow">ePIC · far-forward B0 tracker · \(\Lambda \to p\pi^-\)</div>
   <h1>EIC B0 Notebook</h1>
   <p class="lede">Reconstructing forward Λ hyperons in the ePIC B0 tracker, and the physics they open up: the kaon structure function, the kaon electromagnetic form factor and Λ polarization. Each step records the question, the method, the result and what it means.</p>
   <div class="meta">
@@ -172,7 +180,7 @@ footer { max-width: 1180px; margin: 4rem auto 0; padding-top: 1rem; border-top: 
       <a class="grp" href="#kaon-sf">Kaon structure function</a>
       <a class="sub" href="#ksf-chain">Analysis chain</a>
       <a class="sub" href="#ksf-step0">0 · Where the Λs go</a>
-      <a class="sub" href="#ksf-step1">1 · High-x<sub>L</sub> Λs</a>
+      <a class="sub" href="#ksf-step1">1 · High-\(x_L\) Λs</a>
       <a class="sub" href="#ksf-step2">2 · Scattered electron</a>
       <a class="sub" href="#ksf-step3">3 · Hadronic final state</a>
       <a class="grp" href="#kaon-ff">Kaon EM form factor</a>
@@ -190,11 +198,11 @@ footer { max-width: 1180px; margin: 4rem auto 0; padding-top: 1rem; border-top: 
         <div class="status-grid">
           <div>
             <span class="label">Where we are</span>
-            <p>Kaon structure function at 9×130: clean high-x<sub>L</sub> Λ sample in the B0, Q² from the electron to a few percent, x from a hybrid of the double-angle and electron methods.</p>
+            <p>Kaon structure function at 9×130: clean high-\(x_L\) Λ sample in the B0, \(Q^2\) from the electron to a few percent, x from a hybrid of the double-angle and electron methods.</p>
           </div>
           <div>
             <span class="label">Latest conclusion</span>
-            <p>Below y ≈ 0.01 no method measures x: half of the hadronic E − p<sub>z</sub> goes beyond the detector. With y<sub>DA</sub> &gt; 0.01, 13 of 32 Λ candidates remain and x<sub>K</sub> is measured to about 20 % (old B0).</p>
+            <p>Below y ≈ 0.01 no method measures x: half of the hadronic \(E - p_z\) goes beyond the detector. With \(y_{\mathrm{DA}}\) &gt; 0.01, 13 of 32 Λ candidates remain and \(x_K\) is measured to about 20 % (old B0).</p>
           </div>
           <div>
             <span class="label">Next</span>
@@ -208,9 +216,9 @@ footer { max-width: 1180px; margin: 4rem auto 0; padding-top: 1rem; border-top: 
     <section id="studies" aria-labelledby="studies-h">
       <h2 id="studies-h">Studies</h2>
       <div class="studies">
-        <a class="card" href="#lambda"><span class="pill ok">done</span><h3>Λ → pπ⁻ in the B0</h3><p>Acceptance, tracking, mass and geometry, from a particle gun to Λ-tagged DIS. The base for everything else.</p></a>
+        <a class="card" href="#lambda"><span class="pill ok">done</span><h3>\(\Lambda \to p\pi^-\) in the B0</h3><p>Acceptance, tracking, mass and geometry, from a particle gun to Λ-tagged DIS. The base for everything else.</p></a>
         <a class="card" href="#kaon-sf"><span class="pill run">in progress</span><h3>Kaon structure function</h3><p>Sullivan process with a forward Λ tag. Steps 0–3 done at 9×130.</p></a>
-        <a class="card" href="#kaon-ff"><span class="pill todo">next</span><h3>Kaon EM form factor</h3><p>Exclusive e p → e′ K⁺ Λ: the same Λ tag plus the K⁺ and t.</p></a>
+        <a class="card" href="#kaon-ff"><span class="pill todo">next</span><h3>Kaon EM form factor</h3><p>Exclusive \(e\,p \to e'\,K^+\Lambda\): the same Λ tag plus the \(K^+\) and t.</p></a>
         <a class="card" href="#lambda-pol"><span class="pill todo">planned</span><h3>Λ polarization</h3><p>Proton angle in the Λ rest frame and its acceptance × efficiency.</p></a>
       </div>
     </section>
@@ -219,33 +227,33 @@ footer { max-width: 1180px; margin: 4rem auto 0; padding-top: 1rem; border-top: 
     <section id="lambda" class="study" aria-labelledby="lambda-h">
       <div class="study-head">
         <span class="label">Study 1 · 2026-11-02 to 11-19 · done</span>
-        <h2 id="lambda-h">Λ → pπ⁻ in the B0</h2>
+        <h2 id="lambda-h">\(\Lambda \to p\pi^-\) in the B0</h2>
       </div>
       <div class="prose">
         <p>The first study reconstructed the Λ mass from B0 tracks, step by step: a single-Λ particle gun (50–275 GeV, 8–18 mrad), then Pythia8 Λ-tagged DIS at 18×275 and 9×130, in the old and new B0 geometry. Full detail is in <code>notes/claude_summary.md</code>, sections 1–11.</p>
         <ul>
           <li><b>Seeding.</b> B0 tracks of Λ daughters need seeds for secondaries (EICrecon#2901) or hit seeding (EICrecon#3116, still open). Hit seeding finds a seed for every accepted daughter.</li>
           <li><b>Mass.</b> Peak at the PDG mass with σ ≈ 6–7 MeV. Without truth, a momentum-ratio cut p(+)/p(−) &gt; 2.5 keeps 98 % of the signal.</li>
-          <li><b>Soft π⁻.</b> π⁻ below about 10 GeV are often lost in the track finder (CKF). Not a seeding problem; cause still open.</li>
-          <li><b>Λ-tagged DIS generation.</b> Pythia8 NC DIS, Q² &gt; 1 GeV², events kept only with a Λ at θ &lt; 25 mrad. At 9×130: 8.8 % of events have a Λ at any angle, 6.7 % one below 25 mrad (the filter), 4.6 % one in the B0 range, 1.0 % one in the B0 range with x<sub>L</sub> &gt; 0.6.</li>
-          <li><b>Decay before the B0.</b> Follows BR·(1 − e<sup>−L/λ</sup>) with λ = p[GeV] · 7.07 cm and L = 5.8 m; a Λ that has not decayed by 6 m nearly always interacts in material.</li>
+          <li><b>Soft \(\pi^-\).</b> \(\pi^-\) below about 10 GeV are often lost in the track finder (CKF). Not a seeding problem; cause still open.</li>
+          <li><b>Λ-tagged DIS generation.</b> Pythia8 NC DIS, \(Q^2\) &gt; 1 GeV², events kept only with a Λ at θ &lt; 25 mrad. At 9×130: 8.8 % of events have a Λ at any angle, 6.7 % one below 25 mrad (the filter), 4.6 % one in the B0 range, 1.0 % one in the B0 range with \(x_L\) &gt; 0.6.</li>
+          <li><b>Decay before the B0.</b> Follows \(\mathrm{BR}\cdot\left(1-e^{-L/\lambda}\right)\) with \(\lambda = p\,[\mathrm{GeV}]\cdot 7.07\ \mathrm{cm}\) and \(L = 5.8\ \mathrm{m}\); a Λ that has not decayed by 6 m nearly always interacts in material.</li>
           <li><b>Geometry.</b> The new B0 (AC-LGAD stations) covers 56 % of straight lines at 5.5–20 mrad, against 92 % for the old disks. It has a ±45° gap on the electron side and a larger effective beam hole.</li>
         </ul>
       </div>
       <div class="tbl">
         <table>
-          <thead><tr><th>Λ-tagged DIS, all x<sub>L</sub>, hit seeding</th><th class="r">18×275 old</th><th class="r">18×275 new</th><th class="r">9×130 old</th><th class="r">9×130 new</th></tr></thead>
+          <thead><tr><th>Λ-tagged DIS, all \(x_L\), hit seeding</th><th class="r">18×275 old</th><th class="r">18×275 new</th><th class="r">9×130 old</th><th class="r">9×130 new</th></tr></thead>
           <tbody>
             <tr><td>B0-direction Λs (1000 events)</td><td class="r">417</td><td class="r">417</td><td class="r">703</td><td class="r">703</td></tr>
-            <tr><td>both daughters accepted, per pπ⁻ decay</td><td class="r">53.2 %</td><td class="r">16.0 %</td><td class="r">51.9 %</td><td class="r">21.8 %</td></tr>
-            <tr><td>acceptance × efficiency per pπ⁻ decay</td><td class="r">36.1 %</td><td class="r">10.2 %</td><td class="r">31.2 %</td><td class="r">12.6 %</td></tr>
+            <tr><td>both daughters accepted, per \(p\pi^-\) decay</td><td class="r">53.2 %</td><td class="r">16.0 %</td><td class="r">51.9 %</td><td class="r">21.8 %</td></tr>
+            <tr><td>acceptance × efficiency per \(p\pi^-\) decay</td><td class="r">36.1 %</td><td class="r">10.2 %</td><td class="r">31.2 %</td><td class="r">12.6 %</td></tr>
             <tr><td>reconstructed per B0-direction Λ</td><td class="r">18.7 %</td><td class="r">5.0 %</td><td class="r">16.8 %</td><td class="r">6.7 %</td></tr>
             <tr><td>mass ±10 MeV: signal / background</td><td class="r">54 / 54</td><td class="r">18 / 10</td><td class="r">89 / 24</td><td class="r">34 / 8</td></tr>
           </tbody>
         </table>
       </div>
       <figure data-fig>
-        <div class="fig-bar"><span class="label">Λ-tagged DIS 9×130, all x<sub>L</sub></span>
+        <div class="fig-bar"><span class="label">Λ-tagged DIS 9×130, all \(x_L\)</span>
           <div class="seg" role="group" aria-label="B0 geometry"><button type="button" aria-pressed="true" data-src="figs/dis_9x130_old.png">old B0</button><button type="button" aria-pressed="false" data-src="figs/dis_9x130_new.png">new B0</button></div></div>
         <img src="figs/dis_9x130_old.png" alt="Lambda-tagged DIS 9x130 without an x_L cut: spectrum, acceptance, efficiency, yield and mass." loading="lazy">
         <figcaption>Spectrum, acceptance, tracking efficiency, A×ε, yield and mass (truth and hit seeding) for all B0-direction Λs.</figcaption>
@@ -264,20 +272,20 @@ footer { max-width: 1180px; margin: 4rem auto 0; padding-top: 1rem; border-top: 
         <h2 id="ksf-h">Kaon structure function</h2>
       </div>
       <div class="prose">
-        <p>Sullivan process, e p → e′ Λ X: the photon probes a virtual K⁺ around the proton, and the fast Λ tags the event. The measurement needs the Λ (x<sub>L</sub>, t), the event kinematics (x, Q², y) and then x<sub>K</sub> = x / (1 − x<sub>L</sub>), in the region of high x<sub>L</sub> and small |t|. Results are in <code>results/11_kaon_sf</code>.</p>
+        <p>Sullivan process, \(e\,p \to e'\,\Lambda\,X\): the photon probes a virtual \(K^+\) around the proton, and the fast Λ tags the event. The measurement needs the Λ (\(x_L\), t), the event kinematics (x, \(Q^2\), y) and then \(x_K = x/(1-x_L)\), in the region of high \(x_L\) and small \(|t|\). Results are in <code>results/11_kaon_sf</code>.</p>
       </div>
 
       <div id="ksf-chain" style="display:grid;gap:0.8rem;scroll-margin-top:1.5rem">
         <span class="label">Analysis chain</span>
         <div class="chain">
-          <div class="link"><span class="pill ok">done</span><h3>Where the Λs go</h3><p>High-x<sub>L</sub> Λs reach the B0 at 9×130 and 10×100, not at 18×275.</p></div>
-          <div class="link"><span class="pill ok">done</span><h3>x<sub>L</sub> and t of the Λ</h3><p>x<sub>L</sub> to 1.4–3.3 %, |t| to 0.05–0.08 GeV² (no beam effects yet).</p></div>
-          <div class="link"><span class="pill ok">done</span><h3>Q² from the electron</h3><p>A few percent, once the frame is right.</p></div>
+          <div class="link"><span class="pill ok">done</span><h3>Where the Λs go</h3><p>High-\(x_L\) Λs reach the B0 at 9×130 and 10×100, not at 18×275.</p></div>
+          <div class="link"><span class="pill ok">done</span><h3>\(x_L\) and t of the Λ</h3><p>\(x_L\) to 1.4–3.3 %, \(|t|\) to 0.05–0.08 GeV² (no beam effects yet).</p></div>
+          <div class="link"><span class="pill ok">done</span><h3>\(Q^2\) from the electron</h3><p>A few percent, once the frame is right.</p></div>
           <div class="link"><span class="pill warn">limited</span><h3>x at low y</h3><p>Double-angle at low y, electron above 0.05. No method works below y ≈ 0.01.</p></div>
           <div class="link"><span class="pill todo">next</span><h3>Sullivan signal sample</h3><p>eicMesonSFGen through our simulation and reconstruction, with the afterburner.</p></div>
           <div class="link"><span class="pill todo">to do</span><h3>Statistics</h3><p>More 9×130 events: only 13 usable candidates per 1000 events now (old B0).</p></div>
-          <div class="link"><span class="pill todo">to do</span><h3>Beam effects</h3><p>Angular divergence and momentum spread, for a realistic |t| resolution.</p></div>
-          <div class="link"><span class="pill todo">to do</span><h3>Extraction</h3><p>A×ε in (x<sub>K</sub>, Q², t, x<sub>L</sub>) bins, backgrounds (Σ⁰ → Λγ, fragmentation Λs), kaon flux, t extrapolation.</p></div>
+          <div class="link"><span class="pill todo">to do</span><h3>Beam effects</h3><p>Angular divergence and momentum spread, for a realistic \(|t|\) resolution.</p></div>
+          <div class="link"><span class="pill todo">to do</span><h3>Extraction</h3><p>A×ε in (\(x_K\), \(Q^2\), t, \(x_L\)) bins, backgrounds (\(\Sigma^0 \to \Lambda\gamma\), fragmentation Λs), kaon flux, t extrapolation.</p></div>
         </div>
       </div>
 
@@ -289,9 +297,9 @@ footer { max-width: 1180px; margin: 4rem auto 0; padding-top: 1rem; border-top: 
           <div><p>The Λ-tagged DIS samples put many Λs into the B0 at 18×275. Are these the Λs a kaon structure function measurement needs, and do we need a different sample?</p></div>
           <span class="label">Method</span>
           <div>
-            <p>Count generated Λs by x<sub>L</sub> and by angle from the proton beam, in two kinds of sample:</p>
+            <p>Count generated Λs by \(x_L\) and by angle from the proton beam, in two kinds of sample:</p>
             <ul>
-              <li>the ePIC campaign Sullivan sample <code>EXCLUSIVE/MESON_SF_ABCONV/eicMesonSFGen-1.0.0</code> (K⁺Λ, 2–4 files of 100 events per beam energy);</li>
+              <li>the ePIC campaign Sullivan sample <code>EXCLUSIVE/MESON_SF_ABCONV/eicMesonSFGen-1.0.0</code> (\(K^+\Lambda\), 2–4 files of 100 events per beam energy);</li>
               <li>our Pythia8 Λ-tagged DIS samples (1000 events each).</li>
             </ul>
             <p>Macro <code>macros/exploration/lambda_xl_theta.C</code>.</p>
@@ -300,7 +308,7 @@ footer { max-width: 1180px; margin: 4rem auto 0; padding-top: 1rem; border-top: 
           <div>
             <div class="tbl">
               <table>
-                <thead><tr><th>sample</th><th class="r">Λs</th><th class="r">x<sub>L</sub> &gt; 0.6</th><th class="r">of those in the B0</th><th class="r">median angle</th></tr></thead>
+                <thead><tr><th>sample</th><th class="r">Λs</th><th class="r">\(x_L\) &gt; 0.6</th><th class="r">of those in the B0</th><th class="r">median angle</th></tr></thead>
                 <tbody>
                   <tr><td>Sullivan 5×41</td><td class="r">400</td><td class="r">306</td><td class="r">75</td><td class="r">26 mrad</td></tr>
                   <tr class="hl"><td>Sullivan 10×100</td><td class="r">200</td><td class="r">147</td><td class="r">134</td><td class="r">10.5 mrad</td></tr>
@@ -312,14 +320,14 @@ footer { max-width: 1180px; margin: 4rem auto 0; padding-top: 1rem; border-top: 
               </table>
             </div>
             <ul>
-              <li>The angle is roughly p<sub>T</sub> / (x<sub>L</sub> E<sub>p</sub>). p<sub>T</sub> is 0.4–1.2 GeV at every beam energy, so the angle halves from 130 to 275 GeV and the high-x<sub>L</sub> Λs fall below the B0's 5.5 mrad edge.</li>
-              <li>Of the 417 Λs in the B0 direction in the 18×275 DIS sample, 404 have x<sub>L</sub> &lt; 0.6. They come from fragmentation of the proton remnant.</li>
-              <li>The Sullivan sample has a hard edge, maximum angle × E<sub>p</sub> ≈ 1.5 GeV, so the 0 at 18×275 is not a statistics effect.</li>
+              <li>The angle is roughly \(p_T/(x_L E_p)\). \(p_T\) is 0.4–1.2 GeV at every beam energy, so the angle halves from 130 to 275 GeV and the high-\(x_L\) Λs fall below the B0's 5.5 mrad edge.</li>
+              <li>Of the 417 Λs in the B0 direction in the 18×275 DIS sample, 404 have \(x_L\) &lt; 0.6. They come from fragmentation of the proton remnant.</li>
+              <li>The Sullivan sample has a hard edge, \(\theta_{\max}\,E_p \approx 1.5\ \mathrm{GeV}\), so the 0 at 18×275 is not a statistics effect.</li>
             </ul>
           </div>
           <span class="label">Finding</span>
           <div>
-            <p class="finding"><b>The campaign Sullivan files are unweighted phase space</b> (checked 2026-11-25). eicMesonSFGen 1.0.0 is <a href="https://github.com/JeffersonLab/eic_mesonsf_generator" target="_blank" rel="noopener">JeffersonLab/eic_mesonsf_generator</a> v1.0.0. It samples Q² uniformly, ln x uniformly and the Λ isotropically in the proton rest frame, and puts the physics (inclusive DIS × kaon splitting function × kaon F2) into a weight that the HepMC output does not carry. The hadronic system X is not generated: the "K⁺" in the files has momentum −q. At 9×130 the median Q² is 185 GeV², against 2 GeV² in Pythia DIS.</p>
+            <p class="finding"><b>The campaign Sullivan files are unweighted phase space</b> (checked 2026-11-25). eicMesonSFGen 1.0.0 is <a href="https://github.com/JeffersonLab/eic_mesonsf_generator" target="_blank" rel="noopener">JeffersonLab/eic_mesonsf_generator</a> v1.0.0. It samples \(Q^2\) uniformly, ln x uniformly and the Λ isotropically in the proton rest frame, and puts the physics (inclusive DIS × kaon splitting function × kaon F2) into a weight that the HepMC output does not carry. The hadronic system X is not generated: the "\(K^+\)" in the files has momentum \(-q\). At 9×130 the median \(Q^2\) is 185 GeV², against 2 GeV² in Pythia DIS.</p>
             <p>So the Sullivan fractions in the table above are phase-space fractions, not rates. The angle scaling with beam energy is kinematics and stands.</p>
           </div>
 
@@ -330,10 +338,10 @@ footer { max-width: 1180px; margin: 4rem auto 0; padding-top: 1rem; border-top: 
 
       <!-- STEP 1 -->
       <article class="step" id="ksf-step1">
-        <div class="step-head"><span class="label">Step 1 · 2026-11-25</span><h3>High-x<sub>L</sub> Λs at 9×130: acceptance, mass, x<sub>L</sub> and t</h3></div>
+        <div class="step-head"><span class="label">Step 1 · 2026-11-25</span><h3>High-\(x_L\) Λs at 9×130: acceptance, mass, \(x_L\) and t</h3></div>
         <div class="qmrc">
           <span class="label">Question</span>
-          <div><p>How many Λs with x<sub>L</sub> &gt; 0.6 does the B0 reconstruct at 9×130, how clean is the mass peak, and how well are x<sub>L</sub> and t measured?</p></div>
+          <div><p>How many Λs with \(x_L\) &gt; 0.6 does the B0 reconstruct at 9×130, how clean is the mass peak, and how well are \(x_L\) and t measured?</p></div>
           <span class="label">Method</span>
           <div>
             <ul>
@@ -345,36 +353,36 @@ footer { max-width: 1180px; margin: 4rem auto 0; padding-top: 1rem; border-top: 
           <div>
             <div class="tbl">
               <table>
-                <thead><tr><th>9×130, x<sub>L</sub> &gt; 0.6 (162 B0-direction Λs)</th><th class="r">old B0</th><th class="r">new B0</th></tr></thead>
+                <thead><tr><th>9×130, \(x_L\) &gt; 0.6 (162 B0-direction Λs)</th><th class="r">old B0</th><th class="r">new B0</th></tr></thead>
                 <tbody>
-                  <tr><td>both daughters accepted, per pπ⁻ decay</td><td class="r">61.9 %</td><td class="r">30.1 %</td></tr>
-                  <tr><td>acceptance × efficiency per pπ⁻ decay (truth / hit seeding)</td><td class="r">42.9 / 51.2 %</td><td class="r">19.2 / 24.7 %</td></tr>
+                  <tr><td>both daughters accepted, per \(p\pi^-\) decay</td><td class="r">61.9 %</td><td class="r">30.1 %</td></tr>
+                  <tr><td>acceptance × efficiency per \(p\pi^-\) decay (truth / hit seeding)</td><td class="r">42.9 / 51.2 %</td><td class="r">19.2 / 24.7 %</td></tr>
                   <tr><td>reconstructed per B0-direction Λ (truth / hit)</td><td class="r">22.2 / 26.5 %</td><td class="r">8.6 / 11.1 %</td></tr>
                   <tr class="hl"><td>mass ±10 MeV, hit seeding: signal / background</td><td class="r">31 / 2</td><td class="r">11 / 0</td></tr>
-                  <tr><td>x<sub>L</sub> reco − true: mean, RMS</td><td class="r">+0.012, 0.033</td><td class="r">−0.010, 0.014</td></tr>
-                  <tr><td>|t| reco − true: mean, RMS [GeV²]</td><td class="r">−0.025, 0.080</td><td class="r">−0.003, 0.049</td></tr>
+                  <tr><td>\(x_L\) reco − true: mean, RMS</td><td class="r">+0.012, 0.033</td><td class="r">−0.010, 0.014</td></tr>
+                  <tr><td>\(|t|\) reco − true: mean, RMS [GeV²]</td><td class="r">−0.025, 0.080</td><td class="r">−0.003, 0.049</td></tr>
                 </tbody>
               </table>
             </div>
             <ul>
-              <li>Compared with no cut, acceptance and π⁻ efficiency are higher (the π⁻ is harder) and the combinatorial background almost disappears.</li>
-              <li>No generated Λ in the B0 has |t| below about 0.5 GeV²: the B0 starts at 5.5 mrad, so p<sub>T</sub> ≳ 0.5 GeV.</li>
+              <li>Compared with no cut, acceptance and \(\pi^-\) efficiency are higher (the \(\pi^-\) is harder) and the combinatorial background almost disappears.</li>
+              <li>No generated Λ in the B0 has \(|t|\) below about 0.5 GeV²: the B0 starts at 5.5 mrad, so \(p_T\) ≳ 0.5 GeV.</li>
             </ul>
             <figure data-fig>
               <div class="fig-bar"><span class="label">Acceptance, efficiency and mass</span>
                 <div class="seg" role="group" aria-label="B0 geometry"><button type="button" aria-pressed="true" data-src="figs/dis_9x130_old_xl06.png">old B0</button><button type="button" aria-pressed="false" data-src="figs/dis_9x130_new_xl06.png">new B0</button></div></div>
               <img src="figs/dis_9x130_old_xl06.png" alt="Lambda-tagged DIS 9x130 with x_L above 0.6: spectrum, acceptance, efficiency, yield and mass." loading="lazy">
-              <figcaption>Top: spectrum, acceptance, tracking efficiency, A×ε per pπ⁻ decay. Bottom: yield, mass with truth and hit seeding (green = truth-labelled signal), main numbers.</figcaption>
+              <figcaption>Top: spectrum, acceptance, tracking efficiency, A×ε per \(p\pi^-\) decay. Bottom: yield, mass with truth and hit seeding (green = truth-labelled signal), main numbers.</figcaption>
             </figure>
             <figure data-fig>
-              <div class="fig-bar"><span class="label">x<sub>L</sub> and |t|</span>
+              <div class="fig-bar"><span class="label">\(x_L\) and \(|t|\)</span>
                 <div class="seg" role="group" aria-label="B0 geometry"><button type="button" aria-pressed="true" data-src="figs/dis_9x130_old_xl06_xl_t.png">old B0</button><button type="button" aria-pressed="false" data-src="figs/dis_9x130_new_xl06_xl_t.png">new B0</button></div></div>
-              <img src="figs/dis_9x130_old_xl06_xl_t.png" alt="x_L and |t| distributions of selected Lambdas, generated and reconstructed, and their resolution." loading="lazy">
-              <figcaption>x<sub>L</sub> and |t| of the selected Λs (black generated, red reconstructed), and the resolution of the reconstructed Λ.</figcaption>
+              <img src="figs/dis_9x130_old_xl06_xl_t.png" alt="x_L and \(|t|\) distributions of selected Lambdas, generated and reconstructed, and their resolution." loading="lazy">
+              <figcaption>\(x_L\) and \(|t|\) of the selected Λs (black generated, red reconstructed), and the resolution of the reconstructed Λ.</figcaption>
             </figure>
           </div>
           <span class="label">Conclusion</span>
-          <div><p class="conclusion">At 9×130 the B0 delivers a clean high-x<sub>L</sub> Λ sample with good x<sub>L</sub> and t resolution. The lowest |t| is out of the B0's reach. The new geometry keeps about 40 % of the old geometry's yield.</p></div>
+          <div><p class="conclusion">At 9×130 the B0 delivers a clean high-\(x_L\) Λ sample with good \(x_L\) and t resolution. The lowest \(|t|\) is out of the B0's reach. The new geometry keeps about 40 % of the old geometry's yield.</p></div>
         </div>
       </article>
 
@@ -383,44 +391,44 @@ footer { max-width: 1180px; margin: 4rem auto 0; padding-top: 1rem; border-top: 
         <div class="step-head"><span class="label">Step 2 · 2026-11-25</span><h3>DIS kinematics from the scattered electron</h3></div>
         <div class="qmrc">
           <span class="label">Question</span>
-          <div><p>How well do we measure x, Q² and y for these events from the scattered electron?</p></div>
+          <div><p>How well do we measure x, \(Q^2\) and y for these events from the scattered electron?</p></div>
           <span class="label">Method</span>
           <div>
             <ul>
               <li>Start from EICrecon's <code>InclusiveKinematics*</code> collections; recompute the true kinematics from the beams and the scattered electron (agrees exactly with <code>InclusiveKinematicsTruth</code>).</li>
               <li>Compare the reconstructed electron track with the true electron.</li>
-              <li>Compute Q², x and y as Lorentz invariants from the true beam four-vectors of each event and the reconstructed electron track (<code>macros/kaon/kaon_kinematics.C</code>).</li>
+              <li>Compute \(Q^2\), x and y as Lorentz invariants from the true beam four-vectors of each event and the reconstructed electron track (<code>macros/kaon/kaon_kinematics.C</code>).</li>
             </ul>
           </div>
           <span class="label">Finding</span>
-          <div><p class="finding"><b>Our simulation tilts the electron beam by 25 mrad.</b> ddsim's <code>--crossingAngleBoost -0.025</code> is a pure boost, so both beams get p<sub>x</sub>/E = −0.025. In the official campaign files (ePIC afterburner) the electron beam runs along −z. The proton side is the same in both, so the B0 / Λ results stand. EICrecon assumes the campaign layout, so its reconstructed kinematics are wrong for our samples (Q² spread ±25 %, although the electron track itself is measured to 0.3 mrad).</p></div>
+          <div><p class="finding"><b>Our simulation tilts the electron beam by 25 mrad.</b> ddsim's <code>--crossingAngleBoost -0.025</code> is a pure boost, so both beams get \(p_x/E = -0.025\). In the official campaign files (ePIC afterburner) the electron beam runs along −z. The proton side is the same in both, so the B0 / Λ results stand. EICrecon assumes the campaign layout, so its reconstructed kinematics are wrong for our samples (\(Q^2\) spread ±25 %, although the electron track itself is measured to 0.3 mrad).</p></div>
           <span class="label">Result</span>
           <div>
             <ul>
-              <li>The scattered electron is found in 97–98 % of events. Q² is good to a few percent at all y.</li>
+              <li>The scattered electron is found in 97–98 % of events. \(Q^2\) is good to a few percent at all y.</li>
               <li>x from the electron fails at low y: −90 % at y &lt; 0.01 (y even comes out ≤ 0 in a third of these events), −33 % [−73 %, +74 %] at 0.01–0.05, ±25 % at 0.05–0.2.</li>
-              <li>Of the 162 events with a high-x<sub>L</sub> Λ in the B0 direction, 111 have y &lt; 0.01, 29 have 0.01–0.05 and 22 have y &gt; 0.05.</li>
+              <li>Of the 162 events with a high-\(x_L\) Λ in the B0 direction, 111 have y &lt; 0.01, 29 have 0.01–0.05 and 22 have y &gt; 0.05.</li>
             </ul>
           </div>
           <span class="label">Conclusion</span>
-          <div><p class="conclusion">Q² is fine, but the high-x<sub>L</sub> Λ events sit at very low y, where the electron method can't measure x. That led to step 3.</p></div>
+          <div><p class="conclusion">\(Q^2\) is fine, but the high-\(x_L\) Λ events sit at very low y, where the electron method can't measure x. That led to step 3.</p></div>
         </div>
       </article>
 
       <!-- STEP 3 -->
       <article class="step" id="ksf-step3">
-        <div class="step-head"><span class="label">Step 3 · 2026-11-25</span><h3>Hadronic-final-state methods and x<sub>K</sub></h3></div>
+        <div class="step-head"><span class="label">Step 3 · 2026-11-25</span><h3>Hadronic-final-state methods and \(x_K\)</h3></div>
         <div class="qmrc">
           <span class="label">Question</span>
-          <div><p>Can the hadronic final state recover x at low y, and how well is x<sub>K</sub> = x / (1 − x<sub>L</sub>) then measured?</p></div>
+          <div><p>Can the hadronic final state recover x at low y, and how well is \(x_K = x/(1-x_L)\) then measured?</p></div>
           <span class="label">Method</span>
           <div>
             <ul>
-              <li><b>Frame.</b> Undo the ddsim boost with β<sub>x</sub> = −p<sub>x</sub>/E of the summed true beams. Both beams then lie along z to better than 10⁻¹⁰ GeV.</li>
-              <li><b>Hadronic final state.</b> All <code>ReconstructedParticles</code> (tracks and ECal clusters; no HCal) except the scattered electron: Σ<sub>h</sub> = Σ(E − p<sub>z</sub>) and p<sub>T,h</sub>.</li>
-              <li><b>Methods.</b> Jacquet–Blondel (JB), double-angle (DA), Σ, eΣ, and a hybrid: DA when the reconstructed y<sub>DA</sub> &lt; 0.05, the electron method otherwise.</li>
+              <li><b>Frame.</b> Undo the ddsim boost with \(\beta_x = -p_x/E\) of the summed true beams. Both beams then lie along z to better than \(10^{-10}\) GeV.</li>
+              <li><b>Hadronic final state.</b> All <code>ReconstructedParticles</code> (tracks and ECal clusters; no HCal) except the scattered electron: \(\Sigma_h = \sum (E - p_z)\) and \(p_{T,h}\).</li>
+              <li><b>Methods.</b> Jacquet–Blondel (JB), double-angle (DA), Σ, eΣ, and a hybrid: DA when the reconstructed \(y_{\mathrm{DA}}\) &lt; 0.05, the electron method otherwise.</li>
               <li><b>Closure.</b> The same formulas on the generated final state reproduce the true x (−6 % at y &lt; 0.01 from the neglected proton mass).</li>
-              <li><b>Where Σ<sub>h</sub> goes.</b> Generated Σ<sub>h</sub> split by particle type and angle.</li>
+              <li><b>Where \(\Sigma_h\) goes.</b> Generated \(\Sigma_h\) split by particle type and angle.</li>
             </ul>
           </div>
           <span class="label">Result</span>
@@ -439,7 +447,7 @@ footer { max-width: 1180px; margin: 4rem auto 0; padding-top: 1rem; border-top: 
             <p class="small muted">9×130, old B0, all 1000 events; median [16 %, 84 %]; number of events in brackets. New B0 is similar.</p>
             <div class="tbl">
               <table>
-                <thead><tr><th>share of generated Σ<sub>h</sub></th><th class="r">charged |η| &lt; 3.5</th><th class="r">photons</th><th class="r">neutral hadrons</th><th class="r">η &gt; 3.5</th></tr></thead>
+                <thead><tr><th>share of generated \(\Sigma_h\)</th><th class="r">charged |η| &lt; 3.5</th><th class="r">photons</th><th class="r">neutral hadrons</th><th class="r">η &gt; 3.5</th></tr></thead>
                 <tbody>
                   <tr><td>y &lt; 0.01</td><td class="r">29 %</td><td class="r">14 %</td><td class="r">4 %</td><td class="r zero">53 %</td></tr>
                   <tr><td>0.01–0.05</td><td class="r">51 %</td><td class="r">26 %</td><td class="r">10 %</td><td class="r">13 %</td></tr>
@@ -449,7 +457,7 @@ footer { max-width: 1180px; margin: 4rem auto 0; padding-top: 1rem; border-top: 
             </div>
             <div class="tbl">
               <table>
-                <thead><tr><th>Λ candidates (x<sub>L</sub> &gt; 0.6, ±10 MeV)</th><th class="r">all (signal)</th><th class="r">y<sub>DA</sub> &gt; 0.01 (signal)</th><th class="r">x<sub>K</sub> reco/true − 1, hybrid, y<sub>DA</sub> &gt; 0.01</th></tr></thead>
+                <thead><tr><th>Λ candidates (\(x_L\) &gt; 0.6, ±10 MeV)</th><th class="r">all (signal)</th><th class="r">\(y_{\mathrm{DA}}\) &gt; 0.01 (signal)</th><th class="r">\(x_K\) reco/true − 1, hybrid, \(y_{\mathrm{DA}}\) &gt; 0.01</th></tr></thead>
                 <tbody>
                   <tr class="hl"><td>old B0</td><td class="r">32 (30)</td><td class="r">13 (12)</td><td class="r">−0.00 [−0.17, +0.21]</td></tr>
                   <tr><td>new B0</td><td class="r">9 (9)</td><td class="r">4 (4)</td><td class="r">+0.16 [+0.02, +0.82]</td></tr>
@@ -457,21 +465,21 @@ footer { max-width: 1180px; margin: 4rem auto 0; padding-top: 1rem; border-top: 
               </table>
             </div>
             <figure data-fig>
-              <div class="fig-bar"><span class="label">Kinematics and x<sub>K</sub></span>
+              <div class="fig-bar"><span class="label">Kinematics and \(x_K\)</span>
                 <div class="seg" role="group" aria-label="B0 geometry"><button type="button" aria-pressed="true" data-src="figs/kin_9x130_old.png">old B0</button><button type="button" aria-pressed="false" data-src="figs/kin_9x130_new.png">new B0</button></div></div>
               <img src="figs/kin_9x130_old.png" alt="x-Q2 coverage and y of high-x_L Lambda events, x_K true and reconstructed, x_K resolution, Q2 resolution, and x resolution against y for the electron and double-angle methods." loading="lazy">
-              <figcaption>Top: x–Q² and y of events with a high-x<sub>L</sub> Λ (red: Λ reconstructed), x<sub>K</sub> true and reconstructed, x<sub>K</sub> resolution with y<sub>DA</sub> &gt; 0.01. Bottom: Q² resolution (blue ours, grey EICrecon in the wrong frame), x resolution against y for the electron and double-angle methods.</figcaption>
+              <figcaption>Top: x–\(Q^2\) and y of events with a high-\(x_L\) Λ (red: Λ reconstructed), \(x_K\) true and reconstructed, \(x_K\) resolution with \(y_{\mathrm{DA}}\) &gt; 0.01. Bottom: \(Q^2\) resolution (blue ours, grey EICrecon in the wrong frame), x resolution against y for the electron and double-angle methods.</figcaption>
             </figure>
             <figure data-fig>
-              <div class="fig-bar"><span class="label">x<sub>K</sub> distributions</span>
+              <div class="fig-bar"><span class="label">\(x_K\) distributions</span>
                 <div class="seg" role="group" aria-label="B0 geometry"><button type="button" aria-pressed="true" data-src="figs/kin_9x130_old_xK.png">old B0</button><button type="button" aria-pressed="false" data-src="figs/kin_9x130_new_xK.png">new B0</button></div></div>
               <img src="figs/kin_9x130_old_xK.png" alt="x_K distributions: generated and reconstructed, reconstructed per method versus true, event-by-event reco versus true, resolution per method, and x_K versus Q2." loading="lazy">
-              <figcaption>Top: x<sub>K</sub> generated (all, y &gt; 0.01) and at the true value for reconstructed signal candidates; reconstructed x<sub>K</sub> per method against the true one for the candidates with y<sub>DA</sub> &gt; 0.01; reco against true event by event. Bottom: resolution per method, x<sub>K</sub> against Q² with the reconstructed candidates, numbers.</figcaption>
+              <figcaption>Top: \(x_K\) generated (all, y &gt; 0.01) and at the true value for reconstructed signal candidates; reconstructed \(x_K\) per method against the true one for the candidates with \(y_{\mathrm{DA}}\) &gt; 0.01; reco against true event by event. Bottom: resolution per method, \(x_K\) against \(Q^2\) with the reconstructed candidates, numbers.</figcaption>
             </figure>
-            <p>Generated x<sub>K</sub> spreads over the whole range 0–1, with the most events below 0.1 (median 0.33). Events with y &gt; 0.01 are all below x<sub>K</sub> ≈ 0.2, and so are the candidates that pass y<sub>DA</sub> &gt; 0.01: at 9×130 the y cut limits the reach to x<sub>K</sub> ≲ 0.2–0.3. Candidates below the cut still follow the diagonal with DA (about 20–30 % high), which is worth rechecking with more events.</p>
+            <p>Generated \(x_K\) spreads over the whole range 0–1, with the most events below 0.1 (median 0.33). Events with y &gt; 0.01 are all below \(x_K\) ≈ 0.2, and so are the candidates that pass \(y_{\mathrm{DA}}\) &gt; 0.01: at 9×130 the y cut limits the reach to \(x_K\) ≲ 0.2–0.3. Candidates below the cut still follow the diagonal with DA (about 20–30 % high), which is worth rechecking with more events.</p>
           </div>
           <span class="label">Conclusion</span>
-          <div><p class="conclusion">The double-angle method is the best at low y, the electron method above y ≈ 0.05. Below y ≈ 0.01 no method measures x, because half of the hadronic E − p<sub>z</sub> goes beyond η = 3.5 where there is no detector; adding the HCal would not change that. With y<sub>DA</sub> &gt; 0.01 about 40 % of the candidates remain and x<sub>K</sub> is measured to about 20 % (old B0, 12 events). x<sub>K</sub> bins must be wide, and the hybrid switch point still needs tuning.</p></div>
+          <div><p class="conclusion">The double-angle method is the best at low y, the electron method above y ≈ 0.05. Below y ≈ 0.01 no method measures x, because half of the hadronic \(E - p_z\) goes beyond η = 3.5 where there is no detector; adding the HCal would not change that. With \(y_{\mathrm{DA}}\) &gt; 0.01 about 40 % of the candidates remain and \(x_K\) is measured to about 20 % (old B0, 12 events). \(x_K\) bins must be wide, and the hybrid switch point still needs tuning.</p></div>
         </div>
       </article>
     </section>
@@ -483,10 +491,10 @@ footer { max-width: 1180px; margin: 4rem auto 0; padding-top: 1rem; border-top: 
         <h2 id="kff-h">Kaon electromagnetic form factor</h2>
       </div>
       <div class="planned">
-        <p>Exclusive e p → e′ K⁺ Λ. The forward Λ is tagged in the B0 as in the other studies, plus the exclusive K⁺ in the central detector and the reconstruction of t.</p>
+        <p>Exclusive \(e\,p \to e'\,K^+\Lambda\). The forward Λ is tagged in the B0 as in the other studies, plus the exclusive \(K^+\) in the central detector and the reconstruction of t.</p>
         <ul style="margin:0;padding-left:1.2rem;display:grid;gap:0.3rem">
           <li>Needs an exclusive generator (check what ePIC uses).</li>
-          <li>Reuses the Λ reconstruction, x<sub>L</sub> and t from the kaon structure function work, and the frame handling from step 3.</li>
+          <li>Reuses the Λ reconstruction, \(x_L\) and t from the kaon structure function work, and the frame handling from step 3.</li>
         </ul>
       </div>
     </section>
@@ -498,7 +506,7 @@ footer { max-width: 1180px; margin: 4rem auto 0; padding-top: 1rem; border-top: 
         <h2 id="pol-h">Λ polarization</h2>
       </div>
       <div class="planned">
-        <p>The Λ's self-analysing decay gives its polarization from the proton angle in the Λ rest frame. That needs the full pπ⁻ reconstruction and its angular acceptance × efficiency.</p>
+        <p>The Λ's self-analysing decay gives its polarization from the proton angle in the Λ rest frame. That needs the full \(p\pi^-\) reconstruction and its angular acceptance × efficiency.</p>
         <ul style="margin:0;padding-left:1.2rem;display:grid;gap:0.3rem">
           <li>Can start from the existing DIS samples.</li>
           <li>Pythia does not polarize the Λ: reweight the decay angle, or use a generator with polarization.</li>
@@ -511,8 +519,8 @@ footer { max-width: 1180px; margin: 4rem auto 0; padding-top: 1rem; border-top: 
       <h2 id="issues-h">Open issues</h2>
       <div class="issues">
         <div class="issue"><span class="pill warn">decide</span><p><b>Electron side of the simulation.</b> ddsim <code>--crossingAngleBoost</code> tilts the electron beam by 25 mrad. Redo with the ePIC afterburner before using electron acceptance or EICrecon kinematics. B0 / Λ results are unaffected.</p></div>
-        <div class="issue"><span class="pill todo">next</span><p><b>Kaon SF signal sample.</b> Two candidate generators. eicMesonSFGen: run it ourselves at 9×130 / 10×100, keep its cross-section weight and hadronize X (the campaign files have neither). <a href="https://github.com/rong-wang-impcas/tagged-Lambda-DIS" target="_blank" rel="noopener">tagged-Lambda-DIS</a> (EicC study, arXiv:2109.08483): already unweighted with exact e′ and Λ kinematics, but ROOT-tree output only, no X, and the Λ forced to nπ⁰. Either way, then our chain with the afterburner. Also: more statistics, tune the hybrid switch, kaon flux and t extrapolation, beam effects for |t|.</p></div>
-        <div class="issue"><span class="pill todo">open</span><p><b>Soft π⁻ lost in the CKF</b>; old-geometry truth-seeded efficiency jump between EICrecon builds; +2 MeV mass shift in the old geometry.</p></div>
+        <div class="issue"><span class="pill todo">next</span><p><b>Kaon SF signal sample.</b> Two candidate generators. eicMesonSFGen: run it ourselves at 9×130 / 10×100, keep its cross-section weight and hadronize X (the campaign files have neither). <a href="https://github.com/rong-wang-impcas/tagged-Lambda-DIS" target="_blank" rel="noopener">tagged-Lambda-DIS</a> (EicC study, arXiv:2109.08483): already unweighted with exact e′ and Λ kinematics, but ROOT-tree output only, no X, and the Λ forced to \(n\pi^0\). Either way, then our chain with the afterburner. Also: more statistics, tune the hybrid switch, kaon flux and t extrapolation, beam effects for \(|t|\).</p></div>
+        <div class="issue"><span class="pill todo">open</span><p><b>Soft \(\pi^-\) lost in the CKF</b>; old-geometry truth-seeded efficiency jump between EICrecon builds; +2 MeV mass shift in the old geometry.</p></div>
         <div class="issue"><span class="pill todo">open</span><p><b>Real events</b> (other tracks, beam background) will need vertexing and decay-length cuts.</p></div>
         <div class="issue"><span class="pill ok">done</span><p><b>More statistics.</b> Condor cluster 20204682 finished on 2026-11-25: 20 / 20 jobs OK, 10 000 events at 9×130 (seeds 403–422, both geometries; 152 781 generated). Analysis rerun on them is next. The eic-shell container is now pinned (the daily nightly broke our builds), and EICrecon main includes B0 hit seeding (#3116, merged 2026-11-23). New files end in <code>.eicreconmain1125.edm4eic.root</code>; the existing 1000 events used the older PR build.</p></div>
       </div>
@@ -526,13 +534,13 @@ footer { max-width: 1180px; margin: 4rem auto 0; padding-top: 1rem; border-top: 
         <dt>Accepted daughter</dt><dd>Its own simulated hits in at least 3 B0 layers.</dd>
         <dt>Truth / hit seeding</dt><dd>B0 tracks seeded from the true vertex and momentum (EICrecon#2901), or from triplets of hits (EICrecon#3116).</dd>
         <dt>Old / new B0</dt><dd>epic 43f427e (silicon disks) and epic ec774d8 (AC-LGAD stations, eic/epic#1194).</dd>
-        <dt>Sullivan process</dt><dd>e p → e′ Λ X: the proton fluctuates into Λ + virtual K⁺, the photon probes the K⁺.</dd>
-        <dt>x<sub>L</sub></dt><dd>Λ momentum along the proton beam divided by the beam momentum.</dd>
-        <dt>|t|</dt><dd>−(P<sub>beam</sub> − P<sub>Λ</sub>)², the four-momentum transfer to the Λ.</dd>
-        <dt>x<sub>K</sub></dt><dd>x / (1 − x<sub>L</sub>), the momentum fraction of the struck quark in the kaon.</dd>
-        <dt>x, Q², y</dt><dd>DIS invariants from q = e<sub>beam</sub> − e′: Q² = −q², y = P·q / P·e<sub>beam</sub>, x = Q² / (2 P·q).</dd>
-        <dt>Σ<sub>h</sub>, p<sub>T,h</sub></dt><dd>Σ(E − p<sub>z</sub>) and |Σ p<sub>T</sub>| of the hadronic final state in the head-on frame.</dd>
-        <dt>DA, JB, Σ, eΣ</dt><dd>Double-angle, Jacquet–Blondel, Σ and eΣ reconstruction methods; the hybrid uses DA when y<sub>DA</sub> &lt; 0.05 and the electron otherwise.</dd>
+        <dt>Sullivan process</dt><dd>\(e\,p \to e'\,\Lambda\,X\): the proton fluctuates into Λ + virtual \(K^+\), the photon probes the \(K^+\).</dd>
+        <dt>\(x_L\)</dt><dd>Λ momentum along the proton beam divided by the beam momentum.</dd>
+        <dt>\(|t|\)</dt><dd>\(-(P_{\mathrm{beam}} - P_\Lambda)^2\), the four-momentum transfer to the Λ.</dd>
+        <dt>\(x_K\)</dt><dd>x / (1 − \(x_L\)), the momentum fraction of the struck quark in the kaon.</dd>
+        <dt>\(x,\ Q^2,\ y\)</dt><dd>DIS invariants from \(q = e_{\mathrm{beam}} - e'\): \(Q^2 = -q^2\), \(y = \frac{P\cdot q}{P\cdot e_{\mathrm{beam}}}\), \(x = \frac{Q^2}{2P\cdot q}\).</dd>
+        <dt>\(\Sigma_h\), \(p_{T,h}\)</dt><dd>\(\sum (E - p_z)\) and \(\left|\sum \vec p_T\right|\) of the hadronic final state in the head-on frame.</dd>
+        <dt>DA, JB, Σ, eΣ</dt><dd>Double-angle, Jacquet–Blondel, Σ and eΣ reconstruction methods; the hybrid uses DA when \(y_{\mathrm{DA}}\) &lt; 0.05 and the electron otherwise.</dd>
       </dl>
     </section>
 
