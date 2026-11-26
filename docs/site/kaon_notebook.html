@@ -141,6 +141,7 @@ dialog button { position: absolute; top: 8px; right: 8px; font: 600 0.85rem var(
 
 dl.defs { display: grid; grid-template-columns: minmax(8rem, max-content) minmax(0, 1fr); gap: 0.55rem 1.4rem; margin: 0; max-width: 920px; }
 dl.defs dt { font-weight: 600; }
+.defs-group { margin-top: 0.6rem; color: var(--accent); scroll-margin-top: 1.5rem; }
 dl.defs dd { margin: 0; }
 @media (max-width: 600px) { dl.defs { grid-template-columns: minmax(0, 1fr); gap: 0.1rem; } dl.defs dd { margin-bottom: 0.6rem; } }
 pre { background: var(--code-bg); padding: 0.8rem 1rem; border-radius: 5px; overflow-x: auto; font-family: var(--f-mono); font-size: 0.82rem; line-height: 1.5; margin: 0; max-width: 100%; }
@@ -165,7 +166,7 @@ window.MathJax = {
   <h1>EIC B0 Notebook</h1>
   <p class="lede">Reconstructing forward Λ hyperons in the ePIC B0 tracker, and the physics they open up: the kaon structure function, the kaon electromagnetic form factor and Λ polarization. Each step records the question, the method, the result and what it means.</p>
   <div class="meta">
-    <span>Last updated <b>2026-11-25</b></span>
+    <span>Last updated <b>2026-11-26</b></span>
     <span>Current study <b>kaon structure function · step 3</b></span>
     <span>Code and results <a href="https://github.com/gadininio/eic-B0-detector" target="_blank" rel="noopener">eic-B0-detector</a></span>
   </div>
@@ -187,6 +188,10 @@ window.MathJax = {
       <a class="grp" href="#lambda-pol">Λ polarization</a>
       <a href="#issues">Open issues</a>
       <a href="#defs">Definitions</a>
+      <a class="sub" href="#defs-setup">Samples and detector</a>
+      <a class="sub" href="#defs-acc">Acceptance and efficiency</a>
+      <a class="sub" href="#defs-mass">Mass and selection</a>
+      <a class="sub" href="#defs-kin">Kaon kinematics</a>
       <a href="#repro">Reproduce</a>
     </nav>
   </aside>
@@ -529,15 +534,46 @@ window.MathJax = {
     <!-- ================= DEFINITIONS ================= -->
     <section id="defs" aria-labelledby="defs-h">
       <h2 id="defs-h">Definitions</h2>
+
+      <h3 id="defs-setup" class="defs-group">Samples and detector</h3>
       <dl class="defs">
-        <dt>B0-direction Λ</dt><dd>Generated Λ at 5.5–20 mrad from the proton beam (beam frame, 25 mrad crossing angle undone).</dd>
-        <dt>Accepted daughter</dt><dd>Its own simulated hits in at least 3 B0 layers.</dd>
-        <dt>Truth / hit seeding</dt><dd>B0 tracks seeded from the true vertex and momentum (EICrecon#2901), or from triplets of hits (EICrecon#3116).</dd>
         <dt>Old / new B0</dt><dd>epic 43f427e (silicon disks) and epic ec774d8 (AC-LGAD stations, eic/epic#1194).</dd>
+        <dt>Beam frame</dt><dd>Angles are measured from the proton beam, with the 25 mrad crossing angle undone.</dd>
+        <dt>B0-direction Λ</dt><dd>Generated Λ at \(5.5 &lt; \theta &lt; 20\) mrad from the proton beam. This is an angular proxy for "pointing at the B0": it is not checked against the real layout, so Λs pointing into the new geometry's φ gap still count.</dd>
+        <dt>\(\Lambda \to p\pi^-\) decay</dt><dd>A generated Λ (generator status 1, or 2 in campaign files where the generator decays it) with exactly two daughters, p and \(\pi^-\). A Λ that interacts in material has more daughters and does not count.</dd>
+        <dt>B0 station (layer)</dt><dd>Hits grouped in z: a gap of more than 50 mm starts a new station. Four stations at z ≈ 5.8–6.9 m; the front and back faces of a new-geometry station count as one.</dd>
+        <dt>Decay before the B0</dt><dd>Decay vertex at z &lt; 5.8 m. Its probability per Λ follows \(\mathrm{BR}\cdot\left(1-e^{-L/\lambda}\right)\) with \(\lambda = p\,[\mathrm{GeV}]\cdot 7.07\ \mathrm{cm}\) and \(L = 5.8\ \mathrm{m}\).</dd>
+        <dt>Truth / hit seeding</dt><dd>B0 tracks seeded from the true vertex and momentum (EICrecon#2901), or from triplets of hits (EICrecon#3116).</dd>
+        <dt>Reconstructed daughter</dt><dd>A reconstructed charged particle whose best truth match (highest association weight) is the daughter, in <code>ReconstructedTruthSeededChargedParticles</code> (truth seeding) or <code>ReconstructedChargedParticles</code> (hit seeding).</dd>
+      </dl>
+
+      <h3 id="defs-acc" class="defs-group">Acceptance and efficiency</h3>
+      <dl class="defs">
+        <dt>Accepted daughter</dt><dd>Its own simulated hits cover at least 3 B0 stations. Full simulation (decay point, B0 dipole field, material); no digitization or tracking.</dd>
+        <dt>Acceptance \(A\)</dt><dd>\(A = N(\text{both daughters accepted}) / N(p\pi^-)\), per \(p\pi^-\) decay of a B0-direction Λ, wherever it decays. Decays behind the first station are in the denominator, so A mixes "decays early enough" with "daughters reach the stations". Also given for p and \(\pi^-\) separately.</dd>
+        <dt>Tracking efficiency \(\varepsilon\)</dt><dd>\(\varepsilon_p = N(p\ \text{reconstructed}) / N(p\ \text{accepted})\), and the same for \(\pi^-\), over every accepted daughter. The geometry cancels. Includes digitization (B0 threshold), seeding, track finding (CKF) and track selection.</dd>
+        <dt>Fiducial efficiency</dt><dd>\(\varepsilon_p\), \(\varepsilon_\pi\) and \(\varepsilon_{\mathrm{both}}\) measured only on decays with <b>both</b> daughters accepted, so that \(A \cdot \varepsilon_{\mathrm{both}}\) is exactly the fiducial A×ε. With the per-daughter ε above, \(A\,\varepsilon_p\,\varepsilon_\pi\) does not reproduce A×ε: those use all accepted protons (pions), a softer set.</dd>
+        <dt>A×ε</dt><dd>\(N(\text{both reconstructed}) / N(p\pi^-)\), per \(p\pi^-\) decay. It also counts the few decays reconstructed although a daughter has fewer than 3 stations of its own hits, so it is 0–2 points above the fiducial \(A \cdot \varepsilon_{\mathrm{both}}\).</dd>
+        <dt>Yield</dt><dd>\(Y = N(\text{both reconstructed}) / N(\text{B0-direction}\ \Lambda) = f_{p\pi}\cdot A\times\varepsilon\), where \(f_{p\pi}\) ≈ 0.5 is the fraction that decays to \(p\pi^-\) (branching ratio 64 %, and about 20 % of the Λs never decay but interact in material). The unbiased per-Λ number.</dd>
+        <dt>Per generated Λ (gun)</dt><dd>The same counts divided by all generated Λs of the particle gun.</dd>
+        <dt>Geometric acceptance</dt><dd>Fraction of straight lines from the interaction point (geantino gun) crossing at least 3 stations. Pure detector coverage, not a Λ acceptance: the Λ is neutral, and its daughters start at a displaced vertex and the \(\pi^-\) is bent by the B0 dipole.</dd>
+        <dt>Sensitive area / coverage</dt><dd>Silicon area per station (cm²), versus the fraction of straight lines in the 5.5–20 mrad cone, weighted by solid angle, that cross sensors in at least 3 stations. Area counts all silicon; coverage asks where it is relative to the cone and whether the stations line up.</dd>
+      </dl>
+
+      <h3 id="defs-mass" class="defs-group">Mass and selection</h3>
+      <dl class="defs">
+        <dt>Forward tracks</dt><dd>Reconstructed charged particles at \(\theta &lt; 30\) mrad in the beam frame (the B0 tracks; the central tracker starts at about 40 mrad).</dd>
+        <dt>Λ candidate</dt><dd>Every (+,−) pair of forward tracks, + as proton and − as \(\pi^-\), with \(p_{+}/p_{-} &gt; 2.5\) (for 50–100 GeV Λs the true ratio is 3.1–14.6). No truth is used in the selection.</dd>
+        <dt>Signal / background</dt><dd>Signal: both tracks truth-matched to the daughters of the same \(\Lambda \to p\pi^-\); used only to label. S and B are counted in a window of ±10 MeV around the PDG mass.</dd>
+        <dt>Purity / cut efficiency</dt><dd>Signal / selected candidates; signal kept by a cut / signal before it.</dd>
+      </dl>
+
+      <h3 id="defs-kin" class="defs-group">Kaon kinematics</h3>
+      <dl class="defs">
         <dt>Sullivan process</dt><dd>\(e\,p \to e'\,\Lambda\,X\): the proton fluctuates into Λ + virtual \(K^+\), the photon probes the \(K^+\).</dd>
         <dt>\(x_L\)</dt><dd>Λ momentum along the proton beam divided by the beam momentum.</dd>
         <dt>\(|t|\)</dt><dd>\(-(P_{\mathrm{beam}} - P_\Lambda)^2\), the four-momentum transfer to the Λ.</dd>
-        <dt>\(x_K\)</dt><dd>x / (1 − \(x_L\)), the momentum fraction of the struck quark in the kaon.</dd>
+        <dt>\(x_K\)</dt><dd>\(x_K = x/(1-x_L)\), the momentum fraction of the struck quark in the kaon.</dd>
         <dt>\(x,\ Q^2,\ y\)</dt><dd>DIS invariants from \(q = e_{\mathrm{beam}} - e'\): \(Q^2 = -q^2\), \(y = \frac{P\cdot q}{P\cdot e_{\mathrm{beam}}}\), \(x = \frac{Q^2}{2P\cdot q}\).</dd>
         <dt>\(\Sigma_h\), \(p_{T,h}\)</dt><dd>\(\sum (E - p_z)\) and \(\left|\sum \vec p_T\right|\) of the hadronic final state in the head-on frame.</dd>
         <dt>DA, JB, Σ, eΣ</dt><dd>Double-angle, Jacquet–Blondel, Σ and eΣ reconstruction methods; the hybrid uses DA when \(y_{\mathrm{DA}}\) &lt; 0.05 and the electron otherwise.</dd>

@@ -717,3 +717,4 @@ Macro `~/private/eic/compare_tracks.C` (run in `~/private/eic`). Both use the co
 - 10 000 kept events (152 781 generated, 6.55 % with a Λ at θ < 25 mrad), seeds 403–422, old and new geometry:
   40 *.eicreconmain1125.edm4eic.root + 40 edm4hep + 20 hepmc in $EIC_DATA/lambda_dis_9x130 (79 GB in the folder).
 - Next (proposed): rerun the kaon SF analysis (make_results 11) on the main1125 files.
+- 2026-11-26: website (EIC B0 Notebook, version 10): Definitions section expanded and grouped — samples and detector (beam frame, B0-direction Λ, Λ → pπ⁻ decay, stations, decay before the B0, seeding, reconstructed daughter), acceptance and efficiency (accepted daughter, acceptance A, tracking efficiency, fiducial efficiency, A×ε, yield Y = f_pπ·A×ε, per generated Λ, geometric acceptance, sensitive area vs coverage), mass and selection (forward tracks, candidates, signal/background, purity), kaon kinematics; contents rail links to each group.
