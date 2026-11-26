@@ -71,6 +71,9 @@ code { background: var(--code-bg); padding: 0.1em 0.35em; border-radius: 3px; ov
 .rail a:hover { color: var(--ink); border-left-color: var(--accent); }
 .rail .sub { padding-left: 1.7rem; font-size: 0.84rem; }
 .rail .grp { margin-top: 0.5rem; font-weight: 600; color: var(--ink); }
+/* where the reader is: the section on screen, and the group (study, Definitions) it belongs to */
+.rail a.here { color: var(--accent); border-left-color: var(--accent); font-weight: 600; background: var(--accent-soft); border-radius: 0 3px 3px 0; }
+.rail a.in { border-left-color: var(--accent); color: var(--ink); }
 
 main { display: grid; gap: 3.5rem; min-width: 0; }
 section { display: grid; gap: 1.1rem; min-width: 0; scroll-margin-top: 1.5rem; }
@@ -621,5 +624,37 @@ root -l -b -q 'macros/exploration/lambda_xl_theta.C("&lt;label&gt;","&lt;files&g
   });
   document.getElementById('zoom-close').addEventListener('click', function () { dlg.close(); });
   dlg.addEventListener('click', function (e) { if (e.target === dlg) dlg.close(); });
+
+  // contents rail: mark the section the reader is in (the last one whose top has passed a line near the
+  // top of the window) and the top-level entry it belongs to; keep the marked entry visible in the rail
+  var rail = document.querySelector('.rail');
+  var links = Array.prototype.slice.call(document.querySelectorAll('.rail nav a'));
+  var items = links.map(function (a, i) {
+    var parent = null;
+    if (a.classList.contains('sub')) {
+      for (var j = i - 1; j >= 0; j--) if (!links[j].classList.contains('sub')) { parent = links[j]; break; }
+    }
+    return { a: a, el: document.getElementById(a.getAttribute('href').slice(1)), parent: parent };
+  }).filter(function (it) { return it.el; });
+  var current = null, pending = false;
+  function mark() {
+    pending = false;
+    var line = 110, pick = items[0];
+    items.forEach(function (it) { if (it.el.getBoundingClientRect().top <= line) pick = it; });
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2) pick = items[items.length - 1];
+    if (pick === current) return;
+    links.forEach(function (a) { a.classList.remove('here', 'in'); a.removeAttribute('aria-current'); });
+    pick.a.classList.add('here'); pick.a.setAttribute('aria-current', 'location');
+    if (pick.parent) pick.parent.classList.add('in');
+    current = pick;
+    if (rail && rail.scrollHeight > rail.clientHeight) {
+      var top = pick.a.offsetTop, h = pick.a.offsetHeight;
+      if (top < rail.scrollTop || top + h > rail.scrollTop + rail.clientHeight) rail.scrollTop = top - rail.clientHeight / 3;
+    }
+  }
+  function onScroll() { if (!pending) { pending = true; requestAnimationFrame(mark); } }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  mark();
 })();
 </script>

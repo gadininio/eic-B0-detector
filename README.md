@@ -32,23 +32,57 @@ geometries' **sensitive area and coverage** with the beamline around them.
 
 ## Definitions
 
-| Quantity | Definition | Macro |
+The same definitions, grouped the same way, are on the project website (Definitions section).
+
+### Samples and detector
+
+| Quantity | Definition | Code |
 |---|---|---|
-| Λ → p π⁻ decay | generated Λ (generatorStatus 1, or 2 in campaign files where the generator decays it) with exactly two daughters, p and π⁻. (A Λ that interacts in material is also the parent of its products, but has more daughters.) | `macros/common/LambdaB0.h` |
-| **Geometric acceptance** (Λ direction) | fraction of **straight lines** from the IP at the Λ gun angles crossing ≥ 3 B0 layers (geantino gun). Pure detector coverage; *not* the acceptance for Λs, which are neutral and leave no hits | `macros/acceptance/b0_geometric_acceptance.C` |
-| **Daughter acceptance** | (daughters whose own simulated B0 hits cover ≥ 3 layers) / (Λ → p π⁻ decays); for p, π⁻ and both. Full simulation (decay point, B0 dipole field, material), no digitization or tracking. Not a fiducial volume: a daughter must really leave hits in ≥ 3 layers | `macros/acceptance/lambda_daughter_acceptance.C` |
-| **Tracking efficiency** | (accepted daughters with a reconstructed particle) / (accepted daughters). The geometry cancels. Includes digitization (B0 threshold), seeding, CKF, track filtering | `macros/efficiency/lambda_tracking_efficiency.C` |
-| **Acceptance × efficiency** | (daughters with a reconstructed particle) / (Λ → p π⁻ decays) = acceptance × tracking efficiency | `macros/efficiency/lambda_acceptance_x_efficiency.C` |
-| Per generated Λ | the same, divided by all generated Λs. The unbiased denominator: a Λ that has not decayed by ~6 m nearly always interacts in material before it can decay, so the Λ → p π⁻ decays are mostly early ones (90 % before the B0 at 50–100 GeV) | `macros/efficiency/lambda_vs_momentum.C` |
-| Reconstructed daughter | a reconstructed charged particle whose best truth match (highest association weight) is the daughter; `ReconstructedTruthSeededChargedParticles` (truth seeding, default) or `ReconstructedChargedParticles` (hit seeding, macro argument `"hit"`) | `LambdaB0.h` (`lb0::Seeding`) |
+| Old / new B0 | epic `43f427e` (silicon disks) and epic `ec774d8` (AC-LGAD stations, eic/epic#1194) | `scripts/build/build_epic.sh` |
+| Beam frame (angles) | angles w.r.t. the proton beam, the 25 mrad crossing-angle rotation undone | `LambdaB0.h` |
+| B0-direction Λ (DIS) | generated Λ at θ = 5.5–20 mrad from the proton beam. An angular proxy for "pointing at the B0", not checked against the layout: Λs pointing into the new geometry's φ gap still count | `macros/dis/lambda_dis.C` |
+| Λ → p π⁻ decay | generated Λ (generatorStatus 1, or 2 in campaign files where the generator decays it) with exactly two daughters, p and π⁻. A Λ that interacts in material is also the parent of its products, but has more daughters, and does not count | `macros/common/LambdaB0.h` |
+| B0 station (layer) | hits grouped in z; a gap > 50 mm starts a new station (4 stations at z ≈ 5.8–6.9 m; the front and back faces of a new-geometry station count as one) | `LambdaB0.h` |
+| Decay before the B0 | decay vertex at z < 5.8 m; probability per Λ BR · (1 − e^(−L/λ)) with λ = p[GeV] × 7.07 cm and L = 5.8 m | `macros/efficiency/lambda_vs_momentum.C` |
+| Truth / hit seeding | B0 tracks seeded from the true vertex and momentum (`B0TrackerTruthSeeds`, EICrecon#2901) or from triplets of hits on 3 stations (EICrecon#3116) | `scripts/reco/eicrecon.sh` |
 | Seed of a daughter | truth seeding: a `B0TrackerTruthSeedParameters` entry with its charge and direction; hit seeding: a `B0TrackerSeeds` triplet with ≥ 2 of its 3 hits made by the daughter | `lambda_tracking_efficiency.C` |
-| B0 layers | hits grouped in z; a gap > 50 mm starts a new layer (4 layers / stations at z ≈ 5.8–6.7 m) | `LambdaB0.h` |
-| Angles | w.r.t. the proton beam (the 25 mrad crossing-angle rotation undone) | `LambdaB0.h` |
+| Reconstructed daughter | a reconstructed charged particle whose best truth match (highest association weight) is the daughter; `ReconstructedTruthSeededChargedParticles` (truth seeding, default) or `ReconstructedChargedParticles` (hit seeding, macro argument `"hit"`) | `LambdaB0.h` (`lb0::Seeding`) |
 | Threshold | EICrecon digitization: energy per pixel must exceed it (`B0TRK:B0TrackerRawHits:threshold`; 10 keV in main 8b44cae, **5 keV default since EICrecon#3084**, merged 2026-11-03) | `scripts/reco/eicrecon.sh` |
-| B0-direction Λ (DIS) | generated Λ at θ = 5.5–20 mrad from the proton beam (an angular proxy, not checked against the B0 layout) | `macros/dis/lambda_dis.C` |
-| Fiducial efficiency (DIS) | p, π⁻ and both reconstructed, for decays with **both** daughters accepted; acceptance (both) × ε(both) = fiducial A×ε exactly | `macros/dis/lambda_dis.C` |
-| Sensitive area / coverage | silicon area per station (cm²); fraction of straight lines from the IP in the 5.5–20 mrad cone (solid-angle weighted) that cross sensors in ≥ 3 stations | `scripts/geometry/b0area.py` |
+
+### Acceptance and efficiency
+
+| Quantity | Definition | Code |
+|---|---|---|
+| Accepted daughter | its own simulated B0 hits cover ≥ 3 stations. Full simulation (decay point, B0 dipole field, material), no digitization or tracking. Not a fiducial volume: a daughter must really leave hits in ≥ 3 stations | `LambdaB0.h` |
+| **Acceptance A** | A = N(both daughters accepted) / N(p π⁻), per p π⁻ decay, wherever the Λ decays (decays behind the first station are in the denominator, so A mixes "decays early enough" with "daughters reach the stations"); also for p and π⁻ separately | `macros/acceptance/lambda_daughter_acceptance.C`, `lambda_dis.C` |
+| **Tracking efficiency ε** | ε_p = N(p reconstructed) / N(p accepted), the same for π⁻, over every accepted daughter. The geometry cancels. Includes digitization (B0 threshold), seeding, CKF, track filtering | `macros/efficiency/lambda_tracking_efficiency.C` |
+| **Fiducial efficiency** | ε_p, ε_π and ε_both measured only on decays with **both** daughters accepted, so A · ε_both = fiducial A×ε exactly. With the per-daughter ε above, A · ε_p · ε_π does not reproduce A×ε: those use all accepted protons (pions), a softer set | `macros/dis/lambda_dis.C` |
+| **A×ε** | N(both reconstructed) / N(p π⁻), per p π⁻ decay. Also counts the few decays reconstructed although a daughter has < 3 stations of its own hits, so it is 0–2 points above the fiducial A · ε_both | `macros/efficiency/lambda_acceptance_x_efficiency.C`, `lambda_dis.C` |
+| **Yield Y** (DIS) | N(both reconstructed) / N(B0-direction Λ) = f_pπ · A×ε, with f_pπ ≈ 0.5 the fraction decaying to p π⁻ (BR 64 %, and ~20 % of the Λs never decay but interact in material) | `macros/dis/lambda_dis.C` |
+| Per generated Λ (gun) | the same counts divided by all generated Λs. The unbiased denominator: a Λ that has not decayed by ~6 m nearly always interacts in material before it can decay, so the Λ → p π⁻ decays are mostly early ones (90 % before the B0 at 50–100 GeV) | `macros/efficiency/lambda_vs_momentum.C` |
+| Geometric acceptance | fraction of **straight lines** from the IP at the Λ gun angles crossing ≥ 3 stations (geantino gun). Pure detector coverage; *not* a Λ acceptance: the Λ is neutral, its daughters start at a displaced vertex and the π⁻ is bent by the B0 dipole | `macros/acceptance/b0_geometric_acceptance.C` |
+| Sensitive area / coverage | silicon area per station (cm²), vs the fraction of straight lines from the IP in the 5.5–20 mrad cone (solid-angle weighted) that cross sensors in ≥ 3 stations. Area counts all silicon; coverage asks where it is relative to the cone and whether the stations line up | `scripts/geometry/b0area.py` |
+
+### Mass and selection
+
+| Quantity | Definition | Code |
+|---|---|---|
+| Forward tracks | reconstructed charged particles at θ < 30 mrad in the beam frame (the B0 tracks; the central tracker starts at ~40 mrad) | `lambda_dis.C`, `lambda_mass_notruth.C` |
+| Λ candidate | every (+,−) pair of forward tracks, + as proton and − as π⁻, with p(+)/p(−) > 2.5 (for 50–100 GeV Λs the true ratio is 3.1–14.6). No truth in the selection | `macros/mass/lambda_mass_notruth.C`, `lambda_dis.C` |
+| Signal / background | signal: both tracks truth-matched to the daughters of the same Λ → p π⁻, used only as a label. S and B counted within ±10 MeV of the PDG mass | `lambda_dis.C` |
 | Purity / cut efficiency | (signal candidates / selected candidates); (signal kept by the cut / signal before it) | `macros/mass/lambda_mass_notruth.C` |
+
+### Kaon kinematics (kaon structure function study)
+
+| Quantity | Definition | Code |
+|---|---|---|
+| Sullivan process | e p → e′ Λ X: the proton fluctuates into Λ + virtual K⁺, the photon probes the K⁺ | |
+| x_L | Λ momentum along the proton beam / beam momentum | `macros/exploration/lambda_xl_theta.C`, `lambda_dis.C` |
+| \|t\| | −(P_beam − P_Λ)², the four-momentum transfer to the Λ | `lambda_dis.C` |
+| x_K | x / (1 − x_L), the momentum fraction of the struck quark in the kaon | `macros/kaon/kaon_kinematics.C` |
+| x, Q², y | from q = e_beam − e′: Q² = −q², y = P·q / P·e_beam, x = Q² / (2 P·q) | `kaon_kinematics.C` |
+| Σ_h, p_T,h | Σ(E − p_z) and \|Σ p_T\| of the hadronic final state in the head-on frame | `kaon_kinematics.C` |
+| DA, JB, Σ, eΣ, hybrid | double-angle, Jacquet–Blondel, Σ and eΣ methods; the hybrid uses DA when y_DA < 0.05 and the electron otherwise | `kaon_kinematics.C` |
 
 ## Main results
 
