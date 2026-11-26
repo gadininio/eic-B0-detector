@@ -711,3 +711,9 @@ Macro `~/private/eic/compare_tracks.C` (run in `~/private/eic`). Both use the co
 - Condor cluster 20204682: 20 jobs, BEAM 9x130, seeds 403–422, N = 500 kept each (10 000 events), RECO=EICrecon_main_1125,
   OLD=epic_43f427e_n1124, NEW=epic_ec774d8_n1124, RTAG=main1125 → $EIC_DATA/lambda_dis_9x130/dis_lambda_9x130_{old,new}_s4NN.*;
   logs ~/private/eic/condor_logs/dis_9x130_s4NN.20204682.{out,err}. Expected ~40 min per job once running.
+
+### 9x130 production done (checked 2026-11-26)
+- Condor cluster 20204682: 20 / 20 jobs ALL_OK, normal termination, finished 2026-11-25 20:59–21:55.
+- 10 000 kept events (152 781 generated, 6.55 % with a Λ at θ < 25 mrad), seeds 403–422, old and new geometry:
+  40 *.eicreconmain1125.edm4eic.root + 40 edm4hep + 20 hepmc in $EIC_DATA/lambda_dis_9x130 (79 GB in the folder).
+- Next (proposed): rerun the kaon SF analysis (make_results 11) on the main1125 files.
