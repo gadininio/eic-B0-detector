@@ -21,7 +21,7 @@
 // Inputs: scattered electron = the reconstructed charged particle EICrecon uses for
 // InclusiveKinematicsElectron (ScatteredElectronsTruth: truth-matched track; electron mass); hadronic
 // final state = all ReconstructedParticles (tracks + ECal clusters, no HCal) except that electron.
-// True kinematics: beams and MCScatteredElectrons (identical to InclusiveKinematicsTruth, checked).
+// True kinematics: beams and MCScatteredElectrons (identical to InclusiveKinematicsTruth[Bare], checked).
 // Closure: the same formulas on the generated final state reproduce the true x (up to -6% at
 // y < 0.01: the proton-mass term in sum(E - pz) is neglected).
 //
@@ -107,7 +107,9 @@ void kaon_kinematics(const char* files = "/eos/user/g/gninio/eic/lambda_dis_9x13
   TTreeReaderArray<unsigned int> scatCol(r, "_InclusiveKinematicsElectron_scat.collectionID");
   TTreeReaderArray<float> rpx(r, "ReconstructedParticles.momentum.x"), rpy(r, "ReconstructedParticles.momentum.y"),
                           rpz(r, "ReconstructedParticles.momentum.z"), rpE(r, "ReconstructedParticles.energy");
-  TTreeReaderArray<float> tQ2(r, "InclusiveKinematicsTruth.Q2"), eQ2(r, "InclusiveKinematicsElectron.Q2");
+  // newer EICrecon: InclusiveKinematicsTruth is only an index into InclusiveKinematicsTruthBare
+  const TString truthKin = ch->GetBranch("InclusiveKinematicsTruthBare") ? "InclusiveKinematicsTruthBare" : "InclusiveKinematicsTruth";
+  TTreeReaderArray<float> tQ2(r, truthKin + ".Q2"), eQ2(r, "InclusiveKinematicsElectron.Q2");
 
   const int ny = 5; const double yb[ny + 1] = {0, 0.01, 0.05, 0.2, 0.5, 1};
   auto YBin = [&](double y) { for (int k = 0; k < ny; ++k) if (y >= yb[k] && y < yb[k + 1]) return k; return -1; };

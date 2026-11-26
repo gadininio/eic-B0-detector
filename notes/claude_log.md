@@ -719,3 +719,23 @@ Macro `~/private/eic/compare_tracks.C` (run in `~/private/eic`). Both use the co
 - Next (proposed): rerun the kaon SF analysis (make_results 11) on the main1125 files.
 - 2026-11-26: website (EIC B0 Notebook, version 10): Definitions section expanded and grouped — samples and detector (beam frame, B0-direction Λ, Λ → pπ⁻ decay, stations, decay before the B0, seeding, reconstructed daughter), acceptance and efficiency (accepted daughter, acceptance A, tracking efficiency, fiducial efficiency, A×ε, yield Y = f_pπ·A×ε, per generated Λ, geometric acceptance, sensitive area vs coverage), mass and selection (forward tracks, candidates, signal/background, purity), kaon kinematics; contents rail links to each group.
 - 2026-11-26: README Definitions replaced by the grouped definitions of the website (samples and detector, acceptance and efficiency with A, ε, fiducial ε, A×ε, yield, mass and selection, kaon kinematics). Website version 11: the contents rail marks the section on screen (and its study / group), and keeps it visible.
+
+### Kaon SF with 10 000 events (2026-11-26)
+- User: go ahead with the analysis on the 10 000 new events. `make_results.sh 11` now also runs the *_10k outputs
+  (seeds 403–422, *.eicreconmain1125.edm4eic.root); the four jobs were run in parallel by hand.
+- kaon_kinematics.C first read 0 events: newer EICrecon writes InclusiveKinematicsTruth only as an index
+  (InclusiveKinematicsTruth_objIdx) into InclusiveKinematicsTruthBare. The macro now uses TruthBare when present (old
+  files unchanged: 500-event check 0 differences). Own truth vs TruthBare: 42 / 10 000 events differ by > 0.1 % in Q²
+  (not investigated; the newer EICrecon may pick a different scattered electron in a few events).
+- Λ side (lambda_dis.C, x_L > 0.6), old / new B0, hit seeding: 1513 B0-direction Λs (15.1 % of events); p π⁻ 650 / 694;
+  both accepted 59.5 / 30.8 % of p π⁻; A×ε per p π⁻ 49.7 / 24.8 %; per B0-dir. Λ 21.3 / 11.4 %; fiducial eff both
+  82.9 / 79.4 %; mass ±10 MeV S/B 241 / 8 and 147 / 4; x_L reco − true RMS 0.037 / 0.024; |t| RMS 0.094 / 0.088 GeV².
+- Kinematics: as with 1000 events (DA best at y < 0.05, electron above; reco Σ_h low). Events with a high-x_L Λ:
+  1041 at y < 0.01, 299 at 0.01–0.05, 173 above.
+- Λ candidates (best pair ±10 MeV, x_L > 0.6): old 227 (220 signal), with y_DA > 0.01: 79 (77); new 138 (135), 50 (50).
+- x_K reco/true − 1 (signal, y_DA > 0.01), old / new: hybrid +0.10 [−0.22, +1.19] / +0.05 [−0.32, +0.46];
+  electron −0.09 [−0.80, +0.23] / −0.12 [−0.75, +0.43]; DA +0.15 [−0.18, +1.34] / +0.19 [−0.18, +0.78].
+  Core about ±20 %, long upper tail (DA positive bias, hybrid switch at 0.05 too high for 0.05–0.2).
+  The 1000-event result (hybrid −0.00 [−0.17, +0.21], 12 events) was optimistic.
+- Generated x_K falls from 0 (median 0.23); y > 0.01 events almost all at x_K < 0.15. Candidates below the y cut scatter
+  widely at high x_K (DA) ⇒ the earlier hint that DA could recover high x_K does not hold.

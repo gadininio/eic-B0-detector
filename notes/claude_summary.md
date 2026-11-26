@@ -340,6 +340,28 @@ results/11_kaon_sf/kin_9x130_{old,new}).
   events). The hybrid switch point (0.05) should be tuned: at true y 0.05–0.2 it is worse than the electron
   method alone. x_K bins must be wide (a few per decade).
 
+**Step 4: 10 000 events** (2026-11-25/26; condor cluster 20204682, seeds 403–422, EICrecon main 378d6ae with #3116
+merged, pinned container; results/11_kaon_sf/*_10k). Old / new B0, hit seeding, x_L > 0.6:
+
+| | old B0 | new B0 |
+|---|---|---|
+| B0-direction Λs at x_L > 0.6 | 1513 | 1513 |
+| both daughters accepted, per p π⁻ | 59.5 % | 30.8 % |
+| A×ε per p π⁻ decay | 49.7 % | 24.8 % |
+| mass ±10 MeV, S / B | 241 / 8 | 147 / 4 |
+| x_L reco − true, RMS | 0.037 | 0.024 |
+| \|t\| reco − true, RMS [GeV²] | 0.094 | 0.088 |
+| Λ candidates (signal); with y_DA > 0.01 | 227 (220); 79 (77) | 138 (135); 50 (50) |
+| x_K reco/true − 1, hybrid, y_DA > 0.01 | +0.10 [−0.22, +1.19] | +0.05 [−0.32, +0.46] |
+| x_K, electron, y_DA > 0.01 | −0.09 [−0.80, +0.23] | −0.12 [−0.75, +0.43] |
+
+- 1041 of the 1513 high-x_L events are at y < 0.01; generated x_K falls from 0 (median 0.23) and the y > 0.01 events are
+  almost all at x_K < 0.15. The usable sample (y_DA > 0.01) is ~5 % of the high-x_L Λs (old B0).
+- x_K resolution: core ~±20 %, long upper tail; the 1000-event value (±20 %, 12 events) was optimistic. Next: tune the
+  hybrid switch (electron from lower y), study the DA bias, bin in x_K with the measured migration.
+- Software: newer EICrecon writes InclusiveKinematicsTruth only as an index into InclusiveKinematicsTruthBare
+  (kaon_kinematics.C uses TruthBare when present).
+
 ## Open points
 - Why the CKF loses soft π⁻ (rerun with CKF debug output on a few events).
 - Realistic B0 seeding: works with #3116 (section 7); follow it until merged.

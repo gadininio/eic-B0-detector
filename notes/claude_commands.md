@@ -392,3 +392,11 @@ condor_submit -a RECO=EICrecon_main_1125 -a OLD=epic_43f427e_n1124 -a NEW=epic_e
   -a "queue BEAM,SEED,N,DEST from /tmp/gninio/queue_9x130.txt" scripts/condor/dis_lambda.sub   # cluster 20204682
 condor_q 20204682 -totals; grep -l ALL_OK ~/private/eic/condor_logs/dis_9x130_s4*.20204682.out | wc -l
 ```
+
+## Kaon SF on 10 000 events (2026-11-26)
+```bash
+bash scripts/make_results.sh 11     # includes *_10k (seeds 403-422, *.eicreconmain1125.edm4eic.root)
+F10="$EIC_DATA/lambda_dis_9x130/dis_lambda_9x130_old_s4??.eicreconmain1125.edm4eic.root"
+root -l -b -q "macros/dis/lambda_dis.C+(\"$F10\",\"results/11_kaon_sf/dis_9x130_old_xl06_10k\",3,2.5,0.6)"
+root -l -b -q "macros/kaon/kaon_kinematics.C+(\"$F10\",\"results/11_kaon_sf/kin_9x130_old_10k\")"
+```

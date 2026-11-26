@@ -121,6 +121,10 @@ if want 11; then
     run macros/dis/lambda_dis.C $R/dis_9x130_${g}_xl06 "$EIC_DATA/lambda_dis_9x130/dis_lambda_9x130_${g}_s40?.eicreconpr3116.edm4eic.root" "\"$R/dis_9x130_${g}_xl06\"" 3 2.5 0.6
     # DIS kinematics from the scattered electron (own invariants with the true beams) and x_K = x / (1 - x_L)
     run macros/kaon/kaon_kinematics.C $R/kin_9x130_$g "$EIC_DATA/lambda_dis_9x130/dis_lambda_9x130_${g}_s40?.eicreconpr3116.edm4eic.root" "\"$R/kin_9x130_$g\""
+    # 10 000 events (condor 2026-11-25: seeds 403-422, EICrecon main 1125 with #3116, pinned container)
+    F10="$EIC_DATA/lambda_dis_9x130/dis_lambda_9x130_${g}_s4??.eicreconmain1125.edm4eic.root"
+    run macros/dis/lambda_dis.C $R/dis_9x130_${g}_xl06_10k "$F10" "\"$R/dis_9x130_${g}_xl06_10k\"" 3 2.5 0.6
+    run macros/kaon/kaon_kinematics.C $R/kin_9x130_${g}_10k "$F10" "\"$R/kin_9x130_${g}_10k\""
   done
 fi
 

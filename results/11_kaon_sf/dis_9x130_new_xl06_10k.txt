@@ -1,0 +1,13 @@
+/eos/user/g/gninio/eic/lambda_dis_9x130/dis_lambda_9x130_new_s4??.eicreconmain1125.edm4eic.root
+events 10000; generated Lambdas 10181 (1.018 / event), at < 30 mrad 10031, B0-direction (5.5-20 mrad) 1513
+kaon-SF selection: x_L > 0.60 (E_p = 130 GeV) on the B0-direction Lambdas and on the (+,-) pairs
+events with a B0-direction Lambda: 1513 (15.1%)
+B0-direction Lambdas: p pi- 694 (45.9%), before z = 5.8 m 578 (38.2%), both accepted 214 (30.8% of p pi-)
+truth seeding  eff p  94.4% (302/320)  pi  70.4% (226/321)  both reco 154 = 22.2% per p pi- decay (AxE), 10.2% per B0-dir. Lambda;  events with one: 154 (1.54% of events)
+hit seeding    eff p 100.0% (320/320)  pi  79.4% (255/321)  both reco 172 = 24.8% per p pi- decay (AxE), 11.4% per B0-dir. Lambda;  events with one: 172 (1.72% of events)
+truth seeding  fiducial (both accepted, 214): eff p  93.0%  pi  71.5%  both  68.7%;  fiducial AxE 21.2% per p pi- decay
+hit seeding    fiducial (both accepted, 214): eff p 100.0%  pi  79.4%  both  79.4%;  fiducial AxE 24.5% per p pi- decay
+truth seeding  forward tracks / event 0.71; (+,-) pairs with p+/p- > 2.5: 184, signal 156; in +-10 MeV: S 142 B 5
+hit seeding    forward tracks / event 0.76; (+,-) pairs with p+/p- > 2.5: 202, signal 173; in +-10 MeV: S 147 B 4
+selected Lambdas: x_L mean 0.719, |t| mean 1.307 GeV^2; both reconstructed (hit seeding) 172: x_L mean 0.722, |t| mean 1.633 GeV^2
+reconstructed Lambda (hit seeding): x_L reco-true mean -0.0008 RMS 0.0239; |t| reco-true mean 0.013 RMS 0.088 GeV^2 (under/overflow 0/3)
